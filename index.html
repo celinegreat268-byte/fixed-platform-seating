@@ -46,6 +46,85 @@ button.primary{background:#1d4ed8;color:white}button.danger{background:#fee2e2;c
 
 /* kode lainnya */
 
+/* BIGGER SIDE-BY-SIDE TABLES */
+.layout-wrap {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 28px !important;
+}
+
+.side-card {
+  width: 100% !important;
+  padding: 22px !important;
+  overflow-x: auto !important;
+}
+
+.row-seats {
+  display: grid !important;
+  grid-template-columns: 90px minmax(0, 1fr) !important;
+  gap: 16px !important;
+  min-width: 1300px !important;
+  margin: 18px 0 !important;
+}
+
+.desk-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(380px, 1fr)) !important;
+  gap: 16px !important;
+  min-width: 1180px !important;
+}
+
+.desk-grid.right {
+  grid-template-columns: repeat(2, minmax(430px, 1fr)) !important;
+  min-width: 880px !important;
+}
+
+.desk {
+  padding: 16px !important;
+  min-width: 0 !important;
+}
+
+.desk-title {
+  font-size: 17px !important;
+  margin-bottom: 12px !important;
+}
+
+.facing {
+  padding: 14px !important;
+}
+
+.seats {
+  gap: 12px !important;
+}
+
+.seat {
+  min-width: 0 !important;
+  min-height: 220px !important;
+  padding: 14px !important;
+  gap: 12px !important;
+}
+
+.seat-head {
+  font-size: 13px !important;
+}
+
+.platform-chip {
+  font-size: 14px !important;
+  min-height: 42px !important;
+  line-height: 1.5 !important;
+}
+
+.seat input,
+.seat select {
+  width: 100% !important;
+  font-size: 14px !important;
+  padding: 12px 8px !important;
+}
+
+.face-label {
+  font-size: 13px !important;
+}
+
 </style>
 </head>
 <body>
