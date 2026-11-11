@@ -3,222 +3,300 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fixed Platform Seating Arrangement</title>
+<title>Fixed Platform Seating Management</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{font-family:Inter,Arial,sans-serif;color:#17212b;background:#f4f6f8}
-*{box-sizing:border-box}body{margin:0;background:#f4f6f8}header{background:#172b4d;color:#fff;padding:24px clamp(16px,4vw,52px)}
-header h1{margin:5px 0;font-size:26px}header p{margin:5px 0 0;color:#d7e2f1;font-size:13px}
-main{max-width:1600px;margin:auto;padding:20px}.panel{background:white;border:1px solid #dce2e8;border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:0 2px 8px #1522380a}
-h2{font-size:18px;margin:0 0 12px}.muted{color:#687789;font-size:12px;line-height:1.5}.toolbar,.controls,.formrow{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
-.field{flex:1;min-width:160px}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:5px}
-input,select{width:100%;border:1px solid #ccd5df;border-radius:8px;padding:10px;background:#fff;color:#17212b;font:inherit;font-size:13px}
-button{border:0;border-radius:8px;padding:10px 14px;background:#e8edf3;color:#1b2c43;font-weight:750;cursor:pointer}
-button.primary{background:#1d4ed8;color:white}button.danger{background:#fee2e2;color:#991b1b}button.small{padding:7px 10px;font-size:12px}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}.stat{border:1px solid #e0e6ec;border-radius:10px;padding:12px}.stat small{color:#687789}.stat b{display:block;font-size:24px;margin-top:4px}
-.platform-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:10px;margin-top:14px}
-.platform-card{border:1px solid #dce2e8;border-left:7px solid var(--pcolor);border-radius:10px;padding:12px;background:#fff}
-.platform-card .top{display:flex;justify-content:space-between;gap:8px;align-items:center}.platform-card strong{font-size:14px}
-.platform-card input{margin-top:9px}.platform-card .meta{font-size:11px;color:#617084;margin-top:6px}
-.layout-wrap{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;align-items:start}.side-card{background:#fff;border:1px solid #dce2e8;border-radius:14px;padding:14px;overflow:auto}
-.side-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}.side-head h2{margin:0}
-.row-seats{display:grid;grid-template-columns:62px minmax(0,1fr);gap:10px;margin:11px 0;min-width:970px}.row-label{display:grid;place-items:center;background:#e9eef4;border-radius:9px;font-weight:800;font-size:13px}
-.desk-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.desk-grid.right{grid-template-columns:repeat(2,minmax(0,1fr))}
-.desk{border:1px solid #d7dee7;border-radius:11px;padding:10px;background:#f8fafc;min-width:0}.desk-title{font-size:12px;font-weight:800;margin-bottom:8px}
-.facing{border:1px solid #d8e0e9;border-radius:9px;background:#eef2f6;padding:8px}.face-label{text-align:center;font-size:10px;font-weight:800;color:#607083;margin:4px}
-.seats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.divider{height:4px;background:#9aa9ba;border-radius:8px;margin:8px 4px}
-.seat{background:#fff;border:2px solid #d5dde6;border-radius:9px;padding:9px;min-width:0;min-height:128px;display:flex;flex-direction:column;gap:7px}
-.seat-head{display:flex;justify-content:space-between;gap:4px;font-size:10px;color:#617084;font-weight:800}.seat input,.seat select{font-size:12px;padding:8px 7px;min-width:0}
-.seat.platform-set{border-color:var(--pcolor);background:color-mix(in srgb,var(--pcolor) 8%,white)}.platform-chip{font-size:10px;font-weight:850;color:#263343;overflow-wrap:anywhere;min-height:24px}
-.seat.occupied{box-shadow:inset 0 0 0 1px #16a34a}
-.legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.legend span{font-size:11px;padding:6px 9px;border-radius:20px;background:#f1f4f7}
-.note-box{padding:11px;border-radius:9px;background:#fff7e6;border:1px solid #f1d18a;color:#684b12;font-size:12px;line-height:1.5;margin-top:12px}
-@media(max-width:950px){.layout-wrap{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}main{padding:12px}}
-@media print{header{padding:10px 16px}main{padding:8px}.panel:first-child .toolbar,.controls,.muted,.note-box,.platform-admin{display:none!important}.layout-wrap{grid-template-columns:1.5fr 1fr;gap:8px}.side-card{padding:6px}.row-seats{min-width:0;grid-template-columns:34px minmax(0,1fr);gap:4px;margin:4px 0}.desk-grid{gap:3px}.desk{padding:4px}.seat{padding:4px;min-height:70px;gap:3px}.seat input,.seat select{border:0;padding:2px;font-size:7px}.seat-head,.platform-chip,.desk-title,.face-label{font-size:7px}.seats{gap:3px}}
-.note-box {
-  /* kode lama */
-}
-
-/* TEMPEL KODE EXTRA LARGE DI SINI */
-
-.layout-wrap {
-  display: grid !important;
-}
-
-/* kode lainnya */
-
-/* BIGGER SIDE-BY-SIDE TABLES */
-.layout-wrap {
-  display: grid !important;
-  grid-template-columns: 1fr !important;
-  gap: 28px !important;
-}
-
-.side-card {
-  width: 100% !important;
-  padding: 22px !important;
-  overflow-x: auto !important;
-}
-
-.row-seats {
-  display: grid !important;
-  grid-template-columns: 90px minmax(0, 1fr) !important;
-  gap: 16px !important;
-  min-width: 1300px !important;
-  margin: 18px 0 !important;
-}
-
-.desk-grid {
-  display: grid !important;
-  grid-template-columns: repeat(3, minmax(380px, 1fr)) !important;
-  gap: 16px !important;
-  min-width: 1180px !important;
-}
-
-.desk-grid.right {
-  grid-template-columns: repeat(2, minmax(430px, 1fr)) !important;
-  min-width: 880px !important;
-}
-
-.desk {
-  padding: 16px !important;
-  min-width: 0 !important;
-}
-
-.desk-title {
-  font-size: 17px !important;
-  margin-bottom: 12px !important;
-}
-
-.facing {
-  padding: 14px !important;
-}
-
-.seats {
-  gap: 12px !important;
-}
-
-.seat {
-  min-width: 0 !important;
-  min-height: 220px !important;
-  padding: 14px !important;
-  gap: 12px !important;
-}
-
-.seat-head {
-  font-size: 13px !important;
-}
-
-.platform-chip {
-  font-size: 14px !important;
-  min-height: 42px !important;
-  line-height: 1.5 !important;
-}
-
-.seat input,
-.seat select {
-  width: 100% !important;
-  font-size: 14px !important;
-  padding: 12px 8px !important;
-}
-
-.face-label {
-  font-size: 13px !important;
-}
-
+:root{font-family:Inter,Arial,sans-serif;color:#17212b;background:#f3f6fa;--navy:#17345b;--blue:#2563eb;--line:#d6e0eb}
+*{box-sizing:border-box}body{margin:0;background:#f3f6fa}button,input,select{font:inherit}
+header{background:var(--navy);color:white;padding:17px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+header h1{font-size:21px;margin:0}header p{font-size:12px;color:#d5e2f2;margin:5px 0 0}
+main{max-width:1900px;margin:auto;padding:18px}.hidden{display:none!important}
+.panel{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px;margin-bottom:15px;box-shadow:0 2px 7px #17345b0b}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.nav button{background:#eaf0f7;color:#29415f}.nav button.active{background:var(--blue);color:#fff}
+button{border:0;border-radius:8px;padding:9px 13px;font-weight:700;cursor:pointer;background:#e8eef5;color:#20344e}
+button.primary{background:var(--blue);color:#fff}button.danger{background:#fee2e2;color:#991b1b}button:disabled{opacity:.5;cursor:not-allowed}
+input,select{border:1px solid #cbd6e2;border-radius:8px;padding:9px 10px;background:#fff;color:#17212b;width:100%;min-width:0}
+label{display:block;font-size:12px;font-weight:700;margin-bottom:5px}.muted{font-size:12px;color:#68798d;line-height:1.5}
+.toolbar{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.field{min-width:150px;flex:1}
+.stats{display:grid;grid-template-columns:repeat(5,minmax(130px,1fr));gap:10px;margin:12px 0}
+.stat{border:1px solid var(--line);border-radius:10px;padding:13px;background:#fbfdff}.stat small{color:#68798d}.stat b{display:block;font-size:27px;margin-top:5px;color:#18395f}
+.layout-scroll{overflow-x:auto;padding-bottom:8px}.layout-wrap{display:grid;grid-template-columns: minmax(820px,1.5fr) minmax(570px,1fr);gap:14px;min-width:1430px;align-items:start}
+.side-card{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}.side-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.side-head h3{margin:0;font-size:16px}
+.row-seats{display:grid;grid-template-columns:48px minmax(0,1fr);gap:8px;margin:10px 0}.row-label{display:grid;place-items:center;background:#eaf0f6;border-radius:8px;font-weight:800;font-size:11px}
+.desk-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.desk-grid.right{grid-template-columns:repeat(2,minmax(0,1fr))}
+.desk{border:1px solid #cbd8e6;border-radius:10px;padding:9px;background:#f9fbfd;min-width:0}.desk-title{font-size:12px;font-weight:800;margin:0 0 7px}
+.facing{background:#eef3f8;border:1px solid #d6e0eb;border-radius:8px;padding:7px}.face-label{text-align:center;font-size:10px;font-weight:800;color:#62758a;margin:3px}
+.seats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.divider{height:4px;background:#9aabbd;border-radius:8px;margin:7px 3px}
+.seat{background:#fff;border:1px solid #cbd7e4;border-radius:8px;padding:8px;min-width:0;min-height:145px;display:flex;flex-direction:column;gap:7px}
+.seat-head{display:flex;justify-content:space-between;gap:3px;font-size:10px;font-weight:800;color:#52677f}.seat input{font-size:12px;padding:9px 7px}
+.seat.occupied{border:2px solid #22a06b;background:#f5fff8}.seat .seat-platform{font-size:11px;font-weight:700;color:#315477;overflow-wrap:anywhere;min-height:15px}
+.table{width:100%;border-collapse:collapse;font-size:13px}.table th,.table td{padding:9px;border-bottom:1px solid #e4eaf0;text-align:left}.table th{background:#f4f7fb}
+.table input{min-width:100px}.actions{display:flex;gap:6px;flex-wrap:wrap}
+.login-wrap{max-width:460px;margin:7vh auto;padding:20px}.login-wrap .panel{padding:24px}
+.status{font-size:12px;padding:6px 9px;border-radius:20px;background:#e8f5ed;color:#17633b}
+.notice{padding:12px;border-radius:9px;background:#fff7e6;border:1px solid #f2d18a;color:#76520b;font-size:13px;line-height:1.5}
+@media(max-width:900px){main{padding:10px}.stats{grid-template-columns:repeat(2,1fr)}header{padding:14px}.layout-wrap{min-width:1430px}}
+@media print{header,.nav,.toolbar,.no-print,#dashboardPanel,#employeePanel{display:none!important}main{padding:0}.panel{border:0;box-shadow:none}.layout-wrap{min-width:1430px}.layout-scroll{overflow:visible}.seat{min-height:120px}}
 </style>
 </head>
 <body>
-<header><div style="font-size:11px;letter-spacing:.15em;font-weight:800">OFFICE OPERATIONS</div><h1>Fixed Platform Seating Arrangement</h1><p>Denah 240 kursi · Platform spesifik · Bisa diedit dan diperluas</p></header>
-<main>
-<section class="panel">
- <h2>Pengaturan platform</h2>
- <p class="muted">Ubah nama platform, jumlah kursi, atau warna. Tambahkan platform baru kapan saja. Jumlah 240 kursi pada denah tetap dipertahankan; jumlah di bawah adalah alokasi awal sesuai daftar yang kamu kirim.</p>
- <div class="toolbar">
-  <div class="field"><label>Tanggal kerja</label><input type="date" id="workDate"></div>
-  <div class="field"><label>Shift</label><select id="shift"><option>Pagi</option><option>Malam</option></select></div>
-  <button class="primary" id="applyPlan">Terapkan alokasi platform</button>
-  <button id="addPlatform">+ Tambah platform</button>
-  <button id="export">Backup database</button>
-  <button id="importBtn">Import backup</button>
-  <input type="file" id="importFile" accept=".json,application/json" hidden>
-  <button onclick="window.print()">Print denah</button>
- </div>
- <div class="stats">
-  <div class="stat"><small>Total kursi tetap</small><b>240</b></div>
-  <div class="stat"><small>Kursi dengan platform</small><b id="assignedSeats">57</b></div>
-  <div class="stat"><small>Kursi belum ditentukan</small><b id="freeSeats">183</b></div>
-  <div class="stat"><small>Kursi terisi nama</small><b id="occupiedSeats">0</b></div>
- </div>
- <div class="platform-grid platform-admin" id="platformAdmin"></div>
- <div class="legend" id="legend"></div>
- <div class="note-box">Penyimpanan saat ini menggunakan database lokal browser (localStorage). Agar kamu dan teman-teman bisa membuka dan mengedit database yang sama dari perangkat berbeda, file ini perlu dihubungkan ke database online dan di-hosting. Backup JSON bisa dipakai untuk memindahkan data sementara antarperangkat.</div>
-</section>
-<section class="panel">
- <div class="toolbar" style="justify-content:space-between;align-items:center">
-  <div><h2 style="margin-bottom:4px">Denah tempat duduk</h2><div class="muted">Kotak kursi diperbesar agar nama dan platform lebih mudah dibaca. Pilih platform pada setiap kursi untuk mengubahnya secara manual.</div></div>
-  <button class="danger" id="clear">Kosongkan nama & platform</button>
- </div>
- <div class="layout-wrap">
-  <div class="side-card"><div class="side-head"><h2>SISI KIRI · 3 MEJA</h2><b>144 kursi</b></div><div class="muted">8 baris · 3 meja per baris · 6 kursi per meja</div><div id="leftRows"></div></div>
-  <div class="side-card"><div class="side-head"><h2>SISI KANAN · 2 MEJA</h2><b>96 kursi</b></div><div class="muted">8 baris · 2 meja per baris · 6 kursi per meja</div><div id="rightRows"></div></div>
+<header>
+ <div><h1>Fixed Platform Seating Management</h1><p>240 seats · Employee database · Attendance dashboard</p></div>
+ <div class="toolbar"><span id="userBadge" class="status hidden"></span><button id="logoutBtn" class="hidden">Logout</button></div>
+</header>
+
+<section id="loginScreen" class="login-wrap">
+ <div class="panel">
+  <h2>Login team</h2>
+  <p class="muted">Masuk menggunakan akun masing-masing. Akun dibuat oleh administrator.</p>
+  <div class="field"><label>Email</label><input id="loginEmail" type="email" placeholder="nama@company.com"></div>
+  <div class="field" style="margin-top:12px"><label>Password</label><input id="loginPassword" type="password" placeholder="Password"></div>
+  <button id="loginBtn" class="primary" style="width:100%;margin-top:15px">Login</button>
+  <p id="loginMessage" class="muted"></p>
+  <div class="notice" style="margin-top:14px">Aplikasi online memerlukan project Supabase. Isi URL dan anon key pada bagian konfigurasi di file index.html sebelum digunakan bersama tim.</div>
  </div>
 </section>
+
+<main id="appScreen" class="hidden">
+ <div class="nav no-print">
+  <button class="active" data-tab="seatingPanel">Seating arrangement</button>
+  <button data-tab="dashboardPanel">Dashboard</button>
+  <button data-tab="employeePanel">Employee database</button>
+  <button data-tab="userHelpPanel">User & access</button>
+ </div>
+
+ <section id="seatingPanel" class="tab-panel">
+  <div class="panel">
+   <div class="toolbar">
+    <div class="field"><label>Tanggal kerja</label><input id="workDate" type="date"></div>
+    <div class="field"><label>Shift</label><select id="workShift"><option>Pagi</option><option>Malam</option></select></div>
+    <button id="reloadBtn">Refresh data</button><button id="printBtn">Print denah</button>
+    <span id="saveStatus" class="muted">Belum tersinkron</span>
+   </div>
+   <div class="stats">
+    <div class="stat"><small>Total kapasitas</small><b>240</b></div>
+    <div class="stat"><small>Hadir / nama terisi</small><b id="presentCount">0</b></div>
+    <div class="stat"><small>Kursi kosong</small><b id="emptyCount">240</b></div>
+    <div class="stat"><small>Platform terisi</small><b id="platformCount">0</b></div>
+    <div class="stat"><small>Platform berbeda</small><b id="platformKinds">0</b></div>
+   </div>
+   <p class="muted">Isi nama karyawan dan platform langsung pada setiap kursi. Nama yang terisi otomatis dihitung sebagai hadir untuk tanggal dan shift yang dipilih.</p>
+  </div>
+  <div class="layout-scroll">
+   <div class="layout-wrap">
+    <div class="side-card"><div class="side-head"><h3>SISI KIRI · 3 MEJA</h3><b>144 kursi</b></div><div class="muted">8 baris · 3 meja per baris · 6 kursi per meja</div><div id="leftRows"></div></div>
+    <div class="side-card"><div class="side-head"><h3>SISI KANAN · 2 MEJA</h3><b>96 kursi</b></div><div class="muted">8 baris · 2 meja per baris · 6 kursi per meja</div><div id="rightRows"></div></div>
+   </div>
+  </div>
+ </section>
+
+ <section id="dashboardPanel" class="tab-panel hidden">
+  <div class="panel">
+   <h2>Dashboard kehadiran</h2>
+   <div class="toolbar"><div class="field"><label>Tanggal</label><input id="dashDate" type="date"></div><div class="field"><label>Shift</label><select id="dashShift"><option>Pagi</option><option>Malam</option></select></div><button id="dashRefresh" class="primary">Tampilkan rekap</button></div>
+   <div class="stats">
+    <div class="stat"><small>Total kursi</small><b>240</b></div><div class="stat"><small>Total hadir</small><b id="dashPresent">0</b></div>
+    <div class="stat"><small>Belum terisi</small><b id="dashEmpty">240</b></div><div class="stat"><small>Persentase hadir</small><b id="dashPercent">0%</b></div>
+    <div class="stat"><small>Platform aktif</small><b id="dashPlatforms">0</b></div>
+   </div>
+   <h3>Hadir per platform</h3><div id="platformSummary" class="muted">Belum ada data.</div>
+  </div>
+ </section>
+
+ <section id="employeePanel" class="tab-panel hidden">
+  <div class="panel">
+   <div class="toolbar" style="justify-content:space-between"><div><h2>Employee database</h2><p class="muted">Daftar master karyawan terpisah dari denah kursi.</p></div><button id="addEmployee" class="primary">+ Tambah karyawan</button></div>
+   <div class="toolbar"><div class="field"><label>Cari nama / ID</label><input id="employeeSearch" placeholder="Ketik nama atau ID karyawan"></div><div class="field"><label>Filter status</label><select id="employeeStatus"><option value="active">Aktif</option><option value="all">Semua</option></select></div></div>
+   <div style="overflow:auto;margin-top:12px"><table class="table"><thead><tr><th>ID karyawan</th><th>Nama</th><th>Tim</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="employeeBody"></tbody></table></div>
+  </div>
+ </section>
+
+ <section id="userHelpPanel" class="tab-panel hidden">
+  <div class="panel">
+   <h2>User & access</h2>
+   <p>Setiap TL dan Expat dapat menggunakan akun sendiri. Hak akses dikendalikan berdasarkan role.</p>
+   <table class="table"><thead><tr><th>Role</th><th>Akses</th></tr></thead><tbody>
+    <tr><td>Admin</td><td>Kelola user, employee database, platform, dan seluruh seating arrangement.</td></tr>
+    <tr><td>TL</td><td>Melihat dashboard, mengisi dan mengubah nama serta platform pada kursi, mengelola employee database.</td></tr>
+    <tr><td>Expat</td><td>Melihat denah, dashboard, dan employee database (read-only).</td></tr>
+   </tbody></table>
+   <div class="notice" style="margin-top:14px">Untuk membuat akun: Admin membuka Supabase → Authentication → Users → Add user. Setelah itu tambahkan profil user di tabel <b>profiles</b> dan pilih role <b>admin</b>, <b>tl</b>, atau <b>expat</b>. Petunjuk lengkap ada di README paket.</div>
+  </div>
+ </section>
 </main>
+
 <script>
-const TOTAL=240, KEY='fixed-platform-seating-v2';
-const initialPlatforms=[
- {name:'VEGA-1 + BFC-2',count:1,color:'#f59e0b',family:'VEGA'},
- {name:'VEGA-2 + VEGA-6',count:2,color:'#f59e0b',family:'VEGA'},
- {name:'VEGA-3 + BFC-3',count:2,color:'#f59e0b',family:'VEGA'},
- {name:'VEGA-4 + BFC-1',count:2,color:'#f59e0b',family:'VEGA'},
- {name:'VEGA-5',count:1,color:'#f59e0b',family:'VEGA'},
- {name:'VEGA-9 + VEGA-7',count:2,color:'#f59e0b',family:'VEGA'},
- {name:'ZANE 13',count:11,color:'#22a06b',family:'ZANE'},
- {name:'ZANE 14',count:8,color:'#22a06b',family:'ZANE'},
- {name:'JINX-4',count:4,color:'#dc2626',family:'JINX'},
- {name:'JINX-8',count:5,color:'#dc2626',family:'JINX'},
- {name:'JINX-11',count:10,color:'#dc2626',family:'JINX'},
- {name:'JINX-24',count:5,color:'#dc2626',family:'JINX'},
- {name:'JINX-20',count:4,color:'#dc2626',family:'JINX'}
-];
-let db={platforms:initialPlatforms,seats:{},date:new Date().toISOString().slice(0,10),shift:'Pagi'};
-try{db={...db,...JSON.parse(localStorage.getItem(KEY)||'{}')};}catch(e){}
+/* ================= CONFIG ONLINE =================
+   1) Buat project di https://supabase.com
+   2) Isi URL dan anon key di bawah.
+   Jangan pernah memasukkan service_role key ke file ini.
+*/
+const SUPABASE_URL = "https://droruitqvuqvgnqtbhiu.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_mM2-zsr_b1RAFv6e0qE6gg_pwviQLTg";
+const supabaseReady = SUPABASE_URL.startsWith("https://") && SUPABASE_ANON_KEY.startsWith("sb_publishable_") && !!window.supabase;
+const sb = supabaseReady ? window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY) : null;
+
+const TOTAL=240;
+let currentUser=null, currentRole="expat", assignments={}, employees=[], platforms=[];
 const $=id=>document.getElementById(id);
-$('workDate').value=db.date;$('shift').value=db.shift;
-const seatKeys=()=>{let a=[];for(let r=1;r<=8;r++)for(let s of ['L','R'])for(let t=1;t<=(s==='L'?3:2);t++)for(let p=1;p<=6;p++)a.push(`${s}-R${r}-T${t}-PC${p}`);return a};
-function save(){db.date=$('workDate').value;db.shift=$('shift').value;localStorage.setItem(KEY,JSON.stringify(db));}
-function totalPlan(){return db.platforms.reduce((s,p)=>s+Math.max(0,Number(p.count)||0),0)}
-function colorFor(name){return db.platforms.find(p=>p.name===name)?.color||'#94a3b8'}
-function renderAdmin(){
- $('platformAdmin').innerHTML=db.platforms.map((p,i)=>`<div class="platform-card" style="--pcolor:${p.color}"><div class="top"><strong>${esc(p.name)}</strong><button class="small danger" data-remove="${i}">Hapus</button></div><div class="formrow"><div class="field"><label>Nama platform</label><input data-i="${i}" data-k="name" value="${esc(p.name)}"></div><div style="width:85px"><label style="display:block;font-size:12px;font-weight:700;margin-bottom:5px">Jumlah</label><input type="number" min="0" max="240" data-i="${i}" data-k="count" value="${p.count}"></div><div style="width:54px"><label style="display:block;font-size:12px;font-weight:700;margin-bottom:5px">Warna</label><input type="color" data-i="${i}" data-k="color" value="${p.color}" style="padding:4px;height:38px"></div></div><div class="meta">${p.family||'Platform tambahan'} · ${p.count} kursi rencana</div></div>`).join('');
- $('platformAdmin').querySelectorAll('input').forEach(el=>el.addEventListener('change',()=>{const p=db.platforms[+el.dataset.i];p[el.dataset.k]=el.dataset.k==='count'?Math.max(0,Math.min(240,+el.value||0)):el.value;renderAdmin();renderLegend();save();}));
- $('platformAdmin').querySelectorAll('[data-remove]').forEach(b=>b.addEventListener('click',()=>{if(confirm('Hapus platform ini dari daftar? Kursi yang sudah memakai nama ini tidak otomatis dihapus.')){db.platforms.splice(+b.dataset.remove,1);renderAdmin();renderLegend();save();}}));
+const today=()=>new Date().toLocaleDateString("en-CA");
+$("workDate").value=today();$("dashDate").value=today();
+
+function seatList(){
+ const list=[];
+ for(let r=1;r<=8;r++){
+  for(let t=1;t<=3;t++)for(let pc=1;pc<=6;pc++)list.push({id:`L-R${r}-T${t}-PC${pc}`,side:"L",row:r,table:t,pc});
+  for(let t=1;t<=2;t++)for(let pc=1;pc<=6;pc++)list.push({id:`R-R${r}-T${t}-PC${pc}`,side:"R",row:r,table:t,pc});
+ }
+ return list;
 }
-function renderLegend(){$('legend').innerHTML=db.platforms.map(p=>`<span style="border-left:5px solid ${p.color}">${esc(p.name)}</span>`).join('')+`<span>Abu-abu = Belum ditentukan</span>`}
-function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function renderSeats(side,tables){
- const target=$(side==='L'?'leftRows':'rightRows');
- target.innerHTML=Array.from({length:8},(_,r)=>{let desks=Array.from({length:tables},(_,t)=>{
-  const makeSeat=pc=>{const id=`${side}-R${r+1}-T${t+1}-PC${pc}`,v=db.seats[id]||{};return `<div class="seat ${v.name?'occupied':''}" data-seat="${id}" style="--pcolor:${colorFor(v.platform)}"><div class="seat-head"><span>${side==='L'?'K':'Kn'}${t+1} · R${r+1}</span><span>PC ${pc}</span></div><div class="platform-chip">${esc(v.platform||'Belum ditentukan')}</div><input data-field="name" placeholder="Nama karyawan" value="${esc(v.name||'')}"><select data-field="platform"><option value="">Belum ditentukan</option>${db.platforms.map(p=>`<option ${p.name===v.platform?'selected':''} value="${esc(p.name)}">${esc(p.name)}</option>`).join('')}</select></div>`};
-  return `<div class="desk"><div class="desk-title">Meja ${side==='L'?'Kiri':'Kanan'} ${t+1}</div><div class="facing"><div class="face-label">BARIS ATAS</div><div class="seats">${[1,2,3].map(makeSeat).join('')}</div><div class="divider"></div><div class="face-label">BARIS BAWAH</div><div class="seats">${[4,5,6].map(makeSeat).join('')}</div></div></div>`;
- }).join('');return `<div class="row-seats"><div class="row-label">BARIS ${r+1}</div><div class="desk-grid ${side==='R'?'right':''}">${desks}</div></div>`}).join('');
- target.querySelectorAll('[data-seat] input,[data-seat] select').forEach(el=>el.addEventListener('change',()=>{const card=el.closest('[data-seat]'),id=card.dataset.seat;db.seats[id]||={};db.seats[id][el.dataset.field]=el.value;card.classList.toggle('occupied',!!db.seats[id].name);card.querySelector('.platform-chip').textContent=db.seats[id].platform||'Belum ditentukan';card.style.setProperty('--pcolor',colorFor(db.seats[id].platform));save();stats();}));
+const seats=seatList();
+function canEdit(){return currentRole==="admin"||currentRole==="tl"}
+function canAdmin(){return currentRole==="admin"}
+function message(text){$("saveStatus").textContent=text}
+function setApp(on){
+ $("loginScreen").classList.toggle("hidden",on);$("appScreen").classList.toggle("hidden",!on);
+ $("logoutBtn").classList.toggle("hidden",!on);$("userBadge").classList.toggle("hidden",!on);
 }
-function draw(){renderSeats('L',3);renderSeats('R',2);stats()}
-function stats(){const vals=Object.values(db.seats);const count=vals.filter(v=>v&&v.platform).length;$('assignedSeats').textContent=count;$('freeSeats').textContent=TOTAL-count;$('occupiedSeats').textContent=vals.filter(v=>v&&v.name).length}
-function applyPlan(){
- const keys=seatKeys();let index=0;
- db.platforms.forEach(p=>{for(let n=0;n<Math.max(0,+p.count||0)&&index<keys.length;n++,index++){db.seats[keys[index]]={...(db.seats[keys[index]]||{}),platform:p.name}}});
- if(totalPlan()>TOTAL)alert('Jumlah alokasi platform melebihi 240 kursi. Hanya 240 kursi pertama yang diterapkan.');
- save();draw();
+function showLoginMessage(t){$("loginMessage").textContent=t}
+async function login(){
+ if(!sb){showLoginMessage("Supabase belum dikonfigurasi. Isi SUPABASE_URL dan SUPABASE_ANON_KEY di index.html.");return}
+ $("loginBtn").disabled=true;showLoginMessage("Sedang login...");
+ const {data,error}=await sb.auth.signInWithPassword({email:$("loginEmail").value.trim(),password:$("loginPassword").value});
+ $("loginBtn").disabled=false;
+ if(error){showLoginMessage(error.message);return}
+ await startSession(data.user);
 }
-$('applyPlan').onclick=()=>{if(confirm('Terapkan jumlah kursi platform dari daftar ke denah? Ini akan mengganti label platform kursi berdasarkan urutan daftar, tetapi nama karyawan tetap disimpan.'))applyPlan()};
-$('addPlatform').onclick=()=>{const name=prompt('Masukkan nama platform baru:');if(!name||!name.trim())return;db.platforms.push({name:name.trim(),count:0,color:'#64748b',family:'Tambahan'});renderAdmin();renderLegend();draw();save()};
-$('clear').onclick=()=>{if(confirm('Kosongkan semua nama dan platform di 240 kursi?')){db.seats={};save();draw()}};
-$('workDate').onchange=()=>{save()};$('shift').onchange=()=>{save()};
-$('export').onclick=()=>{const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Fixed_Platform_Seating_Backup.json';a.click();URL.revokeObjectURL(a.href)};
-$('importBtn').onclick=()=>$('importFile').click();
-$('importFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());if(!Array.isArray(d.platforms)||!d.seats)throw Error('Format backup tidak sesuai');db=d;$('workDate').value=db.date||new Date().toISOString().slice(0,10);$('shift').value=db.shift||'Pagi';save();renderAdmin();renderLegend();draw();alert('Backup berhasil diimpor.')}catch(err){alert('Gagal import: '+err.message)}};
-renderAdmin();renderLegend();draw();
+async function startSession(user){
+ currentUser=user;
+ const {data:profile,error}=await sb.from("profiles").select("full_name,role").eq("id",user.id).single();
+ if(error||!profile){await sb.auth.signOut();setApp(false);showLoginMessage("Profil user belum dibuat oleh admin. Hubungi administrator.");return}
+ currentRole=profile.role;
+ $("userBadge").textContent=(profile.full_name||user.email)+" · "+currentRole.toUpperCase();
+ setApp(true);
+ applyPermissions();
+ await loadPlatforms();await loadEmployees();await loadAssignments();
+}
+function applyPermissions(){
+ document.querySelectorAll(".seat input").forEach(x=>x.disabled=!canEdit());
+ $("addEmployee").classList.toggle("hidden",!canEdit());
+}
+async function loadPlatforms(){
+ const {data,error}=await sb.from("platforms").select("name,color").eq("active",true).order("name");
+ if(error){platforms=[];console.error(error)}else platforms=data||[];
+}
+async function loadEmployees(){
+ const {data,error}=await sb.from("employees").select("*").order("full_name");
+ if(error){console.error(error);return}employees=data||[];renderEmployees();
+}
+async function loadAssignments(){
+ message("Memuat data online...");
+ const date=$("workDate").value,shift=$("workShift").value;
+ const {data,error}=await sb.from("seat_assignments").select("seat_code,employee_name,platform").eq("work_date",date).eq("shift",shift);
+ if(error){message("Gagal memuat: "+error.message);return}
+ assignments={};(data||[]).forEach(x=>assignments[x.seat_code]=x);
+ renderSeats("L",3);renderSeats("R",2);updateStats();message("Tersinkron online");
+}
+function renderSeats(side,tableCount){
+ const target=$(side==="L"?"leftRows":"rightRows");
+ target.innerHTML=Array.from({length:8},(_,r)=>{
+  const desks=Array.from({length:tableCount},(_,t)=>{
+   const makeSeat=pc=>{
+    const id=`${side}-R${r+1}-T${t+1}-PC${pc}`,v=assignments[id]||{};
+    return `<div class="seat ${v.employee_name?"occupied":""}" data-seat="${id}">
+     <div class="seat-head"><span>${side==="L"?"K":"Kn"}${t+1} · R${r+1}</span><span>PC ${pc}</span></div>
+     <div class="seat-platform">${escapeHtml(v.platform||"Platform belum diisi")}</div>
+     <input data-field="employee_name" placeholder="Nama karyawan" value="${escapeAttr(v.employee_name||"")}" ${canEdit()?"":"disabled"}>
+     <input data-field="platform" placeholder="Nama platform" value="${escapeAttr(v.platform||"")}" ${canEdit()?"":"disabled"}>
+    </div>`;
+   };
+   return `<div class="desk"><div class="desk-title">Meja ${side==="L"?"Kiri":"Kanan"} ${t+1}</div><div class="facing">
+    <div class="face-label">BARIS ATAS</div><div class="seats">${[1,2,3].map(makeSeat).join("")}</div>
+    <div class="divider"></div><div class="face-label">BARIS BAWAH</div><div class="seats">${[4,5,6].map(makeSeat).join("")}</div>
+   </div></div>`;
+  }).join("");
+  return `<div class="row-seats"><div class="row-label">BARIS ${r+1}</div><div class="desk-grid ${side==="R"?"right":""}">${desks}</div></div>`;
+ }).join("");
+ target.querySelectorAll("[data-seat] input").forEach(el=>{
+  el.addEventListener("change",async()=>{
+   const card=el.closest("[data-seat]"),id=card.dataset.seat;
+   assignments[id] ||= {seat_code:id};
+   assignments[id][el.dataset.field]=el.value.trim();
+   card.classList.toggle("occupied",!!assignments[id].employee_name);
+   card.querySelector(".seat-platform").textContent=assignments[id].platform||"Platform belum diisi";
+   await saveSeat(id);
+  });
+ });
+}
+async function saveSeat(id){
+ if(!canEdit())return;
+ const v=assignments[id]||{},payload={work_date:$("workDate").value,shift:$("workShift").value,seat_code:id,employee_name:v.employee_name||"",platform:v.platform||"",updated_by:currentUser.id};
+ message("Menyimpan...");
+ const {error}=await sb.from("seat_assignments").upsert(payload,{onConflict:"work_date,shift,seat_code"});
+ if(error){message("Gagal simpan: "+error.message);return}
+ message("Tersimpan online");updateStats();
+}
+function updateStats(){
+ const vals=Object.values(assignments),present=vals.filter(v=>(v.employee_name||"").trim()).length;
+ const withPlatform=vals.filter(v=>(v.platform||"").trim()).length;
+ const kinds=new Set(vals.map(v=>(v.platform||"").trim()).filter(Boolean));
+ $("presentCount").textContent=present;$("emptyCount").textContent=TOTAL-present;
+ $("platformCount").textContent=withPlatform;$("platformKinds").textContent=kinds.size;
+}
+async function dashboard(){
+ const date=$("dashDate").value,shift=$("dashShift").value;
+ const {data,error}=await sb.from("seat_assignments").select("employee_name,platform").eq("work_date",date).eq("shift",shift);
+ if(error){$("platformSummary").textContent=error.message;return}
+ const rows=data||[],present=rows.filter(x=>(x.employee_name||"").trim()).length;
+ $("dashPresent").textContent=present;$("dashEmpty").textContent=TOTAL-present;
+ $("dashPercent").textContent=(present/TOTAL*100).toFixed(1)+"%";
+ const map={};rows.forEach(x=>{if((x.employee_name||"").trim()&&(x.platform||"").trim())map[x.platform]=(map[x.platform]||0)+1});
+ $("dashPlatforms").textContent=Object.keys(map).length;
+ $("platformSummary").innerHTML=Object.keys(map).length?`<table class="table"><thead><tr><th>Platform</th><th>Total hadir</th></tr></thead><tbody>${Object.entries(map).sort((a,b)=>a[0].localeCompare(b[0])).map(([n,c])=>`<tr><td>${escapeHtml(n)}</td><td><b>${c}</b></td></tr>`).join("")}</tbody></table>`:"Belum ada data hadir untuk tanggal dan shift ini.";
+}
+function renderEmployees(){
+ const q=$("employeeSearch").value.toLowerCase(),filter=$("employeeStatus").value;
+ const list=employees.filter(e=>(filter==="all"||e.active)&&(`${e.full_name} ${e.employee_code} ${e.team||""}`).toLowerCase().includes(q));
+ $("employeeBody").innerHTML=list.map(e=>`<tr><td>${escapeHtml(e.employee_code)}</td><td>${escapeHtml(e.full_name)}</td><td>${escapeHtml(e.team||"-")}</td><td>${e.active?"Aktif":"Nonaktif"}</td><td class="actions">${canEdit()?`<button class="small" data-edit="${e.id}">Edit</button><button class="small danger" data-toggle="${e.id}">${e.active?"Nonaktifkan":"Aktifkan"}</button>`:"Read only"}</td></tr>`).join("");
+ $("employeeBody").querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editEmployee(b.dataset.edit));
+ $("employeeBody").querySelectorAll("[data-toggle]").forEach(b=>b.onclick=()=>toggleEmployee(b.dataset.toggle));
+}
+async function addEmployee(){
+ const code=prompt("ID karyawan:");if(!code)return;
+ const name=prompt("Nama lengkap karyawan:");if(!name)return;
+ const team=prompt("Tim / departemen (opsional):")||"";
+ const {error}=await sb.from("employees").insert({employee_code:code.trim(),full_name:name.trim(),team,active:true});
+ if(error){alert("Gagal: "+error.message);return}await loadEmployees();
+}
+async function editEmployee(id){
+ const e=employees.find(x=>x.id===id);if(!e)return;
+ const name=prompt("Nama karyawan:",e.full_name);if(name===null)return;
+ const team=prompt("Tim / departemen:",e.team||"");if(team===null)return;
+ const code=prompt("ID karyawan:",e.employee_code);if(code===null)return;
+ const {error}=await sb.from("employees").update({full_name:name.trim(),team:team.trim(),employee_code:code.trim()}).eq("id",id);
+ if(error)alert(error.message);else await loadEmployees();
+}
+async function toggleEmployee(id){
+ const e=employees.find(x=>x.id===id);if(!e)return;
+ const {error}=await sb.from("employees").update({active:!e.active}).eq("id",id);
+ if(error)alert(error.message);else await loadEmployees();
+}
+function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function escapeAttr(v){return escapeHtml(v)}
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x===b));
+ document.querySelectorAll(".tab-panel").forEach(x=>x.classList.add("hidden"));$(b.dataset.tab).classList.remove("hidden");
+ if(b.dataset.tab==="dashboardPanel")dashboard();
+});
+$("loginBtn").onclick=login;
+$("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
+$("logoutBtn").onclick=async()=>{if(sb)await sb.auth.signOut();currentUser=null;setApp(false)};
+$("workDate").onchange=loadAssignments;$("workShift").onchange=loadAssignments;
+$("reloadBtn").onclick=loadAssignments;$("printBtn").onclick=()=>window.print();
+$("dashRefresh").onclick=dashboard;$("addEmployee").onclick=addEmployee;
+$("employeeSearch").oninput=renderEmployees;$("employeeStatus").onchange=renderEmployees;
+if(sb){sb.auth.getSession().then(({data})=>{if(data.session)startSession(data.session.user)});sb.auth.onAuthStateChange((_event,session)=>{if(!session){currentUser=null;setApp(false)}})}
+else{showLoginMessage("Mode online belum aktif. Lengkapi konfigurasi Supabase pada file index.html.")}
 </script>
-</body></html>
+</body>
+</html>
