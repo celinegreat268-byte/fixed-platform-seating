@@ -340,6 +340,118 @@ label,.entry-mode strong{color:#70485e;font-weight:800}
 @media(max-width:700px){.layout-scroll{overflow-x:auto!important}.layout-wrap{width:3240px!important;min-width:3240px!important}}
 @media print{.layout-wrap{grid-template-columns:1880px 52px 1280px!important;width:3240px!important;min-width:3240px!important;gap:14px!important}.layout-scroll{overflow:visible!important}}
 /* ===== END V6 FIX ===== */
+
+
+/* ===== V7: EDITORIAL BLUSH + DISTINCT PLATFORM COLORS ===== */
+:root{
+  color-scheme:light;
+  --ink:#302638;
+  --muted:#716272;
+  --line:#e7dce5;
+  --plum:#47283f;
+  --berry:#913e67;
+  --rose:#c45e87;
+  --blush:#fff1f6;
+  --gold:#c6a36b;
+  --jinx:#c63851;
+  --jinx-soft:#ffe6eb;
+  --vega:#c56b16;
+  --vega-soft:#fff0dc;
+  --zane:#16835d;
+  --zane-soft:#def5e9;
+}
+html,body{background:#f7f3f6;color:var(--ink)}
+body{font-family:'Merriweather',Georgia,serif;font-size:14px;font-weight:500;background:linear-gradient(135deg,#f8f4f7 0%,#f4f0f4 48%,#f9f5f1 100%)}
+header{background:linear-gradient(110deg,#3f263c 0%,#67334f 56%,#984b70 100%);border-bottom:4px solid var(--gold);box-shadow:0 5px 18px rgba(63,38,60,.18)}
+header h1{font-size:23px;font-weight:900;color:#fff;letter-spacing:.15px}
+header p{color:#f8eaf1;font-size:12px;font-weight:600}
+main{max-width:1980px}
+.panel{background:#fff;border:1px solid #e7d9e2;border-radius:15px;box-shadow:0 5px 18px rgba(65,40,59,.065)}
+.nav button{background:#f4e8ef;border:1px solid #e7d4df;color:#58384e;font-weight:800}
+.nav button.active{background:linear-gradient(135deg,#723852,#a74e76);border-color:#8d4567;color:#fff;box-shadow:0 3px 10px rgba(114,56,82,.22)}
+button{font-weight:800}
+button.primary{background:linear-gradient(135deg,#783d5d,#ad5279);color:#fff}
+button.danger{background:#ffe5e9;color:#a42d48}
+input,select{background:#fff;color:#302638;border-color:#d9cbd6;font-size:14px;font-weight:600}
+input:focus,select:focus,textarea:focus{outline:3px solid rgba(196,94,135,.18);border-color:#bd6489}
+label,.entry-mode strong{color:#503449;font-weight:900}
+.muted{color:#716272;font-weight:600}
+.stats{gap:12px}
+.stat{background:#fff;border:1px solid #e6dce5;border-top:4px solid #b85f86;box-shadow:0 3px 10px rgba(55,37,53,.045)}
+.stat:nth-child(1){border-top-color:#a94c75;background:linear-gradient(180deg,#fff 0%,#fff7fa 100%)}
+.stat:nth-child(2){border-top-color:#218a70;background:linear-gradient(180deg,#fff 0%,#f2fbf8 100%)}
+.stat:nth-child(3){border-top-color:#d18a36;background:linear-gradient(180deg,#fff 0%,#fff9f0 100%)}
+.stat:nth-child(4){border-top-color:#537fa8;background:linear-gradient(180deg,#fff 0%,#f4f8fc 100%)}
+.stat:nth-child(5){border-top-color:#9270a8;background:linear-gradient(180deg,#fff 0%,#faf6fc 100%)}
+.stat small{font-size:12px;color:#625266;font-weight:800}
+.stat b{font-size:29px;color:#39283b;font-weight:900}
+/* Fixed V6 floor-plan footprint is intentionally preserved; horizontal scrolling reveals all desks. */
+.layout-scroll{background:transparent;scrollbar-color:#b77b98 #f0e4eb;scrollbar-width:thin}
+.layout-scroll::-webkit-scrollbar{height:13px}
+.layout-scroll::-webkit-scrollbar-track{background:#f0e4eb;border-radius:20px}
+.layout-scroll::-webkit-scrollbar-thumb{background:#b77b98;border:3px solid #f0e4eb;border-radius:20px}
+.layout-wrap{gap:14px!important}
+.side-card{background:linear-gradient(180deg,#fff 0%,#fffafd 100%);border:1px solid #dfd2dd;box-shadow:0 4px 16px rgba(60,38,58,.065)}
+.layout-wrap>.side-card:first-child{border-top:4px solid #a84e77}
+.layout-wrap>.side-card:last-child{border-top:4px solid #6585a2}
+.side-head{border-bottom:2px solid #eee3ea;padding-bottom:10px}
+.side-head h3{color:#472b41;font-size:17px;font-weight:900;letter-spacing:.3px}
+.side-head span,.side-head b{color:#67475f;font-weight:900}
+.row-label{background:linear-gradient(180deg,#f7e7ef,#fdf5f8);border:1px solid #e8d5e0;color:#754760;font-size:12px;font-weight:900}
+.desk{background:#fdf9fc;border:1px solid #dfd3df;box-shadow:0 2px 8px rgba(59,39,58,.035)}
+.desk-title{font-size:14px;color:#4b2d43;font-weight:900}
+.facing{background:linear-gradient(180deg,#f4edf3,#f8f4f7);border:1px solid #e2d7e1}
+.face-label{font-size:11px;color:#70576b;font-weight:900;letter-spacing:.55px}
+.seat{background:#fff;border:1px solid #d9d0db;box-shadow:0 2px 7px rgba(48,34,50,.05);padding:8px}
+.seat-head{font-size:11px;color:#4f4054;font-weight:900;letter-spacing:.1px}
+.seat textarea{font-family:'Merriweather',Georgia,serif;font-size:13px;font-weight:600;line-height:1.45;color:#302638;background:#fff;border:1px solid #d7ced9;min-height:60px;padding:9px 10px;overflow-wrap:break-word;word-break:normal}
+.seat textarea::placeholder{color:#776b7b;opacity:1;font-weight:500}
+.seat .seat-platform{font-size:13px;font-weight:900;line-height:1.45;min-height:45px;color:#4c4052;background:#eef0f4;border-radius:7px;padding:8px 9px;overflow-wrap:break-word;word-break:normal}
+.seat.occupied:not(.platform-jinx):not(.platform-vega):not(.platform-zane){border:2px solid #8b9caf;background:#f8fafc}
+.seat.occupied:not(.platform-jinx):not(.platform-vega):not(.platform-zane) .seat-platform{background:#e9eef4;color:#3d536c}
+/* Platform colors intentionally remain distinct: JINX ruby, VEGA amber, ZANE emerald. */
+.seat.platform-jinx{border:2px solid var(--jinx);background:#fff7f8;box-shadow:0 2px 8px rgba(198,56,81,.09)}
+.seat.platform-jinx .seat-platform{color:#8f2038;background:var(--jinx-soft);border-left:4px solid var(--jinx)}
+.seat.platform-jinx textarea[data-field="platform"]{border-color:#e7a1ad;background:#fffafb}
+.seat.platform-vega{border:2px solid var(--vega);background:#fffaf2;box-shadow:0 2px 8px rgba(197,107,22,.09)}
+.seat.platform-vega .seat-platform{color:#8c4a0c;background:var(--vega-soft);border-left:4px solid var(--vega)}
+.seat.platform-vega textarea[data-field="platform"]{border-color:#e8bd86;background:#fffdf9}
+.seat.platform-zane{border:2px solid var(--zane);background:#f4fcf8;box-shadow:0 2px 8px rgba(22,131,93,.09)}
+.seat.platform-zane .seat-platform{color:#126445;background:var(--zane-soft);border-left:4px solid var(--zane)}
+.seat.platform-zane textarea[data-field="platform"]{border-color:#98d4b7;background:#fbfffd}
+.platform-legend{gap:11px;margin-top:12px}
+.platform-chip{padding:7px 12px;border:1px solid transparent;font-size:12px;font-weight:900;letter-spacing:.15px}
+.platform-chip.jinx{background:var(--jinx-soft);border-color:#f1bdc7;color:#92233b}
+.platform-chip.vega{background:var(--vega-soft);border-color:#f0d1a5;color:#8c4a0c}
+.platform-chip.zane{background:var(--zane-soft);border-color:#b0e0c7;color:#126445}
+.divider{height:4px;background:linear-gradient(90deg,#c4a2b5,#ded1dc);margin:10px 3px}
+.entry-mode{background:#fbf7fa;border:1px solid #eadde6;border-radius:11px;padding:10px 12px}
+.entry-mode button{background:#f0e5ec;border:1px solid #e4d2de;color:#56384d}
+.entry-mode button.active{background:linear-gradient(135deg,#733b5b,#ac527a);border-color:#8e4568;color:#fff}
+.bulk-entry{background:linear-gradient(135deg,#fff7fa,#f8f5fa);border:1px solid #e4d6e1}
+.bulk-entry textarea{font-family:'Merriweather',Georgia,serif;font-size:14px;color:#302638}
+.table th{background:#f3e8ef;color:#503449;font-weight:900}
+.table td{color:#3e3041}
+.notice{background:#fff5e9;border:1px solid #edd5b2;color:#795222}
+.status{background:#f1e4ec;color:#673b55}
+#dashboardPanel .stat{border-radius:13px}
+#dashboardPanel .stat:nth-child(1){background:linear-gradient(135deg,#fff4f8,#fbe6ef)}
+#dashboardPanel .stat:nth-child(2){background:linear-gradient(135deg,#f0fbf7,#dff3eb)}
+#dashboardPanel .stat:nth-child(3){background:linear-gradient(135deg,#fff9ed,#ffefd5)}
+#dashboardPanel .stat:nth-child(4){background:linear-gradient(135deg,#f1f7fd,#e2edf8)}
+#dashboardPanel .stat:nth-child(5){background:linear-gradient(135deg,#f8f3fb,#eee5f5)}
+#employeePanel .table th,#userHelpPanel .table th{background:#f3e8ef;color:#503449}
+.notice b{color:#613f24}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(166,73,116,.25);outline-offset:1px}
+@media print{
+  body{background:#fff;color:#222}
+  .side-card,.desk,.seat{box-shadow:none}
+  .seat.platform-jinx .seat-platform{background:#ffe6eb!important;color:#8f2038!important}
+  .seat.platform-vega .seat-platform{background:#fff0dc!important;color:#8c4a0c!important}
+  .seat.platform-zane .seat-platform{background:#def5e9!important;color:#126445!important}
+}
+/* ===== END V7 VISUAL REFINEMENT ===== */
+
 </style>
 </head>
 <body>
