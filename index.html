@@ -105,6 +105,7 @@ label{display:block;font-size:12px;font-weight:700;margin-bottom:5px}.muted{font
     <div class="stat"><small>Platform berbeda</small><b id="platformKinds">0</b></div>
    </div>
    <p class="muted">Isi nama karyawan dan platform langsung pada setiap kursi. Nama yang terisi otomatis dihitung sebagai hadir untuk tanggal dan shift yang dipilih. Geser denah ke kanan atau kiri untuk melihat seluruh meja.</p>
+   <p class="muted" style="margin-top:6px"><b>Salin denah harian:</b> Jika tanggal dan shift yang dipilih belum memiliki data, aplikasi akan menyalin nama, platform, dan posisi kursi dari tanggal kalender sebelumnya pada shift yang sama. Salinan tanggal baru berdiri sendiri, sehingga perubahan di tanggal baru tidak mengubah tanggal sebelumnya.</p>
    <div class="platform-legend"><span class="muted">Warna platform:</span><span class="platform-chip jinx">JINX · MERAH</span><span class="platform-chip vega">VEGA · ORANYE</span><span class="platform-chip zane">ZANE · HIJAU</span></div>
    <div class="entry-mode no-print">
     <strong style="font-size:13px">Cara memasukkan nama:</strong>
@@ -279,13 +280,52 @@ async function loadEmployees(){
  const {data,error}=await sb.from("employees").select("*").order("full_name");
  if(error){console.error(error);return}employees=data||[];renderEmployees();
 }
+let assignmentLoadSequence=0;
+function previousCalendarDate(dateText){
+ const parts=String(dateText||"").split("-").map(Number);
+ if(parts.length!==3||parts.some(n=>!Number.isFinite(n)))return "";
+ const d=new Date(Date.UTC(parts[0],parts[1]-1,parts[2]));
+ d.setUTCDate(d.getUTCDate()-1);
+ return d.toISOString().slice(0,10);
+}
 async function loadAssignments(){
+ const loadSequence=++assignmentLoadSequence;
  message("Memuat data online...");
  const date=$("workDate").value,shift=$("workShift").value;
  const {data,error}=await sb.from("seat_assignments").select("seat_code,employee_name,platform").eq("work_date",date).eq("shift",shift);
+ if(loadSequence!==assignmentLoadSequence)return;
  if(error){message("Gagal memuat: "+error.message);return}
- assignments={};(data||[]).forEach(x=>assignments[x.seat_code]=x);
- renderSeats("L",3);renderSeats("R",2);updateStats();updateBulkSummary();message("Tersinkron online");
+ let rows=data||[];
+ let loadMessage="Tersinkron online";
+ // Only carry forward when the selected date/shift has no records at all.
+ // The source is the immediately preceding calendar date for the same shift.
+ if(rows.length===0){
+  const sourceDate=previousCalendarDate(date);
+  if(sourceDate){
+   const {data:sourceRows,error:sourceError}=await sb.from("seat_assignments")
+    .select("seat_code,employee_name,platform")
+    .eq("work_date",sourceDate).eq("shift",shift);
+   if(loadSequence!==assignmentLoadSequence)return;
+   if(sourceError){message("Data hari ini kosong. Gagal memeriksa denah hari sebelumnya: "+sourceError.message);return}
+   const source=(sourceRows||[]).filter(x=>String(x.employee_name||"").trim()||String(x.platform||"").trim());
+   if(source.length){
+    const copiedRows=source.map(x=>({
+     work_date:date,shift,seat_code:x.seat_code,
+     employee_name:x.employee_name||"",platform:x.platform||"",updated_by:currentUser.id
+    }));
+    const {error:copyError}=await sb.from("seat_assignments").upsert(copiedRows,{onConflict:"work_date,shift,seat_code"});
+    if(loadSequence!==assignmentLoadSequence)return;
+    if(copyError){
+     message("Gagal menyalin denah dari "+sourceDate+": "+copyError.message);
+     return;
+    }
+    rows=copiedRows;
+    loadMessage=`Denah disalin dari ${sourceDate} · Shift ${shift}. Kamu bisa mengedit tanggal ini tanpa mengubah tanggal sebelumnya.`;
+   }
+  }
+ }
+ assignments={};rows.forEach(x=>assignments[x.seat_code]=x);
+ renderSeats("L",3);renderSeats("R",2);updateStats();updateBulkSummary();message(loadMessage);
 }
 let bulkNamesPreview=[];
 function orderedSeatCodes(){
