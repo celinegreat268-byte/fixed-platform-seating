@@ -452,6 +452,110 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 }
 /* ===== END V7 VISUAL REFINEMENT ===== */
 
+
+
+/* ===== V8: NEUTRAL PROFESSIONAL THEME + HIGH-CONTRAST PLATFORM COLORS =====
+/* Color-only refinement. Preserve V7 seating geometry, desk widths, and input dimensions. */
+:root{
+  color-scheme:light;
+  --ink:#182633;
+  --muted:#465665;
+  --line:#cbd5dc;
+  --navy:#243746;
+  --blue:#36566b;
+  --accent:#c58a3c;
+  --jinx:#c52e49;
+  --jinx-soft:#fde5e9;
+  --vega:#d97706;
+  --vega-soft:#fff0d8;
+  --zane:#16845b;
+  --zane-soft:#e0f4e9;
+}
+html,body{background:#f1f4f3;color:var(--ink)}
+body{background:linear-gradient(145deg,#f3f5f4 0%,#edf1f0 52%,#f4f2ed 100%);color:var(--ink);font-weight:600}
+header{background:linear-gradient(110deg,#203443 0%,#2c4858 58%,#3c5968 100%);border-bottom:4px solid #c79a5b;box-shadow:0 5px 18px rgba(28,46,59,.16)}
+header h1{color:#fff;font-weight:900}
+header p{color:#edf2f4;font-weight:700}
+.panel{background:#fff;border-color:#cfd9df;box-shadow:0 4px 15px rgba(31,49,61,.065)}
+.nav button{background:#e8eef0;border:1px solid #cbd6dc;color:#263d4c;font-weight:900}
+.nav button.active{background:linear-gradient(135deg,#2c4a5c,#42677a);border-color:#2c4a5c;color:#fff;box-shadow:0 3px 10px rgba(37,65,82,.2)}
+button{background:#e6ecef;color:#203342;font-weight:900}
+button.primary{background:linear-gradient(135deg,#2c4a5c,#42677a);color:#fff}
+button.danger{background:#fde7e9;color:#8f1f32;border:1px solid #efc1c7}
+input,select{background:#fff;color:#182633;border-color:#aebdc7;font-weight:700}
+input::placeholder{color:#5c6973;opacity:1}
+input:focus,select:focus,textarea:focus{outline:3px solid rgba(54,86,107,.18);border-color:#36566b}
+label,.entry-mode strong{color:#1e303d;font-weight:900}
+.muted{color:#465665;font-weight:700}
+.status{background:#e1f1e8;color:#155c3e;border:1px solid #b8dcc8;font-weight:900}
+.notice{background:#fff5e4;border:1px solid #e6c98f;color:#624719;font-weight:700}
+/* KPI cards: neutral surfaces with purposeful red/green/amber/blue/violet indicators. */
+.stat{background:#fff;border:1px solid #d0d9df;border-top:4px solid #536d7d;box-shadow:0 3px 10px rgba(31,49,61,.045)}
+.stat:nth-child(1){border-top-color:#36566b;background:linear-gradient(180deg,#fff 0%,#f3f7f9 100%)}
+.stat:nth-child(2){border-top-color:#16845b;background:linear-gradient(180deg,#fff 0%,#eff8f3 100%)}
+.stat:nth-child(3){border-top-color:#d97706;background:linear-gradient(180deg,#fff 0%,#fff7e9 100%)}
+.stat:nth-child(4){border-top-color:#c52e49;background:linear-gradient(180deg,#fff 0%,#fff2f4 100%)}
+.stat:nth-child(5){border-top-color:#6d65a5;background:linear-gradient(180deg,#fff 0%,#f5f4fb 100%)}
+.stat small{color:#364957;font-weight:900}
+.stat b{color:#172936;font-weight:900}
+/* Main seating surface remains white; desk surfaces use quiet slate-grey for contrast. */
+.side-card{background:#fff;border:1px solid #cbd6dd;box-shadow:0 4px 15px rgba(31,49,61,.055)}
+.side-card:first-child{border-top:4px solid #36566b}
+.side-card:last-child{border-top:4px solid #c58a3c}
+.side-head{border-bottom:2px solid #dce4e8}
+.side-head h3{color:#172936;font-weight:900}
+.side-head span,.side-head b{color:#263b49;font-weight:900}
+.row-label{background:linear-gradient(180deg,#e7edf0,#f4f6f5);border:1px solid #cbd6dc;color:#263d4b;font-weight:900}
+.desk{background:#f5f7f6;border:1px solid #cbd6dc;box-shadow:0 2px 8px rgba(31,49,61,.035)}
+.desk-title{color:#203644;font-weight:900}
+.facing{background:#eaf0f1;border:1px solid #cbd7dc}
+.face-label{color:#3e5664;font-weight:900}
+.seat{background:#fff;border:1px solid #bccbd4;box-shadow:0 2px 7px rgba(31,49,61,.055)}
+.seat-head{color:#203441;font-weight:900}
+.seat textarea{color:#172936;background:#fff;border:1px solid #aebdc7;font-weight:700}
+.seat textarea::placeholder{color:#586874;opacity:1;font-weight:600}
+.seat .seat-platform{color:#263b49;background:#e9eef1;font-weight:900}
+.seat.occupied:not(.platform-jinx):not(.platform-vega):not(.platform-zane){border:2px solid #728d80;background:#f4faf6}
+.seat.occupied:not(.platform-jinx):not(.platform-vega):not(.platform-zane) .seat-platform{background:#e3f0e8;color:#24543c}
+/* Platform identities: clearly distinct, saturated borders and readable dark labels. */
+.seat.platform-jinx{border:2px solid var(--jinx);background:#fff8f8;box-shadow:0 2px 8px rgba(197,46,73,.10)}
+.seat.platform-jinx .seat-platform{color:#861d32;background:var(--jinx-soft);border-left:4px solid var(--jinx)}
+.seat.platform-jinx textarea[data-field="platform"]{border-color:#db8795;background:#fffafb;color:#76182a}
+.seat.platform-vega{border:2px solid var(--vega);background:#fffbf4;box-shadow:0 2px 8px rgba(217,119,6,.10)}
+.seat.platform-vega .seat-platform{color:#854307;background:var(--vega-soft);border-left:4px solid var(--vega)}
+.seat.platform-vega textarea[data-field="platform"]{border-color:#dfa65f;background:#fffdf8;color:#75400b}
+.seat.platform-zane{border:2px solid var(--zane);background:#f7fcf9;box-shadow:0 2px 8px rgba(22,132,91,.10)}
+.seat.platform-zane .seat-platform{color:#105b40;background:var(--zane-soft);border-left:4px solid var(--zane)}
+.seat.platform-zane textarea[data-field="platform"]{border-color:#80c6a4;background:#fbfffc;color:#104f38}
+.platform-legend{gap:10px}
+.platform-chip{font-weight:900;border:1px solid transparent}
+.platform-chip.jinx{background:var(--jinx-soft);border-color:#e8aab5;color:#861d32}
+.platform-chip.vega{background:var(--vega-soft);border-color:#e9c48d;color:#854307}
+.platform-chip.zane{background:var(--zane-soft);border-color:#9fd6ba;color:#105b40}
+.divider{background:linear-gradient(90deg,#9aaeb8,#cbd5d9);height:4px}
+.entry-mode{background:#edf2f3;border:1px solid #cbd6dc}
+.entry-mode strong{color:#1d303d}
+.entry-mode button{background:#e1e9ec;border:1px solid #bdccd4;color:#203644}
+.entry-mode button.active{background:linear-gradient(135deg,#2c4a5c,#42677a);border-color:#2c4a5c;color:#fff}
+.bulk-entry{background:linear-gradient(135deg,#f2f6f5,#fff9ef);border:1px solid #cbd6dc}
+.bulk-entry textarea{background:#fff;color:#172936;border-color:#aebdc7}
+.bulk-entry .bulk-summary{color:#3e5360;font-weight:800}
+.table th{background:#eaf0f2;color:#1e3442;font-weight:900}
+.table td{color:#243643}
+#dashboardPanel .stat{border-radius:13px}
+#dashboardPanel .stat:nth-child(1){background:linear-gradient(135deg,#f3f7f9,#e7eef2)}
+#dashboardPanel .stat:nth-child(2){background:linear-gradient(135deg,#eff8f3,#dff1e6)}
+#dashboardPanel .stat:nth-child(3){background:linear-gradient(135deg,#fff8ec,#ffedcf)}
+#dashboardPanel .stat:nth-child(4){background:linear-gradient(135deg,#fff3f4,#f9dfe4)}
+#dashboardPanel .stat:nth-child(5){background:linear-gradient(135deg,#f5f4fb,#e9e6f5)}
+#employeePanel .table th,#userHelpPanel .table th{background:#eaf0f2;color:#1e3442}
+@media print{
+  .seat.platform-jinx .seat-platform{background:#fde5e9!important;color:#861d32!important}
+  .seat.platform-vega .seat-platform{background:#fff0d8!important;color:#854307!important}
+  .seat.platform-zane .seat-platform{background:#e0f4e9!important;color:#105b40!important}
+}
+/* ===== END V8 THEME ===== */
+
 </style>
 </head>
 <body>
