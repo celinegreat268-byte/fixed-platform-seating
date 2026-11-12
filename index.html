@@ -130,14 +130,22 @@ label{display:block;font-size:12px;font-weight:700;margin-bottom:5px}.muted{font
 
  <section id="userHelpPanel" class="tab-panel hidden">
   <div class="panel">
-   <h2>User & access</h2>
-   <p>Setiap TL dan Expat dapat menggunakan akun sendiri. Hak akses dikendalikan berdasarkan role.</p>
-   <table class="table"><thead><tr><th>Role</th><th>Akses</th></tr></thead><tbody>
-    <tr><td>Admin</td><td>Kelola user, employee database, platform, dan seluruh seating arrangement.</td></tr>
-    <tr><td>TL</td><td>Melihat dashboard, mengisi dan mengubah nama serta platform pada kursi, mengelola employee database.</td></tr>
-    <tr><td>Expat</td><td>Melihat denah, dashboard, dan employee database (read-only).</td></tr>
-   </tbody></table>
-   <div class="notice" style="margin-top:14px">Untuk membuat akun: Admin membuka Supabase → Authentication → Users → Add user. Setelah itu tambahkan profil user di tabel <b>profiles</b> dan pilih role <b>admin</b>, <b>tl</b>, atau <b>expat</b>. Petunjuk lengkap ada di README paket.</div>
+   <h2>User & access management</h2>
+   <p class="muted">Admin dapat mengelola semua akun. Expat dapat membuat, mengubah, dan menonaktifkan akun Expat saja. TL tidak mengelola akun user.</p>
+   <div class="notice" style="margin:12px 0">Keamanan akun dijalankan melalui Supabase Edge Function <b>manage-users</b>. Secret/service_role key hanya disimpan sebagai secret server Supabase dan tidak pernah dimasukkan ke file HTML.</div>
+   <div class="toolbar">
+    <div class="field"><label>Nama lengkap</label><input id="newUserName" placeholder="Nama user"></div>
+    <div class="field"><label>Email login</label><input id="newUserEmail" type="email" placeholder="nama@company.com"></div>
+    <div class="field"><label>Password awal (min. 8 karakter)</label><input id="newUserPassword" type="password" placeholder="Password awal"></div>
+    <div class="field" id="newUserRoleField"><label>Role</label><select id="newUserRole"><option value="expat">Expat</option><option value="tl">TL</option><option value="admin">Admin</option></select></div>
+    <button id="createUserBtn" class="primary">+ Buat akun</button>
+   </div>
+   <div class="toolbar" style="justify-content:space-between;margin-top:16px">
+    <h3>Daftar akun</h3><button id="refreshUsersBtn">Refresh daftar</button>
+   </div>
+   <div style="overflow:auto;margin-top:8px"><table class="table"><thead><tr><th>Nama</th><th>Email</th><th>Role</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="userAccountBody"><tr><td colspan="5">Klik Refresh daftar untuk memuat akun.</td></tr></tbody></table></div>
+   <p id="userAccountMessage" class="muted" aria-live="polite"></p>
+   <div class="muted">Catatan keamanan: Expat dapat mengelola akun Expat saja. Hanya Admin yang dapat membuat atau mengubah role Admin dan TL. Semua tindakan pengelolaan akun diproses di server, bukan dengan service_role key di browser.</div>
   </div>
  </section>
 </main>
@@ -168,8 +176,11 @@ function seatList(){
  return list;
 }
 const seats=seatList();
-function canEdit(){return currentRole==="admin"||currentRole==="tl"}
+function canEditSeats(){return ["admin","tl","expat"].includes(currentRole)}
+function canManageEmployees(){return ["admin","tl","expat"].includes(currentRole)}
+function canManageUsers(){return currentRole==="admin"||currentRole==="expat"}
 function canAdmin(){return currentRole==="admin"}
+let managedUsers=[];
 function platformColorClass(value){
  const name=String(value||"").toLowerCase();
  if(name.includes("jinx"))return "platform-jinx";
@@ -204,11 +215,27 @@ async function startSession(user){
  $("userBadge").textContent=(profile.full_name||user.email)+" · "+currentRole.toUpperCase();
  setApp(true);
  applyPermissions();
- await loadPlatforms();await loadEmployees();await loadAssignments();
+ await loadPlatforms();
+ await loadEmployees();
+ await loadAssignments();
+ if(canManageUsers()) await loadUserAccounts();
 }
 function applyPermissions(){
- document.querySelectorAll(".seat input,.seat textarea").forEach(x=>x.disabled=!canEdit());
- $("addEmployee").classList.toggle("hidden",!canEdit());
+ document.querySelectorAll(".seat input,.seat textarea").forEach(x=>x.disabled=!canEditSeats());
+ $("addEmployee").classList.toggle("hidden",!canManageEmployees());
+ const dashboardTab=document.querySelector('[data-tab="dashboardPanel"]');
+ const employeeTab=document.querySelector('[data-tab="employeePanel"]');
+ const accessTab=document.querySelector('[data-tab="userHelpPanel"]');
+ if(dashboardTab)dashboardTab.classList.remove("hidden");
+ if(employeeTab)employeeTab.classList.remove("hidden");
+ if(accessTab)accessTab.classList.toggle("hidden",!canManageUsers());
+ const roleSelect=$("newUserRole");
+ if(roleSelect){
+  if(currentRole==="expat"){
+   roleSelect.innerHTML='<option value="expat">Expat</option>';
+   roleSelect.disabled=true;
+  }else{roleSelect.disabled=false;roleSelect.innerHTML='<option value="expat">Expat</option><option value="tl">TL</option><option value="admin">Admin</option>';}
+ }
 }
 async function loadPlatforms(){
  const {data,error}=await sb.from("platforms").select("name,color").eq("active",true).order("name");
@@ -235,8 +262,8 @@ function renderSeats(side,tableCount){
     return `<div class="seat ${v.employee_name?"occupied":""} ${platformColorClass(v.platform)}" data-seat="${id}">
      <div class="seat-head"><span>${side==="L"?"K":"Kn"}${t+1} · R${r+1}</span><span>PC ${pc}</span></div>
      <div class="seat-platform">${escapeHtml(v.platform||"Platform belum diisi")}</div>
-     <textarea data-field="employee_name" rows="2" placeholder="Nama karyawan" ${canEdit()?"":"disabled"}>${escapeHtml(v.employee_name||"")}</textarea>
-     <textarea data-field="platform" rows="2" placeholder="Nama platform" ${canEdit()?"":"disabled"}>${escapeHtml(v.platform||"")}</textarea>
+     <textarea data-field="employee_name" rows="2" placeholder="Nama karyawan" ${canEditSeats()?"":"disabled"}>${escapeHtml(v.employee_name||"")}</textarea>
+     <textarea data-field="platform" rows="2" placeholder="Nama platform" ${canEditSeats()?"":"disabled"}>${escapeHtml(v.platform||"")}</textarea>
     </div>`;
    };
    return `<div class="desk"><div class="desk-title">Meja ${side==="L"?"Kiri":"Kanan"} ${t+1}</div><div class="facing">
@@ -259,7 +286,7 @@ function renderSeats(side,tableCount){
  });
 }
 async function saveSeat(id){
- if(!canEdit())return;
+ if(!canEditSeats())return;
  const v=assignments[id]||{},payload={work_date:$("workDate").value,shift:$("workShift").value,seat_code:id,employee_name:v.employee_name||"",platform:v.platform||"",updated_by:currentUser.id};
  message("Menyimpan...");
  const {error}=await sb.from("seat_assignments").upsert(payload,{onConflict:"work_date,shift,seat_code"});
@@ -287,7 +314,7 @@ async function dashboard(){
 function renderEmployees(){
  const q=$("employeeSearch").value.toLowerCase(),filter=$("employeeStatus").value;
  const list=employees.filter(e=>(filter==="all"||e.active)&&(`${e.full_name} ${e.employee_code} ${e.team||""}`).toLowerCase().includes(q));
- $("employeeBody").innerHTML=list.map(e=>`<tr><td>${escapeHtml(e.employee_code)}</td><td>${escapeHtml(e.full_name)}</td><td>${escapeHtml(e.team||"-")}</td><td>${e.active?"Aktif":"Nonaktif"}</td><td class="actions">${canEdit()?`<button class="small" data-edit="${e.id}">Edit</button><button class="small danger" data-toggle="${e.id}">${e.active?"Nonaktifkan":"Aktifkan"}</button>`:"Read only"}</td></tr>`).join("");
+ $("employeeBody").innerHTML=list.map(e=>`<tr><td>${escapeHtml(e.employee_code)}</td><td>${escapeHtml(e.full_name)}</td><td>${escapeHtml(e.team||"-")}</td><td>${e.active?"Aktif":"Nonaktif"}</td><td class="actions">${canManageEmployees()?`<button class="small" data-edit="${e.id}">Edit</button><button class="small danger" data-toggle="${e.id}">${e.active?"Nonaktifkan":"Aktifkan"}</button>`:"Read only"}</td></tr>`).join("");
  $("employeeBody").querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editEmployee(b.dataset.edit));
  $("employeeBody").querySelectorAll("[data-toggle]").forEach(b=>b.onclick=()=>toggleEmployee(b.dataset.toggle));
 }
@@ -311,6 +338,77 @@ async function toggleEmployee(id){
  const {error}=await sb.from("employees").update({active:!e.active}).eq("id",id);
  if(error)alert(error.message);else await loadEmployees();
 }
+async function callUserManager(payload){
+ const {data,error}=await sb.functions.invoke("manage-users",{body:payload});
+ if(error)throw new Error(error.message||"Edge Function gagal dipanggil.");
+ if(data&&data.error)throw new Error(data.error);
+ return data||{};
+}
+function setUserMessage(text){$("userAccountMessage").textContent=text}
+async function loadUserAccounts(){
+ if(!canManageUsers())return;
+ setUserMessage("Memuat daftar akun...");
+ $("userAccountBody").innerHTML='<tr><td colspan="5">Memuat...</td></tr>';
+ try{
+  const result=await callUserManager({action:"list"});
+  managedUsers=result.users||[];
+  renderUserAccounts();
+  setUserMessage(`Berhasil memuat ${managedUsers.length} akun.`);
+ }catch(error){
+  $("userAccountBody").innerHTML='<tr><td colspan="5">Daftar akun belum tersedia. Pastikan Edge Function manage-users sudah dipasang.</td></tr>';
+  setUserMessage(error.message);
+ }
+}
+function renderUserAccounts(){
+ const body=$("userAccountBody");
+ if(!managedUsers.length){body.innerHTML='<tr><td colspan="5">Belum ada akun untuk ditampilkan.</td></tr>';return}
+ body.innerHTML=managedUsers.map(u=>{
+  const active=!u.banned_until||new Date(u.banned_until).getTime()<Date.now();
+  return `<tr><td>${escapeHtml(u.full_name||"-")}</td><td>${escapeHtml(u.email||"-")}</td><td>${escapeHtml((u.role||"-" ).toUpperCase())}</td><td>${active?"Aktif":"Dinonaktifkan"}</td><td class="actions"><button data-user-edit="${escapeAttr(u.id)}">Edit</button><button class="danger" data-user-toggle="${escapeAttr(u.id)}" data-active="${active?"1":"0"}">${active?"Nonaktifkan":"Aktifkan"}</button></td></tr>`;
+ }).join("");
+ body.querySelectorAll("[data-user-edit]").forEach(b=>b.onclick=()=>editManagedUser(b.dataset.userEdit));
+ body.querySelectorAll("[data-user-toggle]").forEach(b=>b.onclick=()=>toggleManagedUser(b.dataset.userToggle,b.dataset.active==="1"));
+}
+async function createManagedUser(){
+ const full_name=$("newUserName").value.trim();
+ const email=$("newUserEmail").value.trim();
+ const password=$("newUserPassword").value;
+ const role=canAdmin()?$("newUserRole").value:"expat";
+ if(!full_name||!email||!password){setUserMessage("Isi nama, email, dan password awal.");return}
+ if(password.length<8){setUserMessage("Password awal minimal 8 karakter.");return}
+ const btn=$("createUserBtn");btn.disabled=true;setUserMessage("Membuat akun...");
+ try{
+  await callUserManager({action:"create",full_name,email,password,role});
+  $("newUserName").value="";$("newUserEmail").value="";$("newUserPassword").value="";
+  await loadUserAccounts();setUserMessage("Akun berhasil dibuat. User dapat login menggunakan email dan password awal.");
+ }catch(error){setUserMessage(error.message)}finally{btn.disabled=false}
+}
+async function editManagedUser(id){
+ const u=managedUsers.find(x=>x.id===id);if(!u)return;
+ const full_name=prompt("Nama lengkap:",u.full_name||"");if(full_name===null)return;
+ const email=prompt("Email login:",u.email||"");if(email===null)return;
+ let role=u.role||"expat";
+ if(canAdmin()){
+  const nextRole=prompt("Role (admin / tl / expat):",role);if(nextRole===null)return;role=nextRole.trim().toLowerCase();
+ }
+ const password=prompt("Password baru (kosongkan jika tidak ingin mengganti):","");if(password===null)return;
+ if(!["admin","tl","expat"].includes(role)){setUserMessage("Role harus admin, tl, atau expat.");return}
+ if(password&&password.length<8){setUserMessage("Password baru minimal 8 karakter.");return}
+ try{
+  await callUserManager({action:"update",id,full_name:full_name.trim(),email:email.trim(),role,...(password?{password}:{})});
+  await loadUserAccounts();setUserMessage("Akun berhasil diperbarui.");
+ }catch(error){setUserMessage(error.message)}
+}
+async function toggleManagedUser(id,isActive){
+ const u=managedUsers.find(x=>x.id===id);if(!u)return;
+ if(id===currentUser.id){setUserMessage("Kamu tidak dapat menonaktifkan akun yang sedang digunakan.");return}
+ const action=isActive?"menonaktifkan":"mengaktifkan";
+ if(!confirm(`Yakin ingin ${action} akun ${u.email}?`))return;
+ try{
+  await callUserManager({action:"set_status",id,active:!isActive});
+  await loadUserAccounts();setUserMessage(`Akun berhasil ${isActive?"dinonaktifkan":"diaktifkan"}.`);
+ }catch(error){setUserMessage(error.message)}
+}
 function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function escapeAttr(v){return escapeHtml(v)}
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{
@@ -324,6 +422,8 @@ $("logoutBtn").onclick=async()=>{if(sb)await sb.auth.signOut();currentUser=null;
 $("workDate").onchange=loadAssignments;$("workShift").onchange=loadAssignments;
 $("reloadBtn").onclick=loadAssignments;$("printBtn").onclick=()=>window.print();
 $("dashRefresh").onclick=dashboard;$("addEmployee").onclick=addEmployee;
+$("createUserBtn").onclick=createManagedUser;
+$("refreshUsersBtn").onclick=loadUserAccounts;
 $("employeeSearch").oninput=renderEmployees;$("employeeStatus").onchange=renderEmployees;
 if(sb){sb.auth.getSession().then(({data})=>{if(data.session)startSession(data.session.user)});sb.auth.onAuthStateChange((_event,session)=>{if(!session){currentUser=null;setApp(false)}})}
 else{showLoginMessage("Mode online belum aktif. Lengkapi konfigurasi Supabase pada file index.html.")}
