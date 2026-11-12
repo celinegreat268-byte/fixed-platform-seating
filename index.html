@@ -50,7 +50,15 @@ label{display:block;font-size:12px;font-weight:700;margin-bottom:5px}.muted{font
 .table input{min-width:100px}.actions{display:flex;gap:6px;flex-wrap:wrap}
 .login-wrap{max-width:460px;margin:7vh auto;padding:20px}.login-wrap .panel{padding:24px}
 .status{font-size:12px;padding:6px 9px;border-radius:20px;background:#e8f5ed;color:#17633b}
-.notice{padding:12px;border-radius:9px;background:#fff7e6;border:1px solid #f2d18a;color:#76520b;font-size:13px;line-height:1.5}
+ .notice{padding:12px;border-radius:9px;background:#fff7e6;border:1px solid #f2d18a;color:#76520b;font-size:13px;line-height:1.5}
+.entry-mode{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.entry-mode button.active{background:var(--blue);color:#fff}
+.bulk-entry{margin-top:12px;padding:14px;border:1px solid #cbd8e6;border-radius:10px;background:#f8fbff}
+.bulk-entry textarea{width:100%;min-height:150px;resize:vertical;border:1px solid #cbd6e2;border-radius:8px;padding:11px;font:14px/1.5 Inter,Arial,sans-serif;color:#17212b}
+.bulk-entry .bulk-tools{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.bulk-entry .bulk-summary{font-size:13px;color:#52677f;margin:8px 0 0;line-height:1.5}
+.bulk-entry input[type=file]{max-width:320px;background:#fff}
+@media(max-width:700px){.bulk-entry input[type=file]{max-width:100%}}
 @media(max-width:900px){main{padding:10px}.stats{grid-template-columns:repeat(2,1fr)}header{padding:14px}.layout-wrap{min-width:2740px}}
 @media print{header,.nav,.toolbar,.no-print,#dashboardPanel,#employeePanel{display:none!important}main{padding:0}.panel{border:0;box-shadow:none}.layout-wrap{min-width:2740px}.layout-scroll{overflow:visible}.seat{min-height:210px}}
 </style>
@@ -98,6 +106,30 @@ label{display:block;font-size:12px;font-weight:700;margin-bottom:5px}.muted{font
    </div>
    <p class="muted">Isi nama karyawan dan platform langsung pada setiap kursi. Nama yang terisi otomatis dihitung sebagai hadir untuk tanggal dan shift yang dipilih. Geser denah ke kanan atau kiri untuk melihat seluruh meja.</p>
    <div class="platform-legend"><span class="muted">Warna platform:</span><span class="platform-chip jinx">JINX · MERAH</span><span class="platform-chip vega">VEGA · ORANYE</span><span class="platform-chip zane">ZANE · HIJAU</span></div>
+   <div class="entry-mode no-print">
+    <strong style="font-size:13px">Cara memasukkan nama:</strong>
+    <button id="singleEntryMode" class="active" type="button">Satu per satu</button>
+    <button id="bulkEntryMode" type="button">Banyak sekaligus</button>
+   </div>
+   <div id="singleEntryHelp" class="muted" style="margin-top:8px">Mode satu per satu: klik kolom <b>Nama karyawan</b> pada kursi yang dipilih, lalu ketik nama seperti biasa.</div>
+   <div id="bulkEntryBox" class="bulk-entry hidden no-print">
+    <h3 style="margin:0 0 6px">Masukkan banyak nama sekaligus</h3>
+    <p class="muted" style="margin:0 0 10px">Tempel daftar nama dari Excel atau ketik satu nama per baris. Nama akan diisikan ke kursi kosong pada tanggal dan shift yang sedang dipilih, mengikuti urutan denah. Kursi yang sudah berisi nama tidak akan ditimpa dan platform yang sudah terisi tetap dipertahankan.</p>
+    <label for="bulkEmployeeNames">Daftar nama karyawan (satu nama per baris)</label>
+    <textarea id="bulkEmployeeNames" placeholder="Contoh:
+Justin
+Livie
+Zane
+Patrick"></textarea>
+    <div class="bulk-tools">
+     <label for="bulkEmployeeFile" style="margin:0">Atau pilih file .txt / .csv</label>
+     <input id="bulkEmployeeFile" type="file" accept=".txt,.csv,.tsv,text/plain,text/csv,text/tab-separated-values">
+     <button id="previewBulkNames" type="button">Periksa daftar</button>
+     <button id="applyBulkNames" type="button" class="primary" disabled>Masukkan ke kursi kosong</button>
+     <button id="clearBulkNames" type="button">Bersihkan</button>
+    </div>
+    <p id="bulkEmployeeSummary" class="bulk-summary" aria-live="polite">Belum ada nama yang dimasukkan.</p>
+   </div>
   </div>
   <div class="layout-scroll">
    <div class="layout-wrap">
@@ -222,6 +254,8 @@ async function startSession(user){
 }
 function applyPermissions(){
  document.querySelectorAll(".seat input,.seat textarea").forEach(x=>x.disabled=!canEditSeats());
+ if($("bulkEntryMode"))$("bulkEntryMode").disabled=!canEditSeats();
+ if($("applyBulkNames"))$("applyBulkNames").disabled=!canEditSeats()||!parseBulkNames().names.length;
  $("addEmployee").classList.toggle("hidden",!canManageEmployees());
  const dashboardTab=document.querySelector('[data-tab="dashboardPanel"]');
  const employeeTab=document.querySelector('[data-tab="employeePanel"]');
@@ -251,7 +285,74 @@ async function loadAssignments(){
  const {data,error}=await sb.from("seat_assignments").select("seat_code,employee_name,platform").eq("work_date",date).eq("shift",shift);
  if(error){message("Gagal memuat: "+error.message);return}
  assignments={};(data||[]).forEach(x=>assignments[x.seat_code]=x);
- renderSeats("L",3);renderSeats("R",2);updateStats();message("Tersinkron online");
+ renderSeats("L",3);renderSeats("R",2);updateStats();updateBulkSummary();message("Tersinkron online");
+}
+let bulkNamesPreview=[];
+function orderedSeatCodes(){
+ const ids=[];
+ // Urutan mengikuti denah yang terlihat: seluruh sisi kiri, lalu seluruh sisi kanan.
+ for(const side of ["L","R"]){
+  const tableCount=side==="L"?3:2;
+  for(let row=1;row<=8;row++)for(let table=1;table<=tableCount;table++)for(let pc=1;pc<=6;pc++)ids.push(`${side}-R${row}-T${table}-PC${pc}`);
+ }
+ return ids;
+}
+function parseBulkNames(){
+ const raw=$("bulkEmployeeNames").value||"";
+ const names=raw.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+ const seen=new Set(),unique=[];
+ names.forEach(name=>{const key=name.toLocaleLowerCase();if(!seen.has(key)){seen.add(key);unique.push(name)}});
+ return {names:unique,duplicates:names.length-unique.length};
+}
+function availableSeatCodes(){
+ return orderedSeatCodes().filter(id=>!String(assignments[id]?.employee_name||"").trim());
+}
+function updateBulkSummary(){
+ if(!$("bulkEmployeeSummary"))return;
+ const {names,duplicates}=parseBulkNames(),available=availableSeatCodes().length;
+ const willAdd=Math.min(names.length,available);
+ bulkNamesPreview=names;
+ $("applyBulkNames").disabled=!canEditSeats()||willAdd===0;
+ let summary=names.length?`${names.length} nama unik terdeteksi. ${available} kursi masih kosong. ${willAdd} nama bisa dimasukkan.`:"Belum ada nama yang dimasukkan.";
+ if(duplicates)summary+=` ${duplicates} nama duplikat dalam daftar akan dilewati.`;
+ if(names.length>available)summary+=` Kelebihan ${names.length-available} nama karena kursi kosong tidak cukup.`;
+ $("bulkEmployeeSummary").textContent=summary;
+}
+function setEntryMode(mode){
+ const isBulk=mode==="bulk";
+ $("bulkEntryBox").classList.toggle("hidden",!isBulk);
+ $("singleEntryHelp").classList.toggle("hidden",isBulk);
+ $("singleEntryMode").classList.toggle("active",!isBulk);
+ $("bulkEntryMode").classList.toggle("active",isBulk);
+ if(isBulk)updateBulkSummary();
+}
+async function applyBulkNames(){
+ if(!canEditSeats()){alert("Akun ini tidak memiliki izin mengubah denah.");return}
+ const {names,duplicates}=parseBulkNames();
+ if(!names.length){alert("Masukkan minimal satu nama karyawan.");return}
+ const date=$("workDate").value,shift=$("workShift").value;
+ const available=availableSeatCodes();
+ if(!available.length){alert("Tidak ada kursi kosong untuk tanggal dan shift ini.");return}
+ if(names.length>available.length){alert(`Nama yang dimasukkan ${names.length}, sedangkan kursi kosong hanya ${available.length}. Kurangi daftar menjadi maksimal ${available.length} nama.`);return}
+ const preview=names.map((name,i)=>`${i+1}. ${name} → ${available[i]}`).slice(0,12).join("\n");
+ const more=names.length>12?`\n...dan ${names.length-12} nama lainnya`:"";
+ if(!confirm(`Masukkan ${names.length} nama ke kursi kosong untuk ${date} · Shift ${shift}?\n\n${preview}${more}\n\nKursi yang sudah berisi nama tidak akan ditimpa.`))return;
+ const rows=names.map((name,i)=>{
+  const seatCode=available[i],existing=assignments[seatCode]||{};
+  return {work_date:date,shift,seat_code:seatCode,employee_name:name,platform:existing.platform||"",updated_by:currentUser.id};
+ });
+ const button=$("applyBulkNames");button.disabled=true;button.textContent="Menyimpan...";message(`Menyimpan ${rows.length} nama...`);
+ try{
+  const {error}=await sb.from("seat_assignments").upsert(rows,{onConflict:"work_date,shift,seat_code"});
+  if(error)throw error;
+  $("bulkEmployeeNames").value="";$("bulkEmployeeFile").value="";bulkNamesPreview=[];
+  await loadAssignments();
+  $("bulkEmployeeSummary").textContent=`Berhasil memasukkan ${rows.length} nama ke denah untuk ${date}, shift ${shift}.${duplicates?` ${duplicates} nama duplikat dilewati.`:""}`;
+  message(`${rows.length} nama berhasil disimpan online`);
+ }catch(error){
+  message("Gagal menyimpan daftar nama: "+error.message);
+  alert("Gagal menyimpan daftar nama: "+error.message);
+ }finally{button.disabled=false;button.textContent="Masukkan ke kursi kosong";updateBulkSummary()}
 }
 function renderSeats(side,tableCount){
  const target=$(side==="L"?"leftRows":"rightRows");
@@ -415,6 +516,25 @@ document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{
  document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x===b));
  document.querySelectorAll(".tab-panel").forEach(x=>x.classList.add("hidden"));$(b.dataset.tab).classList.remove("hidden");
  if(b.dataset.tab==="dashboardPanel")dashboard();
+});
+$("singleEntryMode").onclick=()=>setEntryMode("single");
+$("bulkEntryMode").onclick=()=>setEntryMode("bulk");
+$("bulkEmployeeNames").addEventListener("input",updateBulkSummary);
+$("previewBulkNames").onclick=updateBulkSummary;
+$("applyBulkNames").onclick=applyBulkNames;
+$("clearBulkNames").onclick=()=>{$("bulkEmployeeNames").value="";$("bulkEmployeeFile").value="";updateBulkSummary()};
+$("bulkEmployeeFile").addEventListener("change",async e=>{
+ const file=e.target.files?.[0];if(!file)return;
+ try{
+  const text=await file.text();
+  // Support one-column TXT/CSV/TSV. For multi-column files, use the first column as the employee name.
+  const lines=text.replace(/^\uFEFF/,"").split(/\r?\n/).filter(line=>line.trim());
+  const names=lines.map((line,index)=>{
+   const first=(line.split(/[\t,;]/)[0]||"").trim().replace(/^"|"$/g,"");
+   return index===0&&/^(nama|name|employee_name|full_name)$/i.test(first)?"":first;
+  }).filter(Boolean);
+  $("bulkEmployeeNames").value=names.join("\n");updateBulkSummary();
+ }catch(error){alert("File tidak dapat dibaca: "+error.message)}
 });
 $("loginBtn").onclick=login;
 $("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
