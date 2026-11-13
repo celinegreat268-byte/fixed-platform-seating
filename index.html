@@ -670,7 +670,6 @@ label,.entry-mode strong{color:#1e303d;font-weight:900}
   <div class="field" style="margin-top:12px"><label>Password</label><input id="loginPassword" type="password" placeholder="Password"></div>
   <button id="loginBtn" class="primary" style="width:100%;margin-top:15px">Login</button>
   <p id="loginMessage" class="muted"></p>
-  <div class="notice" style="margin-top:14px">Aplikasi online memerlukan project Supabase. Isi URL dan anon key pada bagian konfigurasi di file index.html sebelum digunakan bersama tim.</div>
  </div>
 </section>
 
@@ -916,6 +915,14 @@ const FLOOR8_META_DATE="1900-01-01", FLOOR8_META_SHIFT="Pagi", FLOOR8_META_CODE=
 let floor8Config={...FLOOR8_DEFAULT};
 let floor8SavedConfig={...FLOOR8_DEFAULT};
 let activeFloor=(localStorage.getItem("fps_active_floor_v1")==="8")?"8":"9";
+function seatList(){
+ const list=[];
+ for(let r=1;r<=8;r++){
+  for(let t=1;t<=3;t++)for(let pc=1;pc<=6;pc++)list.push({id:`L-R${r}-T${t}-PC${pc}`,side:"L",row:r,table:t,pc});
+  for(let t=1;t<=2;t++)for(let pc=1;pc<=6;pc++)list.push({id:`R-R${r}-T${t}-PC${pc}`,side:"R",row:r,table:t,pc});
+ }
+ return list;
+}
 let floor9Seats=seatList();
 let seats=floor9Seats;
 let TOTAL=seats.length;
@@ -1092,12 +1099,19 @@ function setApp(on){
 }
 function showLoginMessage(t){$("loginMessage").textContent=t}
 async function login(){
- if(!sb){showLoginMessage("Supabase belum dikonfigurasi. Isi SUPABASE_URL dan SUPABASE_ANON_KEY di index.html.");return}
- $("loginBtn").disabled=true;showLoginMessage("Sedang login...");
- const {data,error}=await sb.auth.signInWithPassword({email:$("loginEmail").value.trim(),password:$("loginPassword").value});
- $("loginBtn").disabled=false;
- if(error){showLoginMessage(error.message);return}
- await startSession(data.user);
+ if(!sb){showLoginMessage("Koneksi Supabase belum aktif. Periksa konfigurasi URL dan Publishable Key di index.html.");return}
+ const button=$("loginBtn");
+ button.disabled=true;
+ showLoginMessage("Sedang login...");
+ try{
+  const {data,error}=await sb.auth.signInWithPassword({email:$("loginEmail").value.trim(),password:$("loginPassword").value});
+  if(error){showLoginMessage(error.message);return}
+  await startSession(data.user);
+ }catch(error){
+  showLoginMessage("Gagal menghubungi Supabase: "+(error?.message||"Periksa koneksi internet."));
+ }finally{
+  button.disabled=false;
+ }
 }
 async function startSession(user){
  currentUser=user;
