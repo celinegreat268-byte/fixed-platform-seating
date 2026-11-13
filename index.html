@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <title>Fixed Platform Seating Management</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- V18 COLOR FIX: catalog colors now override JINX/VEGA/ZANE fallback colors. -->
 <style>
 :root{font-family:Inter,Arial,sans-serif;color:#17212b;background:#f3f6fa;--navy:#17345b;--blue:#2563eb;--line:#d6e0eb}
 *{box-sizing:border-box}body{margin:0;background:#f3f6fa}button,input,select{font:inherit}
@@ -598,8 +599,8 @@ label,.entry-mode strong{color:#1e303d;font-weight:900}
 .platform-map-side-right-placeholder{display:none}
 .bulk-platform-select{max-width:420px;margin:8px 0 12px}
 .bulk-preview{margin-top:10px;padding:10px 12px;border-radius:9px;background:#edf3f5;border:1px solid #cbd9df;color:#203644;font-size:12px;line-height:1.6;max-height:220px;overflow:auto;white-space:pre-wrap}
-.seat.platform-custom{border:2px solid var(--platform-color,#64748b);background:var(--platform-bg,#f8fafc)}
-.seat.platform-custom .seat-platform{border-left:4px solid var(--platform-color,#64748b);background:var(--platform-bg,#f1f5f9);color:var(--platform-ink,#263746)}
+.seat.platform-custom{border:2px solid var(--platform-color,#64748b);background:var(--platform-seat-bg,#f8fafc)}
+.seat.platform-custom .seat-platform{border-left:5px solid var(--platform-color,#64748b);background:var(--platform-bg,#e9eef1);color:var(--platform-ink,#263746)}
 .seat.platform-custom textarea[data-field="platform"]{border-color:var(--platform-color,#64748b)}
 @media(max-width:980px){.platform-map-side-grid{grid-template-columns:repeat(2,minmax(420px,1fr));overflow-x:auto}.platform-tools-grid{grid-template-columns:1fr}.platform-form{grid-template-columns:minmax(0,1fr) 70px}.platform-form button{grid-column:1/-1}}
 @media(max-width:700px){.platform-seat-filter .field{min-width:100%}.platform-seat-list select{min-width:145px}}
@@ -1081,16 +1082,25 @@ function darkenHex(hex,ratio=0.48){
 function platformForName(value){return platforms.find(p=>String(p.name||"").trim().toLowerCase()===String(value||"").trim().toLowerCase())||null}
 function applyPlatformColor(card,value){
  card.classList.remove("platform-jinx","platform-vega","platform-zane","platform-custom");
- card.style.removeProperty("--platform-color");card.style.removeProperty("--platform-bg");card.style.removeProperty("--platform-ink");
- const colorClass=platformColorClass(value);
- if(colorClass){card.classList.add(colorClass);return}
+ card.style.removeProperty("--platform-color");
+ card.style.removeProperty("--platform-bg");
+ card.style.removeProperty("--platform-seat-bg");
+ card.style.removeProperty("--platform-ink");
+ // The saved catalog color is authoritative for every platform name,
+ // including JINX, VEGA, and ZANE. Category colors are only a fallback
+ // when a matching catalog entry/color is unavailable.
  const entry=platformForName(value);
- if(entry&&entry.color){
+ if(entry&&/^#[0-9a-f]{6}$/i.test(String(entry.color||""))){
+  const color=entry.color;
   card.classList.add("platform-custom");
-  card.style.setProperty("--platform-color",entry.color);
-  card.style.setProperty("--platform-bg",blendHex(entry.color,.88));
-  card.style.setProperty("--platform-ink",darkenHex(entry.color,.48));
+  card.style.setProperty("--platform-color",color);
+  card.style.setProperty("--platform-bg",blendHex(color,.72));
+  card.style.setProperty("--platform-seat-bg",blendHex(color,.94));
+  card.style.setProperty("--platform-ink",darkenHex(color,.55));
+  return;
  }
+ const colorClass=platformColorClass(value);
+ if(colorClass)card.classList.add(colorClass);
 }
 function message(text){$("saveStatus").textContent=text}
 function setApp(on){
