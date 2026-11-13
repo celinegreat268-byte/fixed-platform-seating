@@ -556,11 +556,109 @@ label,.entry-mode strong{color:#1e303d;font-weight:900}
 }
 /* ===== END V8 THEME ===== */
 
+
+
+/* V16: move platform catalog table to the right-hand area; keep add forms on the left. */
+.platform-catalog-card{min-height:100%;display:flex;flex-direction:column;gap:10px}
+.platform-catalog-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;padding-bottom:10px;border-bottom:1px solid #dbe3e8}
+.platform-catalog-list{overflow:auto;max-height:720px;border:1px solid #e0e7eb;border-radius:9px}
+.platform-catalog-list .platform-admin-table{margin-top:0}
+.platform-catalog-list .platform-admin-table th{position:sticky;top:0;z-index:1}
+@media(max-width:980px){.platform-catalog-list{max-height:480px}}
+
+/* ===== V10: SERPENTINE SEAT ORDER FOR PLATFORM MAP + BULK ASSIGNMENT ===== */
+.platform-tools-grid{display:grid;grid-template-columns:minmax(280px,.8fr) minmax(0,1.5fr);gap:16px;align-items:start}
+.platform-manager-card{border:1px solid #cbd6dc;border-radius:12px;padding:14px;background:#fff}
+.platform-form{display:grid;grid-template-columns:minmax(0,1fr) 76px auto;gap:8px;align-items:end}
+.platform-form input[type=color]{height:42px;padding:4px;min-width:0}
+.platform-admin-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}
+.platform-admin-table th,.platform-admin-table td{padding:9px 7px;border-bottom:1px solid #dce4e8;text-align:left;vertical-align:middle}
+.platform-admin-table th{background:#eaf0f2;color:#203644;font-weight:900}
+.platform-swatch{display:inline-block;width:18px;height:18px;border-radius:5px;border:1px solid #aebdc7;vertical-align:middle;margin-right:6px}
+.platform-seat-tools{margin-top:16px;border:1px solid #cbd6dc;border-radius:12px;padding:14px;background:#fff}
+.platform-map-side-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:14px;align-items:start;overflow-x:auto;padding-bottom:6px}
+.platform-map-side{border:1px solid #cbd6dc;border-radius:12px;padding:12px;background:#f8fafb;min-width:0}
+.platform-map-left{border-top:4px solid #36566b}
+.platform-map-right{border-top:4px solid #c58a3c}
+.platform-map-side-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:2px 2px 8px;border-bottom:1px solid #dbe3e8}
+.platform-map-side-head h3{margin:0;font-size:16px;color:#213849}
+.platform-map-side-head p{margin:4px 0 0;font-size:12px;color:#526779}
+.platform-map-count{font-size:12px;font-weight:900;padding:6px 10px;border-radius:999px;background:#e8eef2;color:#263d4e;white-space:nowrap}
+.platform-map-left .platform-map-count{background:#e4edf2;color:#284c62}
+.platform-map-right .platform-map-count{background:#fff0d8;color:#854307}
+.platform-seat-filter{display:flex;gap:9px;flex-wrap:wrap;align-items:end;margin:10px 0}
+.platform-seat-filter .field{min-width:180px}
+.platform-seat-list{max-height:420px;overflow:auto;border:1px solid #d7e0e5;border-radius:9px;background:#fff}
+.platform-seat-list table{width:100%;border-collapse:collapse;font-size:12px}
+.platform-seat-list th{position:sticky;top:0;background:#eaf0f2;z-index:1;color:#203644;text-align:left}
+.platform-seat-list th,.platform-seat-list td{padding:7px 9px;border-bottom:1px solid #e1e7eb}
+.platform-seat-list td:first-child{font-weight:900;color:#203644;white-space:nowrap}
+.platform-seat-list select{min-width:180px;padding:7px 9px}
+.platform-save-state{font-size:11px;font-weight:800;color:#17613f}
+.platform-map-side-right-placeholder{display:none}
+.bulk-platform-select{max-width:420px;margin:8px 0 12px}
+.bulk-preview{margin-top:10px;padding:10px 12px;border-radius:9px;background:#edf3f5;border:1px solid #cbd9df;color:#203644;font-size:12px;line-height:1.6;max-height:220px;overflow:auto;white-space:pre-wrap}
+.seat.platform-custom{border:2px solid var(--platform-color,#64748b);background:var(--platform-bg,#f8fafc)}
+.seat.platform-custom .seat-platform{border-left:4px solid var(--platform-color,#64748b);background:var(--platform-bg,#f1f5f9);color:var(--platform-ink,#263746)}
+.seat.platform-custom textarea[data-field="platform"]{border-color:var(--platform-color,#64748b)}
+@media(max-width:980px){.platform-map-side-grid{grid-template-columns:repeat(2,minmax(420px,1fr));overflow-x:auto}.platform-tools-grid{grid-template-columns:1fr}.platform-form{grid-template-columns:minmax(0,1fr) 70px}.platform-form button{grid-column:1/-1}}
+@media(max-width:700px){.platform-seat-filter .field{min-width:100%}.platform-seat-list select{min-width:145px}}
+.platform-bulk-add{margin-top:14px;padding:12px;border:1px dashed #b8c8d1;border-radius:10px;background:linear-gradient(180deg,#f8fbfc,#f1f6f7)}
+.platform-bulk-title{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.platform-bulk-title h4{font-size:13px;color:#203644}
+.platform-bulk-add textarea{display:block;width:100%;min-height:112px;resize:vertical;border:1px solid #bdcbd3;border-radius:8px;padding:10px;background:#fff;color:#203344;font:600 13px/1.55 'Merriweather',Georgia,serif}
+.platform-bulk-controls{display:flex;gap:8px;align-items:end;flex-wrap:wrap;margin-top:9px}
+.platform-bulk-default-color{width:165px}
+.platform-bulk-default-color input{height:38px;padding:3px}
+.platform-bulk-controls button{white-space:nowrap}
+@media(max-width:700px){.platform-bulk-default-color{width:100%}}
+/* V13: bulk employee entry is isolated by physical side to prevent cross-side filling. */
+.bulk-side-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+.bulk-side-card{min-width:0;padding:13px;border:1px solid #cbd6dd;border-radius:11px;background:linear-gradient(180deg,#fff 0%,#f8fafb 100%);box-shadow:0 2px 8px rgba(31,49,61,.045)}
+.bulk-side-left{border-top:4px solid #36566b}
+.bulk-side-right{border-top:4px solid #c58a3c}
+.bulk-side-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:5px}
+.bulk-side-heading h4{margin:0;color:#203747;font-size:14px;font-weight:900;letter-spacing:.3px}
+.bulk-side-heading span{font-size:11px;font-weight:800;color:#5c6d78;background:#edf2f4;padding:5px 8px;border-radius:20px}
+.bulk-side-card>p{margin:4px 0 10px}
+.bulk-side-platform{margin:9px 0 12px;padding:9px;border-radius:8px;background:#edf3f5;border:1px solid #d4dfe4}
+.bulk-side-platform select{background:#fff}
+.bulk-side-card textarea{display:block;width:100%;min-height:125px;resize:vertical;border:1px solid #b9c8d0;border-radius:8px;padding:10px;background:#fff;color:#172936;font:600 13px/1.55 'Merriweather',Georgia,serif}
+.bulk-side-actions{display:flex;gap:8px;align-items:end;flex-wrap:wrap;margin-top:10px}
+.bulk-side-file{min-width:180px;flex:1}
+.bulk-side-file input{width:100%;padding:6px;background:#fff;font-size:11px}
+.bulk-side-card .bulk-summary{min-height:34px;margin:9px 0 0;color:#405563;font-weight:700}
+.bulk-side-card .bulk-preview{max-height:180px}
+@media(max-width:980px){.bulk-side-grid{grid-template-columns:minmax(0,1fr)}}
+/* ===== END V11 PLATFORM BULK ADD: multi-platform creation in one save ===== */
+
+/* V13: independent bulk entry forms for LEFT and RIGHT sides. */
+
+/* ===== V17: Multi-floor planning controls ===== */
+.floor-switcher{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:12px 16px;margin-bottom:12px;background:#fff;border:1px solid var(--line);border-left:5px solid #36566b}
+.floor-switcher .field{max-width:360px;min-width:250px;flex:0 1 320px;margin:0}
+.floor-switcher-copy{flex:1;min-width:220px}
+.floor-mode-badge{display:inline-flex;align-items:center;padding:7px 11px;border-radius:999px;font-size:12px;font-weight:800;background:#e6f4ed;color:#126445}
+.floor-mode-badge.planning{background:#fff0d8;color:#89500e}
+.floor8-planner{border:1px solid #d8b77b;background:linear-gradient(135deg,#fffaf0,#fff 65%);margin:12px 0;padding:15px;border-radius:12px}
+.floor8-planner h3{margin:0 0 5px;color:#243746}
+.floor8-config-grid{display:grid;grid-template-columns:repeat(5,minmax(145px,1fr));gap:10px;margin:12px 0}
+.floor8-config-grid .field{min-width:0}
+.floor8-plan-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.floor8-capacity{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 12px;background:#edf3f6;border-radius:9px;margin:10px 0;font-weight:700}
+.floor8-capacity b{font-size:20px;color:#243746}
+.floor8-plan-status{font-size:12px;color:#52677f;margin-top:8px}
+.floor8-planning-tag{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:#8b5a17}
+.floor8-seat-note{padding:9px 12px;background:#fff7e8;border:1px solid #ead3a5;border-radius:8px;color:#76501d;margin:0 0 12px}
+.floor-active-label{font-weight:800;color:#243746}
+@media(max-width:1000px){.floor8-config-grid{grid-template-columns:repeat(2,minmax(140px,1fr))}}
+@media(max-width:560px){.floor8-config-grid{grid-template-columns:1fr}.floor-switcher .field{max-width:none;flex-basis:100%}}
+
 </style>
 </head>
 <body>
 <header>
- <div><h1>Fixed Platform Seating Management</h1><p>240 seats · Employee database · Attendance dashboard</p></div>
+ <div><h1>Fixed Platform Seating Management</h1><p id="headerFloorSeatSummary">240 seats · Employee database · Attendance dashboard</p></div>
  <div class="toolbar"><span id="userBadge" class="status hidden"></span><button id="logoutBtn" class="hidden">Logout</button></div>
 </header>
 
@@ -579,9 +677,15 @@ label,.entry-mode strong{color:#1e303d;font-weight:900}
 <main id="appScreen" class="hidden">
  <div class="nav no-print">
   <button class="active" data-tab="seatingPanel">Seating arrangement</button>
+  <button data-tab="platformPanel" id="platformToolsTab">Platform tools</button>
   <button data-tab="dashboardPanel">Dashboard</button>
   <button data-tab="employeePanel">Employee database</button>
   <button data-tab="userHelpPanel">User & access</button>
+ </div>
+ <div class="panel floor-switcher no-print">
+  <div class="field"><label for="activeFloorSelect">Pilih lantai</label><select id="activeFloorSelect"><option value="9">Lantai 9 · Operasional · 240 kursi</option><option value="8">Lantai 8 · Perencanaan · denah fleksibel</option></select></div>
+  <div class="floor-switcher-copy"><div id="activeFloorLabel" class="floor-active-label">Lantai 9 · Operasional</div><div id="activeFloorDescription" class="muted">Denah tetap 240 kursi. Data Lantai 9 tidak berubah saat kamu membuka Lantai 8.</div></div>
+  <span id="floorModeBadge" class="floor-mode-badge">OPERASIONAL</span>
  </div>
 
  <section id="seatingPanel" class="tab-panel">
@@ -593,15 +697,28 @@ label,.entry-mode strong{color:#1e303d;font-weight:900}
     <span id="saveStatus" class="muted">Belum tersinkron</span>
    </div>
    <div class="stats">
-    <div class="stat"><small>Total kapasitas</small><b>240</b></div>
+    <div class="stat"><small>Total kapasitas</small><b id="totalCapacity">240</b></div>
     <div class="stat"><small>Hadir / nama terisi</small><b id="presentCount">0</b></div>
     <div class="stat"><small>Kursi kosong</small><b id="emptyCount">240</b></div>
     <div class="stat"><small>Platform terisi</small><b id="platformCount">0</b></div>
     <div class="stat"><small>Platform berbeda</small><b id="platformKinds">0</b></div>
    </div>
-   <p class="muted">Isi nama karyawan dan platform langsung pada setiap kursi. Nama yang terisi otomatis dihitung sebagai hadir untuk tanggal dan shift yang dipilih. Geser denah ke kanan atau kiri untuk melihat seluruh meja.</p>
-   <p class="muted" style="margin-top:6px"><b>Salin denah harian:</b> Jika tanggal dan shift yang dipilih belum memiliki data, aplikasi akan menyalin nama, platform, dan posisi kursi dari tanggal kalender sebelumnya pada shift yang sama. Salinan tanggal baru berdiri sendiri, sehingga perubahan di tanggal baru tidak mengubah tanggal sebelumnya.</p>
-   <div class="platform-legend"><span class="muted">Warna platform:</span><span class="platform-chip jinx">JINX · MERAH</span><span class="platform-chip vega">VEGA · ORANYE</span><span class="platform-chip zane">ZANE · HIJAU</span></div>
+   <p class="muted">Isi nama karyawan pada setiap kursi. Nama platform ditampilkan sebagai informasi dan hanya dapat diatur melalui tab <b>Platform tools</b> oleh Admin, agar tidak berubah karena salah ketik. Nama yang terisi otomatis dihitung sebagai hadir untuk tanggal dan shift yang dipilih.</p>
+   <p class="muted" style="margin-top:6px"><b>Salin denah harian:</b> Jika tanggal dan shift yang dipilih belum memiliki data, aplikasi akan menyalin nama, platform, dan posisi kursi dari tanggal kalender sebelumnya pada shift yang sama di lantai yang sama. Data Lantai 8 dan Lantai 9 dipisahkan.</p>
+   <div id="floor8Planner" class="floor8-planner hidden no-print">
+    <div class="toolbar" style="justify-content:space-between;align-items:center"><div><div class="floor8-planning-tag">Planning · Belum final</div><h3>Atur pemetaan meja — Lantai 8</h3><p class="muted" style="margin:0">Masukkan ukuran sementara. Denah akan dibuat otomatis dan bisa diubah lagi ketika ukuran lantai sudah pasti.</p></div><span class="status">Konfigurasi fleksibel</span></div>
+    <div class="floor8-config-grid">
+     <div class="field"><label for="f8DepthRows">Baris ke belakang</label><input id="f8DepthRows" type="number" min="1" max="30" step="1" value="5"></div>
+     <div class="field"><label for="f8LeftTables">Meja berjajar — Sisi Kiri</label><input id="f8LeftTables" type="number" min="1" max="10" step="1" value="1"></div>
+     <div class="field"><label for="f8RightTables">Meja berjajar — Sisi Kanan</label><input id="f8RightTables" type="number" min="1" max="10" step="1" value="1"></div>
+     <div class="field"><label for="f8SeatsPerFace">Kursi per sisi meja (atas/bawah)</label><input id="f8SeatsPerFace" type="number" min="1" max="8" step="1" value="3"></div>
+     <div class="field"><label>Jumlah kursi per meja</label><input id="f8SeatsPerDeskTotal" value="6 kursi (otomatis)" readonly></div>
+    </div>
+    <div class="floor8-capacity"><span>Perkiraan total kapasitas Lantai 8:</span><b id="f8CapacityValue">150 kursi</b><span class="muted" id="f8CapacityBreakdown">Sisi kiri 90 · Sisi kanan 60</span></div>
+    <div class="floor8-plan-actions"><button id="previewFloor8Plan" type="button">Perbarui preview denah</button><button id="saveFloor8Plan" type="button" class="primary">Simpan denah Lantai 8</button><button id="resetFloor8Plan" type="button">Kembalikan contoh awal</button></div>
+    <p id="floor8PlanStatus" class="floor8-plan-status" aria-live="polite">Contoh awal: 1 meja sisi kiri + 1 meja sisi kanan (2 meja melintang), 5 baris ke belakang, 3 kursi atas dan 3 kursi bawah per meja.</p>
+    <p class="muted" style="margin:6px 0 0">Pengaturan denah Lantai 8 tersimpan online. Kursi Lantai 8 menggunakan kode tersendiri, sehingga tidak bercampur dengan 240 kursi Lantai 9.</p>
+   </div>
    <div class="entry-mode no-print">
     <strong style="font-size:13px">Cara memasukkan nama:</strong>
     <button id="singleEntryMode" class="active" type="button">Satu per satu</button>
@@ -609,38 +726,139 @@ label,.entry-mode strong{color:#1e303d;font-weight:900}
    </div>
    <div id="singleEntryHelp" class="muted" style="margin-top:8px">Mode satu per satu: klik kolom <b>Nama karyawan</b> pada kursi yang dipilih, lalu ketik nama seperti biasa.</div>
    <div id="bulkEntryBox" class="bulk-entry hidden no-print">
-    <h3 style="margin:0 0 6px">Masukkan banyak nama sekaligus</h3>
-    <p class="muted" style="margin:0 0 10px">Tempel daftar nama dari Excel atau ketik satu nama per baris. Nama akan diisikan ke kursi kosong pada tanggal dan shift yang sedang dipilih, mengikuti urutan denah. Kursi yang sudah berisi nama tidak akan ditimpa dan platform yang sudah terisi tetap dipertahankan.</p>
-    <label for="bulkEmployeeNames">Daftar nama karyawan (satu nama per baris)</label>
-    <textarea id="bulkEmployeeNames" placeholder="Contoh:
-Justin
-Livie
-Zane
-Patrick"></textarea>
-    <div class="bulk-tools">
-     <label for="bulkEmployeeFile" style="margin:0">Atau pilih file .txt / .csv</label>
-     <input id="bulkEmployeeFile" type="file" accept=".txt,.csv,.tsv,text/plain,text/csv,text/tab-separated-values">
-     <button id="previewBulkNames" type="button">Periksa daftar</button>
-     <button id="applyBulkNames" type="button" class="primary" disabled>Masukkan ke kursi kosong</button>
-     <button id="clearBulkNames" type="button">Bersihkan</button>
+    <h3 style="margin:0 0 6px">Pengisian nama dipisah berdasarkan sisi</h3>
+    <p class="muted" style="margin:0 0 12px">Gunakan kotak Sisi Kiri dan Sisi Kanan secara terpisah. Pilihan platform hanya mengambil kursi pada sisi yang dipilih, sehingga nama dari satu sisi tidak akan pernah masuk ke sisi lainnya.</p>
+    <div class="bulk-side-grid">
+     <section class="bulk-side-card bulk-side-left" aria-labelledby="bulkLeftTitle">
+      <div class="bulk-side-heading"><h4 id="bulkLeftTitle">SISI KIRI</h4><span id="bulkLeftMeta">144 kursi · 3 meja</span></div>
+      <p class="muted">Pengisian hanya untuk kursi di sisi kiri. Urutan mengikuti jalur zig-zag pada denah.</p>
+      <div class="bulk-side-platform"><label for="bulkTargetPlatformL">Platform di Sisi Kiri</label><select id="bulkTargetPlatformL"><option value="">Memuat platform sisi kiri...</option></select></div>
+      <label for="bulkEmployeeNamesL">Daftar nama karyawan — Sisi Kiri (satu nama per baris)</label>
+      <textarea id="bulkEmployeeNamesL" placeholder="Contoh:
+Valentine
+Jean
+Justin"></textarea>
+      <div class="bulk-side-actions">
+       <div class="bulk-side-file"><label for="bulkEmployeeFileL">Upload .txt / .csv</label><input id="bulkEmployeeFileL" type="file" accept=".txt,.csv,.tsv,text/plain,text/csv,text/tab-separated-values"></div>
+       <button id="previewBulkNamesL" type="button">Periksa daftar</button>
+       <button id="applyBulkNamesL" type="button" class="primary" disabled>Isi Sisi Kiri</button>
+       <button id="clearBulkNamesL" type="button">Bersihkan</button>
+      </div>
+      <p id="bulkEmployeeSummaryL" class="bulk-summary" aria-live="polite">Pilih platform sisi kiri, lalu masukkan daftar nama.</p>
+      <div id="bulkEmployeePreviewL" class="bulk-preview hidden" aria-live="polite"></div>
+     </section>
+     <section class="bulk-side-card bulk-side-right" aria-labelledby="bulkRightTitle">
+      <div class="bulk-side-heading"><h4 id="bulkRightTitle">SISI KANAN</h4><span id="bulkRightMeta">96 kursi · 2 meja</span></div>
+      <p class="muted">Pengisian hanya untuk kursi di sisi kanan. Nama tidak akan bercampur dengan sisi kiri.</p>
+      <div class="bulk-side-platform"><label for="bulkTargetPlatformR">Platform di Sisi Kanan</label><select id="bulkTargetPlatformR"><option value="">Memuat platform sisi kanan...</option></select></div>
+      <label for="bulkEmployeeNamesR">Daftar nama karyawan — Sisi Kanan (satu nama per baris)</label>
+      <textarea id="bulkEmployeeNamesR" placeholder="Contoh:
+Alex
+Morgan
+Taylor"></textarea>
+      <div class="bulk-side-actions">
+       <div class="bulk-side-file"><label for="bulkEmployeeFileR">Upload .txt / .csv</label><input id="bulkEmployeeFileR" type="file" accept=".txt,.csv,.tsv,text/plain,text/csv,text/tab-separated-values"></div>
+       <button id="previewBulkNamesR" type="button">Periksa daftar</button>
+       <button id="applyBulkNamesR" type="button" class="primary" disabled>Isi Sisi Kanan</button>
+       <button id="clearBulkNamesR" type="button">Bersihkan</button>
+      </div>
+      <p id="bulkEmployeeSummaryR" class="bulk-summary" aria-live="polite">Pilih platform sisi kanan, lalu masukkan daftar nama.</p>
+      <div id="bulkEmployeePreviewR" class="bulk-preview hidden" aria-live="polite"></div>
+     </section>
     </div>
-    <p id="bulkEmployeeSummary" class="bulk-summary" aria-live="polite">Belum ada nama yang dimasukkan.</p>
    </div>
   </div>
   <div class="layout-scroll">
    <div class="layout-wrap">
-    <div class="side-card"><div class="side-head"><h3>SISI KIRI · 3 MEJA</h3><b>144 kursi</b></div><div class="muted">8 baris · 3 meja per baris · 6 kursi per meja</div><div id="leftRows"></div></div>
-    <div class="side-card"><div class="side-head"><h3>SISI KANAN · 2 MEJA</h3><b>96 kursi</b></div><div class="muted">8 baris · 2 meja per baris · 6 kursi per meja</div><div id="rightRows"></div></div>
+    <div class="side-card"><div class="side-head"><h3 id="leftSideTitle">SISI KIRI · 3 MEJA</h3><b id="leftSideCount">144 kursi</b></div><div class="muted" id="leftSideMeta">8 baris · 3 meja per baris · 6 kursi per meja</div><div id="leftRows"></div></div>
+    <div class="side-card"><div class="side-head"><h3 id="rightSideTitle">SISI KANAN · 2 MEJA</h3><b id="rightSideCount">96 kursi</b></div><div class="muted" id="rightSideMeta">8 baris · 2 meja per baris · 6 kursi per meja</div><div id="rightRows"></div></div>
+   </div>
+  </div>
+ </section>
+
+
+ <section id="platformPanel" class="tab-panel hidden">
+  <div class="panel">
+   <div class="toolbar" style="justify-content:space-between;align-items:center">
+    <div><h2 style="margin:0">Platform tools</h2><p class="muted" style="margin:5px 0 0">Kelola nama platform dan susunan platform per kursi dari satu tempat. Perubahan tersimpan online.</p></div>
+    <span class="status">Admin only</span>
+   </div>
+   <div class="notice" style="margin:12px 0">Pengelolaan nama dan warna platform dilakukan di sini. Daftar platform dipisahkan dari pemetaan kursi agar lebih mudah dibaca dan tidak tercampur dengan pengaturan denah.</div>
+   <div class="platform-tools-grid">
+    <div class="platform-manager-card">
+     <h3 style="margin:0 0 8px">Tambah platform</h3>
+     <p class="muted" style="margin:0 0 12px">Tambahkan satu platform atau masukkan banyak nama sekaligus. Daftar platform dan tombol edit sekarang berada di panel sebelah kanan.</p>
+     <div class="platform-form">
+      <div><label for="newPlatformName">Nama platform baru</label><input id="newPlatformName" placeholder="Contoh: VEGA-12"></div>
+      <div><label for="newPlatformColor">Warna</label><input id="newPlatformColor" type="color" value="#d97706"></div>
+      <button id="addPlatformBtn" class="primary" type="button">+ Tambah</button>
+     </div>
+     <div class="platform-bulk-add">
+      <div class="platform-bulk-title">
+       <h4 style="margin:0">Tambah banyak platform sekaligus</h4>
+       <span class="muted">Satu nama per baris</span>
+      </div>
+      <p class="muted" style="margin:6px 0 10px">Tempel semua nama platform sekaligus. Nama JINX otomatis mendapat warna merah, VEGA oranye, dan ZANE hijau. Nama lain menggunakan warna default yang kamu pilih.</p>
+      <label for="bulkPlatformNames">Daftar nama platform</label>
+      <textarea id="bulkPlatformNames" rows="5" placeholder="JINX-11&#10;JINX-20&#10;VEGA-12&#10;VEGA-13&#10;ZANE-15"></textarea>
+      <div class="platform-bulk-controls">
+       <div class="platform-bulk-default-color"><label for="bulkPlatformDefaultColor">Warna default nama lain</label><input id="bulkPlatformDefaultColor" type="color" value="#64748b"></div>
+       <button id="previewBulkPlatforms" type="button">Periksa daftar</button>
+       <button id="applyBulkPlatforms" class="primary" type="button" disabled>+ Tambahkan semua</button>
+       <button id="clearBulkPlatforms" type="button">Bersihkan</button>
+      </div>
+      <p id="bulkPlatformSummary" class="muted" aria-live="polite" style="margin:8px 0 0">Tempel daftar platform, lalu periksa sebelum menyimpan.</p>
+      <div id="bulkPlatformPreview" class="bulk-preview hidden" aria-live="polite"></div>
+     </div>
+    </div>
+    <div class="platform-manager-card platform-catalog-card">
+     <div class="platform-catalog-head">
+      <div>
+       <h3 style="margin:0 0 8px">Daftar platform</h3>
+       <p class="muted" style="margin:0">Semua platform yang tersedia, status aktif, serta pengaturan nama dan warna.</p>
+      </div>
+      <span class="status">Katalog platform</span>
+     </div>
+     <div class="platform-catalog-list">
+      <table class="platform-admin-table"><thead><tr><th>Platform</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="platformCatalogBody"><tr><td colspan="3">Memuat daftar platform...</td></tr></tbody></table>
+     </div>
+     <p id="platformManagerMessage" class="muted" aria-live="polite" style="margin:10px 0 0"></p>
+    </div>
+   </div>
+   <div class="platform-seat-tools">
+    <div class="toolbar" style="justify-content:space-between;align-items:center">
+     <div><h3 style="margin:0">Pemetaan platform per sisi</h3><p id="platformMapDescription" class="muted" style="margin:5px 0 0">Pemetaan ditampilkan dalam dua panel berdampingan. Setiap panel memiliki pencarian dan filter sendiri.</p></div>
+     <button id="refreshPlatformMap" type="button">Refresh kedua sisi</button>
+    </div>
+    <div class="platform-map-side-grid">
+     <section class="platform-map-side platform-map-left" aria-labelledby="platformMapLeftTitle">
+      <div class="platform-map-side-head"><div><h3 id="platformMapLeftTitle">SISI KIRI</h3><p id="platformMapLeftMeta">144 kursi · 3 meja per baris</p></div><span class="platform-map-count" id="platformMapLeftCount">144 kursi</span></div>
+      <div class="platform-seat-filter">
+       <div class="field"><label for="platformSeatSearchL">Cari kode kursi — Sisi Kiri</label><input id="platformSeatSearchL" placeholder="Contoh: L-R1-T1-PC1"></div>
+       <div class="field"><label for="platformSeatFilterL">Filter platform Sisi Kiri</label><select id="platformSeatFilterL"><option value="">Semua platform sisi kiri</option><option value="__empty__">Belum ditentukan</option></select></div>
+      </div>
+      <div class="platform-seat-list"><table><thead><tr><th style="width:180px">Kode kursi kiri</th><th>Platform</th><th style="width:100px">Status</th></tr></thead><tbody id="platformSeatBodyL"><tr><td colspan="3">Memuat pemetaan sisi kiri...</td></tr></tbody></table></div>
+     </section>
+     <section class="platform-map-side platform-map-right" aria-labelledby="platformMapRightTitle">
+      <div class="platform-map-side-head"><div><h3 id="platformMapRightTitle">SISI KANAN</h3><p id="platformMapRightMeta">96 kursi · 2 meja per baris</p></div><span class="platform-map-count" id="platformMapRightCount">96 kursi</span></div>
+      <div class="platform-seat-filter">
+       <div class="field"><label for="platformSeatSearchR">Cari kode kursi — Sisi Kanan</label><input id="platformSeatSearchR" placeholder="Contoh: R-R1-T1-PC1"></div>
+       <div class="field"><label for="platformSeatFilterR">Filter platform Sisi Kanan</label><select id="platformSeatFilterR"><option value="">Semua platform sisi kanan</option><option value="__empty__">Belum ditentukan</option></select></div>
+      </div>
+      <div class="platform-seat-list"><table><thead><tr><th style="width:180px">Kode kursi kanan</th><th>Platform</th><th style="width:100px">Status</th></tr></thead><tbody id="platformSeatBodyR"><tr><td colspan="3">Memuat pemetaan sisi kanan...</td></tr></tbody></table></div>
+     </section>
+    </div>
+    <p id="platformSeatMessage" class="muted" aria-live="polite" style="margin:9px 0 0"></p>
    </div>
   </div>
  </section>
 
  <section id="dashboardPanel" class="tab-panel hidden">
   <div class="panel">
-   <h2>Dashboard kehadiran</h2>
+   <h2>Dashboard kehadiran — <span id="dashFloorLabel">Lantai 9</span></h2>
    <div class="toolbar"><div class="field"><label>Tanggal</label><input id="dashDate" type="date"></div><div class="field"><label>Shift</label><select id="dashShift"><option>Pagi</option><option>Malam</option></select></div><button id="dashRefresh" class="primary">Tampilkan rekap</button></div>
    <div class="stats">
-    <div class="stat"><small>Total kursi</small><b>240</b></div><div class="stat"><small>Total hadir</small><b id="dashPresent">0</b></div>
+    <div class="stat"><small>Total kursi</small><b id="dashTotalSeats">240</b></div><div class="stat"><small>Total hadir</small><b id="dashPresent">0</b></div>
     <div class="stat"><small>Belum terisi</small><b id="dashEmpty">240</b></div><div class="stat"><small>Persentase hadir</small><b id="dashPercent">0%</b></div>
     <div class="stat"><small>Platform aktif</small><b id="dashPlatforms">0</b></div>
    </div>
@@ -689,21 +907,145 @@ const SUPABASE_ANON_KEY = "sb_publishable_mM2-zsr_b1RAFv6e0qE6gg_pwviQLTg";
 const supabaseReady = SUPABASE_URL.startsWith("https://") && SUPABASE_ANON_KEY.startsWith("sb_publishable_") && !!window.supabase;
 const sb = supabaseReady ? window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY) : null;
 
-const TOTAL=240;
 let currentUser=null, currentRole="expat", assignments={}, employees=[], platforms=[];
 const $=id=>document.getElementById(id);
 const today=()=>new Date().toLocaleDateString("en-CA");
 $("workDate").value=today();$("dashDate").value=today();
-
-function seatList(){
- const list=[];
- for(let r=1;r<=8;r++){
-  for(let t=1;t<=3;t++)for(let pc=1;pc<=6;pc++)list.push({id:`L-R${r}-T${t}-PC${pc}`,side:"L",row:r,table:t,pc});
-  for(let t=1;t<=2;t++)for(let pc=1;pc<=6;pc++)list.push({id:`R-R${r}-T${t}-PC${pc}`,side:"R",row:r,table:t,pc});
+const FLOOR8_DEFAULT={depthRows:5,leftTables:1,rightTables:1,seatsPerFace:3};
+const FLOOR8_META_DATE="1900-01-01", FLOOR8_META_SHIFT="Pagi", FLOOR8_META_CODE="__FLOOR8_LAYOUT_CONFIG_V1__";
+let floor8Config={...FLOOR8_DEFAULT};
+let floor8SavedConfig={...FLOOR8_DEFAULT};
+let activeFloor=(localStorage.getItem("fps_active_floor_v1")==="8")?"8":"9";
+let floor9Seats=seatList();
+let seats=floor9Seats;
+let TOTAL=seats.length;
+function safeFloor8Config(value){
+ const n=(x,f,min,max)=>Math.max(min,Math.min(max,Math.floor(Number(x)||f)));
+ return {depthRows:n(value?.depthRows,FLOOR8_DEFAULT.depthRows,1,30),leftTables:n(value?.leftTables,FLOOR8_DEFAULT.leftTables,1,10),rightTables:n(value?.rightTables,FLOOR8_DEFAULT.rightTables,1,10),seatsPerFace:n(value?.seatsPerFace,FLOOR8_DEFAULT.seatsPerFace,1,8)};
+}
+function floor8SeatList(config=floor8Config){
+ const c=safeFloor8Config(config),list=[];
+ for(const side of ["L","R"]){
+  const tableCount=side==="L"?c.leftTables:c.rightTables;
+  for(let r=1;r<=c.depthRows;r++){
+   for(let t=1;t<=tableCount;t++)for(let pc=1;pc<=c.seatsPerFace;pc++)list.push({id:`F8-${side}-R${r}-T${t}-PC${pc}`,side,row:r,table:t,pc});
+   for(let t=tableCount;t>=1;t--)for(let pc=c.seatsPerFace*2;pc>c.seatsPerFace;pc--)list.push({id:`F8-${side}-R${r}-T${t}-PC${pc}`,side,row:r,table:t,pc});
+  }
  }
  return list;
 }
-const seats=seatList();
+function refreshActiveSeatList(){
+ seats=activeFloor==="8"?floor8SeatList():floor9Seats;
+ TOTAL=seats.length;
+}
+async function loadFloor8Config(){
+ // The floor-plan setup is stored as a reserved metadata row in the existing seat_assignments table.
+ // Its dedicated code/date/shift are filtered out of every real seating and dashboard query.
+ try{
+  const {data,error}=await sb.from("seat_assignments").select("employee_name").eq("work_date",FLOOR8_META_DATE).eq("shift",FLOOR8_META_SHIFT).eq("seat_code",FLOOR8_META_CODE).maybeSingle();
+  if(!error&&data?.employee_name){
+   const parsed=JSON.parse(data.employee_name);floor8Config=safeFloor8Config(parsed);
+   localStorage.setItem("fps_floor8_layout_v1",JSON.stringify(floor8Config));
+  }else{
+   const local=localStorage.getItem("fps_floor8_layout_v1");if(local)floor8Config=safeFloor8Config(JSON.parse(local));
+  }
+  floor8SavedConfig={...floor8Config};
+ }catch(error){
+  try{const local=localStorage.getItem("fps_floor8_layout_v1");if(local)floor8Config=safeFloor8Config(JSON.parse(local));}catch{}
+  floor8SavedConfig={...floor8Config};
+  console.warn("Konfigurasi Lantai 8 menggunakan contoh lokal:",error);
+ }
+ refreshActiveSeatList();syncFloor8Inputs();updateFloorDisplay();
+}
+function syncFloor8Inputs(){
+ if($("f8DepthRows"))$("f8DepthRows").value=floor8Config.depthRows;
+ if($("f8LeftTables"))$("f8LeftTables").value=floor8Config.leftTables;
+ if($("f8RightTables"))$("f8RightTables").value=floor8Config.rightTables;
+ if($("f8SeatsPerFace"))$("f8SeatsPerFace").value=floor8Config.seatsPerFace;
+ updateFloor8CapacityPreview();
+}
+function readFloor8Inputs(){
+ return safeFloor8Config({depthRows:$("f8DepthRows")?.value,leftTables:$("f8LeftTables")?.value,rightTables:$("f8RightTables")?.value,seatsPerFace:$("f8SeatsPerFace")?.value});
+}
+function updateFloor8CapacityPreview(){
+ if(!$("f8CapacityValue"))return;
+ const c=readFloor8Inputs(),left=c.depthRows*c.leftTables*c.seatsPerFace*2,right=c.depthRows*c.rightTables*c.seatsPerFace*2;
+ $("f8SeatsPerDeskTotal").value=`${c.seatsPerFace*2} kursi (${c.seatsPerFace} atas + ${c.seatsPerFace} bawah)`;
+ $("f8CapacityValue").textContent=`${left+right} kursi`;
+ $("f8CapacityBreakdown").textContent=`Sisi kiri ${left} · Sisi kanan ${right} · ${c.depthRows} baris`; 
+}
+async function saveFloor8Plan(){
+ if(!canAdmin()){alert("Hanya Admin yang dapat mengubah denah perencanaan Lantai 8.");return}
+ const next=readFloor8Inputs();
+ if(next.leftTables+next.rightTables===0){alert("Tambahkan minimal satu meja pada Sisi Kiri atau Sisi Kanan.");return}
+ const maxSeats=next.depthRows*(next.leftTables+next.rightTables)*next.seatsPerFace*2;
+ if(maxSeats>3000){alert("Denah terlalu besar. Batas perencanaan adalah 3.000 kursi.");return}
+ const oldConfig={...floor8SavedConfig};
+ const oldCapacity=floor8SeatList(oldConfig).length,newCapacity=floor8SeatList(next).length;
+ const removed=floor8SeatList(oldConfig).filter(x=>!floor8SeatList(next).some(y=>y.id===x.id));
+ if(removed.length){
+  const {data:existing,error}=await sb.from("seat_assignments").select("seat_code,employee_name,platform").in("seat_code",removed.map(x=>x.id));
+  if(error){alert("Tidak dapat memeriksa data kursi yang akan keluar dari denah: "+error.message);return}
+  const occupied=(existing||[]).filter(x=>(x.employee_name||"").trim()||(x.platform||"").trim()).length;
+  if(occupied&&!confirm(`Perubahan ukuran menghapus ${removed.length} kode kursi dari denah. Ada ${occupied} catatan nama/platform pada kode kursi tersebut di tanggal/shift yang tersimpan. Catatan tidak dihapus dari database, tetapi tidak tampil pada denah baru. Lanjutkan?`))return;
+ }
+ const payload={work_date:FLOOR8_META_DATE,shift:FLOOR8_META_SHIFT,seat_code:FLOOR8_META_CODE,employee_name:JSON.stringify(next),platform:"",updated_by:currentUser.id};
+ const btn=$("saveFloor8Plan");btn.disabled=true;btn.textContent="Menyimpan...";
+ try{
+  const {error}=await sb.from("seat_assignments").upsert(payload,{onConflict:"work_date,shift,seat_code"});
+  if(error)throw error;
+  floor8Config=next;floor8SavedConfig={...next};localStorage.setItem("fps_floor8_layout_v1",JSON.stringify(next));
+  refreshActiveSeatList();updateFloorDisplay();
+  if(activeFloor==="8")await loadAssignments();
+  $("floor8PlanStatus").textContent=`Denah Lantai 8 tersimpan online: ${oldCapacity} → ${newCapacity} kursi. Kamu dapat mengubah ukuran lagi saat pembangunan selesai.`;
+ }catch(error){
+  floor8Config=oldConfig;floor8SavedConfig={...oldConfig};refreshActiveSeatList();updateFloorDisplay();
+  $("floor8PlanStatus").textContent="Gagal menyimpan denah online: "+error.message;
+  alert("Gagal menyimpan denah Lantai 8: "+error.message);
+ }finally{btn.disabled=false;btn.textContent="Simpan denah Lantai 8";syncFloor8Inputs()}
+}
+function updateFloorDisplay(){
+ const is8=activeFloor==="8",c=floor8Config;
+ const leftTables=is8?c.leftTables:3,rightTables=is8?c.rightTables:2,rows=is8?c.depthRows:8,perFace=is8?c.seatsPerFace:3;
+ const leftTotal=rows*leftTables*perFace*2,rightTotal=rows*rightTables*perFace*2;
+ const leftMeta=`${rows} baris · ${leftTables} meja per baris · ${perFace*2} kursi per meja`;
+ const rightMeta=`${rows} baris · ${rightTables} meja per baris · ${perFace*2} kursi per meja`;
+ $("activeFloorLabel").textContent=is8?"Lantai 8 · Perencanaan":"Lantai 9 · Operasional";
+ $("activeFloorDescription").textContent=is8?"Denah sementara dapat diatur ulang. Data kursi Lantai 8 terpisah dari Lantai 9.":"Denah tetap 240 kursi. Data Lantai 9 tidak berubah saat kamu membuka Lantai 8.";
+ $("floorModeBadge").textContent=is8?"PLANNING":"OPERASIONAL";
+ $("floorModeBadge").classList.toggle("planning",is8);
+ $("floor8Planner").classList.toggle("hidden",!is8);
+ $("totalCapacity").textContent=TOTAL;
+ $("headerFloorSeatSummary").textContent=`${TOTAL} seats · Lantai ${activeFloor} · Employee database · Attendance dashboard`;
+ $("leftSideTitle").textContent=`SISI KIRI · ${leftTables} MEJA`;
+ $("leftSideCount").textContent=`${leftTotal} kursi`;
+ $("leftSideMeta").textContent=leftMeta;
+ $("rightSideTitle").textContent=`SISI KANAN · ${rightTables} MEJA`;
+ $("rightSideCount").textContent=`${rightTotal} kursi`;
+ $("rightSideMeta").textContent=rightMeta;
+ $("bulkLeftMeta").textContent=`${leftTotal} kursi · ${leftTables} meja`;
+ $("bulkRightMeta").textContent=`${rightTotal} kursi · ${rightTables} meja`;
+ $("bulkLeftTitle").textContent=is8?"SISI KIRI · LANTAI 8":"SISI KIRI";
+ $("bulkRightTitle").textContent=is8?"SISI KANAN · LANTAI 8":"SISI KANAN";
+ $("platformMapDescription").textContent=`Pemetaan kursi untuk Lantai ${activeFloor} · ${TOTAL} kursi. Sisi Kiri dan Sisi Kanan memiliki daftar terpisah. Pemetaan mengikuti tanggal dan shift yang sedang dipilih.`;
+ $("platformMapLeftMeta").textContent=`${leftTotal} kursi · ${leftTables} meja per baris`;
+ $("platformMapLeftCount").textContent=`${leftTotal} kursi`;
+ $("platformMapRightMeta").textContent=`${rightTotal} kursi · ${rightTables} meja per baris`;
+ $("platformMapRightCount").textContent=`${rightTotal} kursi`;
+ $("dashFloorLabel").textContent=`Lantai ${activeFloor}`;
+ $("dashTotalSeats").textContent=TOTAL;
+}
+async function setActiveFloor(floor){
+ const next=floor==="8"?"8":"9";if(next===activeFloor)return;
+ activeFloor=next;localStorage.setItem("fps_active_floor_v1",activeFloor);
+ if($("activeFloorSelect"))$("activeFloorSelect").value=activeFloor;
+ refreshActiveSeatList();updateFloorDisplay();
+ assignments={};renderSeats("L",activeFloor==="8"?floor8Config.leftTables:3);renderSeats("R",activeFloor==="8"?floor8Config.rightTables:2);
+ updateStats();renderBulkPlatformOptions();updateBulkSummary();
+ await loadAssignments();
+ if($("platformPanel")&&!$("platformPanel").classList.contains("hidden"))renderPlatformSeatEditor();
+ if($("dashboardPanel")&&!$("dashboardPanel").classList.contains("hidden"))await dashboard();
+}
 function canEditSeats(){return ["admin","tl","expat"].includes(currentRole)}
 function canManageEmployees(){return ["admin","tl","expat"].includes(currentRole)}
 function canManageUsers(){return currentRole==="admin"||currentRole==="expat"}
@@ -716,10 +1058,32 @@ function platformColorClass(value){
  if(name.includes("zane"))return "platform-zane";
  return "";
 }
+function hexRgb(hex){
+ const h=String(hex||"").trim().replace("#","");
+ if(!/^[0-9a-f]{6}$/i.test(h))return [100,116,139];
+ return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];
+}
+function blendHex(hex,ratio=0.88){
+ const rgb=hexRgb(hex).map(v=>Math.round(v+(255-v)*ratio));
+ return "#"+rgb.map(v=>v.toString(16).padStart(2,"0")).join("");
+}
+function darkenHex(hex,ratio=0.48){
+ const rgb=hexRgb(hex).map(v=>Math.round(v*(1-ratio)));
+ return "#"+rgb.map(v=>v.toString(16).padStart(2,"0")).join("");
+}
+function platformForName(value){return platforms.find(p=>String(p.name||"").trim().toLowerCase()===String(value||"").trim().toLowerCase())||null}
 function applyPlatformColor(card,value){
- card.classList.remove("platform-jinx","platform-vega","platform-zane");
+ card.classList.remove("platform-jinx","platform-vega","platform-zane","platform-custom");
+ card.style.removeProperty("--platform-color");card.style.removeProperty("--platform-bg");card.style.removeProperty("--platform-ink");
  const colorClass=platformColorClass(value);
- if(colorClass)card.classList.add(colorClass);
+ if(colorClass){card.classList.add(colorClass);return}
+ const entry=platformForName(value);
+ if(entry&&entry.color){
+  card.classList.add("platform-custom");
+  card.style.setProperty("--platform-color",entry.color);
+  card.style.setProperty("--platform-bg",blendHex(entry.color,.88));
+  card.style.setProperty("--platform-ink",darkenHex(entry.color,.48));
+ }
 }
 function message(text){$("saveStatus").textContent=text}
 function setApp(on){
@@ -745,20 +1109,26 @@ async function startSession(user){
  applyPermissions();
  await loadPlatforms();
  await loadEmployees();
+ await loadFloor8Config();
+ if($("activeFloorSelect"))$("activeFloorSelect").value=activeFloor;
+ refreshActiveSeatList();updateFloorDisplay();
  await loadAssignments();
  if(canManageUsers()) await loadUserAccounts();
 }
 function applyPermissions(){
  document.querySelectorAll(".seat input,.seat textarea").forEach(x=>x.disabled=!canEditSeats());
  if($("bulkEntryMode"))$("bulkEntryMode").disabled=!canEditSeats();
- if($("applyBulkNames"))$("applyBulkNames").disabled=!canEditSeats()||!parseBulkNames().names.length;
+ ["L","R"].forEach(side=>{const button=$("applyBulkNames"+side);if(button)button.disabled=!canEditSeats()||!parseBulkNames(side).names.length;});
  $("addEmployee").classList.toggle("hidden",!canManageEmployees());
  const dashboardTab=document.querySelector('[data-tab="dashboardPanel"]');
  const employeeTab=document.querySelector('[data-tab="employeePanel"]');
  const accessTab=document.querySelector('[data-tab="userHelpPanel"]');
+ const platformTab=$("platformToolsTab");
+ if(platformTab)platformTab.classList.toggle("hidden",!canAdmin());
  if(dashboardTab)dashboardTab.classList.remove("hidden");
  if(employeeTab)employeeTab.classList.remove("hidden");
  if(accessTab)accessTab.classList.toggle("hidden",!canManageUsers());
+ ["f8DepthRows","f8LeftTables","f8RightTables","f8SeatsPerFace","previewFloor8Plan","saveFloor8Plan","resetFloor8Plan"].forEach(id=>{const el=$(id);if(el)el.disabled=!canAdmin()});
  const roleSelect=$("newUserRole");
  if(roleSelect){
   if(currentRole==="expat"){
@@ -768,9 +1138,196 @@ function applyPermissions(){
  }
 }
 async function loadPlatforms(){
- const {data,error}=await sb.from("platforms").select("name,color").eq("active",true).order("name");
- if(error){platforms=[];console.error(error)}else platforms=data||[];
+ const {data,error}=await sb.from("platforms").select("id,name,color,active").order("name");
+ if(error){platforms=[];console.error(error);if(typeof setPlatformManagerMessage==="function")setPlatformManagerMessage("Gagal memuat daftar platform: "+error.message)}else platforms=data||[];
+ if(typeof renderPlatformCatalog==="function")renderPlatformCatalog();
+ if(typeof renderBulkPlatformOptions==="function")renderBulkPlatformOptions();
+ if(typeof renderPlatformSeatFilters==="function")renderPlatformSeatFilters();
 }
+function setPlatformManagerMessage(text){if($("platformManagerMessage"))$("platformManagerMessage").textContent=text||""}
+function setPlatformSeatMessage(text){if($("platformSeatMessage"))$("platformSeatMessage").textContent=text||""}
+function platformCatalogColor(p){return /^#[0-9a-f]{6}$/i.test(String(p.color||""))?p.color:"#64748b"}
+function renderPlatformCatalog(){
+ const body=$("platformCatalogBody");if(!body)return;
+ if(!canAdmin()){body.innerHTML='<tr><td colspan="3">Hanya Admin yang dapat mengelola daftar platform.</td></tr>';return}
+ if(!platforms.length){body.innerHTML='<tr><td colspan="3">Belum ada platform. Tambahkan platform baru di atas.</td></tr>';return}
+ body.innerHTML=platforms.map(p=>`<tr>
+  <td><span class="platform-swatch" style="background:${escapeAttr(platformCatalogColor(p))}"></span><b>${escapeHtml(p.name)}</b></td>
+  <td>${p.active?'<span class="status">Aktif</span>':'<span class="muted">Nonaktif</span>'}</td>
+  <td class="actions"><button type="button" data-platform-edit="${escapeAttr(p.id)}">Edit</button><button type="button" class="${p.active?'danger':'primary'}" data-platform-toggle="${escapeAttr(p.id)}">${p.active?'Nonaktifkan':'Aktifkan'}</button></td>
+ </tr>`).join("");
+ body.querySelectorAll("[data-platform-edit]").forEach(b=>b.onclick=()=>editPlatform(b.dataset.platformEdit));
+ body.querySelectorAll("[data-platform-toggle]").forEach(b=>b.onclick=()=>togglePlatform(b.dataset.platformToggle));
+}
+function renderPlatformSeatFilters(){
+ // Each side owns its own search and filter controls; never combine left/right rows.
+ renderPlatformSeatEditorSide("L");
+ renderPlatformSeatEditorSide("R");
+}
+async function addPlatform(){
+ if(!canAdmin()){alert("Hanya Admin yang dapat menambahkan platform.");return}
+ const name=$("newPlatformName").value.trim(),color=$("newPlatformColor").value||"#64748b";
+ if(!name){alert("Isi nama platform terlebih dahulu.");return}
+ const duplicate=platforms.some(p=>p.name.toLowerCase()===name.toLowerCase());
+ if(duplicate){alert("Nama platform sudah ada. Gunakan nama yang berbeda atau edit platform yang ada.");return}
+ const {error}=await sb.from("platforms").insert({name,color,active:true});
+ if(error){setPlatformManagerMessage("Gagal menambahkan platform: "+error.message);alert("Gagal menambahkan platform: "+error.message);return}
+ $("newPlatformName").value="";await loadPlatforms();setPlatformManagerMessage(`Platform ${name} berhasil ditambahkan.`);
+}
+function bulkPlatformColorForName(name){
+ const value=String(name||"").trim().toUpperCase();
+ if(/^JINX(?:\b|[-_])/.test(value)||value==="JINX")return "#dc2626";
+ if(/^VEGA(?:\b|[-_])/.test(value)||value==="VEGA")return "#d97706";
+ if(/^ZANE(?:\b|[-_])/.test(value)||value==="ZANE")return "#16a36a";
+ return $("bulkPlatformDefaultColor")?.value||"#64748b";
+}
+function parseBulkPlatformNames(){
+ const lines=String($("bulkPlatformNames")?.value||"").replace(/^\uFEFF/,"").split(/\r?\n/);
+ const seen=new Set(),rows=[];let duplicateInList=0,alreadyExists=0,blank=0;
+ const existing=new Set(platforms.map(p=>String(p.name||"").trim().toLocaleLowerCase()));
+ for(const raw of lines){
+  const name=raw.trim();if(!name){blank++;continue}
+  const key=name.toLocaleLowerCase();
+  if(seen.has(key)){duplicateInList++;continue}
+  seen.add(key);
+  if(existing.has(key)){alreadyExists++;continue}
+  rows.push({name,color:bulkPlatformColorForName(name),active:true});
+ }
+ return {rows,duplicateInList,alreadyExists,blank};
+}
+function updateBulkPlatformSummary(){
+ const summary=$("bulkPlatformSummary"),button=$("applyBulkPlatforms"),preview=$("bulkPlatformPreview");
+ if(!summary||!button||!preview)return;
+ const result=parseBulkPlatformNames(),{rows,duplicateInList,alreadyExists}=result;
+ button.disabled=!canAdmin()||rows.length===0;
+ if(!String($("bulkPlatformNames").value||"").trim())summary.textContent="Tempel daftar platform, lalu periksa sebelum menyimpan.";
+ else{
+  const parts=[`${rows.length} platform baru siap ditambahkan.`];
+  if(alreadyExists)parts.push(`${alreadyExists} nama sudah ada dan akan dilewati.`);
+  if(duplicateInList)parts.push(`${duplicateInList} duplikat dalam daftar akan dilewati.`);
+  summary.textContent=parts.join(" ");
+ }
+ if(rows.length){
+  preview.classList.remove("hidden");
+  preview.textContent=rows.slice(0,40).map((p,i)=>`${i+1}. ${p.name} — ${p.color}`).join("\n")+(rows.length>40?`\n…dan ${rows.length-40} platform lainnya`:"");
+ }else{preview.classList.add("hidden");preview.textContent=""}
+}
+async function addBulkPlatforms(){
+ if(!canAdmin()){alert("Hanya Admin yang dapat menambahkan platform.");return}
+ const {rows,duplicateInList,alreadyExists}=parseBulkPlatformNames();
+ if(!rows.length){alert("Tidak ada nama platform baru untuk ditambahkan. Periksa apakah daftar kosong atau semua nama sudah terdaftar.");return}
+ if(rows.length>500){alert("Maksimal 500 platform dalam satu proses. Bagi daftar menjadi beberapa batch.");return}
+ const examples=rows.slice(0,16).map((p,i)=>`${i+1}. ${p.name}`).join("\n");
+ const more=rows.length>16?`\n…dan ${rows.length-16} lainnya`:"";
+ const notes=[alreadyExists?`${alreadyExists} nama yang sudah ada akan dilewati.`:"",duplicateInList?`${duplicateInList} duplikat pada daftar akan dilewati.`:""].filter(Boolean).join(" ");
+ if(!confirm(`Tambahkan ${rows.length} platform sekaligus?\n${notes}\n\n${examples}${more}\n\nWarna otomatis: JINX merah, VEGA oranye, ZANE hijau. Nama lain memakai warna default.`))return;
+ const button=$("applyBulkPlatforms");button.disabled=true;button.textContent="Menyimpan...";
+ setPlatformManagerMessage(`Menyimpan ${rows.length} platform...`);
+ try{
+  const {error}=await sb.from("platforms").insert(rows);
+  if(error)throw error;
+  $("bulkPlatformNames").value="";
+  await loadPlatforms();
+  updateBulkPlatformSummary();
+  setPlatformManagerMessage(`Berhasil menambahkan ${rows.length} platform. ${alreadyExists+duplicateInList} nama duplikat/sudah terdaftar dilewati.`);
+ }catch(error){
+  setPlatformManagerMessage("Gagal menambahkan platform: "+error.message);
+  alert("Gagal menambahkan platform: "+error.message);
+ }finally{
+  button.textContent="+ Tambahkan semua";
+  updateBulkPlatformSummary();
+ }
+}
+async function editPlatform(id){
+ if(!canAdmin())return;
+ const p=platforms.find(x=>x.id===id);if(!p)return;
+ const name=prompt("Nama platform:",p.name);if(name===null)return;
+ const nextName=name.trim();if(!nextName){alert("Nama platform tidak boleh kosong.");return}
+ const color=prompt("Warna HEX platform (contoh #c52e49):",platformCatalogColor(p));if(color===null)return;
+ const nextColor=color.trim();if(!/^#[0-9a-f]{6}$/i.test(nextColor)){alert("Format warna harus seperti #c52e49.");return}
+ const same=platforms.find(x=>x.id!==id&&x.name.toLowerCase()===nextName.toLowerCase());
+ if(same){alert("Nama platform tersebut sudah dipakai platform lain.");return}
+ const oldName=p.name,renamed=oldName!==nextName;
+ const affected=(Object.values(assignments).filter(x=>String(x.platform||"").trim()===oldName).length);
+ const promptText=renamed?`Ubah nama ${oldName} menjadi ${nextName}?\n\nNama platform di semua tanggal dan shift yang memakai nama persis ${oldName} juga akan ikut diperbarui.`:`Simpan warna baru untuk ${oldName}?`;
+ if(!confirm(promptText))return;
+ setPlatformManagerMessage("Menyimpan perubahan platform...");
+ try{
+  const {error:catalogError}=await sb.from("platforms").update({name:nextName,color:nextColor}).eq("id",id);
+  if(catalogError)throw catalogError;
+  if(renamed){
+   const {error:seatError}=await sb.from("seat_assignments").update({platform:nextName,updated_by:currentUser.id}).eq("platform",oldName);
+   if(seatError){
+    const {error:rollbackError}=await sb.from("platforms").update({name:oldName,color:p.color}).eq("id",id);
+    throw new Error("Nama katalog sudah diperbarui tetapi pemutakhiran label kursi gagal: "+seatError.message+(rollbackError?"; rollback katalog juga gagal: "+rollbackError.message:"; nama katalog sudah dikembalikan."));
+   }
+  }
+  await loadPlatforms();await loadAssignments();renderPlatformSeatEditor();
+  setPlatformManagerMessage(renamed?`Nama ${oldName} berhasil diubah menjadi ${nextName}. Semua catatan historis dengan nama lama ikut diperbarui.`:`Warna ${nextName} berhasil diperbarui.`);
+ }catch(error){setPlatformManagerMessage("Gagal menyimpan: "+error.message);alert("Gagal menyimpan platform: "+error.message)}
+}
+async function togglePlatform(id){
+ if(!canAdmin())return;
+ const p=platforms.find(x=>x.id===id);if(!p)return;
+ const next=!p.active;
+ if(!confirm(`${next?'Aktifkan':'Nonaktifkan'} platform ${p.name}? Data kursi lama tidak akan dihapus.`))return;
+ const {error}=await sb.from("platforms").update({active:next}).eq("id",id);
+ if(error){alert("Gagal mengubah status platform: "+error.message);return}
+ await loadPlatforms();renderPlatformSeatEditor();setPlatformManagerMessage(`Platform ${p.name} berhasil ${next?'diaktifkan':'dinonaktifkan'}.`);
+}
+function renderPlatformSeatEditor(){
+ renderPlatformSeatEditorSide("L");
+ renderPlatformSeatEditorSide("R");
+}
+function renderPlatformSeatEditorSide(side){
+ const suffix=side==="L"?"L":"R";
+ const body=$("platformSeatBody"+suffix);if(!body)return;
+ if(!canAdmin()){
+  body.innerHTML='<tr><td colspan="3">Hanya Admin yang dapat mengubah pemetaan platform.</td></tr>';
+  return;
+ }
+ const q=String($("platformSeatSearch"+suffix)?.value||"").trim().toLowerCase();
+ const filter=$("platformSeatFilter"+suffix)?.value||"";
+ const sideSeats=seats.filter(seat=>seat.side===side);
+ const distinct=[...new Set(sideSeats.map(seat=>String(assignments[seat.id]?.platform||"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+ const filterSelect=$("platformSeatFilter"+suffix);
+ const previousFilter=filterSelect?.value||"";
+ if(filterSelect){
+  const defaultLabel=side==="L"?"Semua platform sisi kiri":"Semua platform sisi kanan";
+  filterSelect.innerHTML=`<option value="">${defaultLabel}</option><option value="__empty__">Belum ditentukan</option>`+distinct.map(name=>`<option value="${escapeAttr(name)}">${escapeHtml(name)}</option>`).join("");
+  if([...filterSelect.options].some(o=>o.value===previousFilter))filterSelect.value=previousFilter;
+ }
+ const activeFilter=filterSelect?.value||"";
+ const rows=sideSeats.filter(seat=>{
+  const code=seat.id.toLowerCase(),current=String(assignments[seat.id]?.platform||"").trim();
+  return (!q||code.includes(q))&&(!activeFilter||(activeFilter==="__empty__"?!current:current.toLowerCase()===activeFilter.toLowerCase()));
+ });
+ if(!rows.length){body.innerHTML='<tr><td colspan="3">Tidak ada kursi yang cocok pada '+(side==="L"?"Sisi Kiri":"Sisi Kanan")+'.</td></tr>';return}
+ const active=platforms.filter(p=>p.active);
+ body.innerHTML=rows.map(seat=>{
+  const current=String(assignments[seat.id]?.platform||"");
+  const hasCurrent=current&&!active.some(p=>p.name===current);
+  const options='<option value="">Belum ditentukan</option>'+(hasCurrent?`<option value="${escapeAttr(current)}" selected>${escapeHtml(current)} (lama/nonaktif)</option>`:'')+active.map(p=>`<option value="${escapeAttr(p.name)}" ${p.name===current?'selected':''}>${escapeHtml(p.name)}</option>`).join("");
+  return `<tr><td>${escapeHtml(seat.id)}</td><td><select data-seat-platform="${escapeAttr(seat.id)}">${options}</select></td><td><span class="platform-save-state" data-platform-state="${escapeAttr(seat.id)}">${current?'Tersimpan':'Kosong'}</span></td></tr>`;
+ }).join("");
+ body.querySelectorAll("[data-seat-platform]").forEach(select=>select.onchange=()=>saveSeatPlatform(select.dataset.seatPlatform,select.value));
+}
+async function saveSeatPlatform(seatCode,platformName){
+ if(!canAdmin()){alert("Hanya Admin yang dapat mengubah pemetaan platform.");return}
+ const state=document.querySelector(`[data-platform-state="${CSS.escape(seatCode)}"]`);
+ if(state)state.textContent="Menyimpan...";
+ assignments[seatCode] ||= {seat_code:seatCode,employee_name:"",platform:""};
+ assignments[seatCode].platform=platformName;
+ const payload={work_date:$("workDate").value,shift:$("workShift").value,seat_code:seatCode,employee_name:assignments[seatCode].employee_name||"",platform:platformName||"",updated_by:currentUser.id};
+ const {error}=await sb.from("seat_assignments").upsert(payload,{onConflict:"work_date,shift,seat_code"});
+ if(error){if(state)state.textContent="Gagal";setPlatformSeatMessage("Gagal menyimpan "+seatCode+": "+error.message);await loadAssignments();return}
+ if(state)state.textContent="Tersimpan";
+ renderSeats("L",activeFloor==="8"?floor8Config.leftTables:3);renderSeats("R",activeFloor==="8"?floor8Config.rightTables:2);updateStats();renderBulkPlatformOptions();updateBulkSummary();setPlatformSeatMessage(`${seatCode} berhasil disimpan dengan platform ${platformName||'(belum ditentukan)'}.`);
+}
+async function refreshPlatformTools(){
+ renderPlatformCatalog();renderPlatformSeatEditor();renderBulkPlatformOptions();
+}
+
 async function loadEmployees(){
  const {data,error}=await sb.from("employees").select("*").order("full_name");
  if(error){console.error(error);return}employees=data||[];renderEmployees();
@@ -790,7 +1347,8 @@ async function loadAssignments(){
  const {data,error}=await sb.from("seat_assignments").select("seat_code,employee_name,platform").eq("work_date",date).eq("shift",shift);
  if(loadSequence!==assignmentLoadSequence)return;
  if(error){message("Gagal memuat: "+error.message);return}
- let rows=data||[];
+ const activeSeatIds=new Set(seats.map(x=>x.id));
+ let rows=(data||[]).filter(x=>activeSeatIds.has(x.seat_code));
  let loadMessage="Tersinkron online";
  // Only carry forward when the selected date/shift has no records at all.
  // The source is the immediately preceding calendar date for the same shift.
@@ -802,7 +1360,7 @@ async function loadAssignments(){
     .eq("work_date",sourceDate).eq("shift",shift);
    if(loadSequence!==assignmentLoadSequence)return;
    if(sourceError){message("Data hari ini kosong. Gagal memeriksa denah hari sebelumnya: "+sourceError.message);return}
-   const source=(sourceRows||[]).filter(x=>String(x.employee_name||"").trim()||String(x.platform||"").trim());
+   const source=(sourceRows||[]).filter(x=>activeSeatIds.has(x.seat_code)&&(String(x.employee_name||"").trim()||String(x.platform||"").trim()));
    if(source.length){
     const copiedRows=source.map(x=>({
      work_date:date,shift,seat_code:x.seat_code,
@@ -820,38 +1378,59 @@ async function loadAssignments(){
   }
  }
  assignments={};rows.forEach(x=>assignments[x.seat_code]=x);
- renderSeats("L",3);renderSeats("R",2);updateStats();updateBulkSummary();message(loadMessage);
+ renderSeats("L",activeFloor==="8"?floor8Config.leftTables:3);renderSeats("R",activeFloor==="8"?floor8Config.rightTables:2);updateStats();renderBulkPlatformOptions();updateBulkSummary();
+ if($("platformPanel")&&!$("platformPanel").classList.contains("hidden"))renderPlatformSeatEditor();
+ message(loadMessage);
 }
-let bulkNamesPreview=[];
-function orderedSeatCodes(){
- const ids=[];
- // Urutan mengikuti denah yang terlihat: seluruh sisi kiri, lalu seluruh sisi kanan.
- for(const side of ["L","R"]){
-  const tableCount=side==="L"?3:2;
-  for(let row=1;row<=8;row++)for(let table=1;table<=tableCount;table++)for(let pc=1;pc<=6;pc++)ids.push(`${side}-R${row}-T${table}-PC${pc}`);
- }
- return ids;
+function orderedSeatCodesByDiagram(){
+ // Urutan denah zig-zag yang sama dengan Platform tools: sisi kiri kemudian kanan.
+ return seats.map(seat=>seat.id);
 }
-function parseBulkNames(){
- const raw=$("bulkEmployeeNames").value||"";
+function sideLabel(side){return side==="L"?"Sisi Kiri":"Sisi Kanan"}
+function parseBulkNames(side){
+ const raw=$("bulkEmployeeNames"+side)?.value||"";
  const names=raw.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
  const seen=new Set(),unique=[];
  names.forEach(name=>{const key=name.toLocaleLowerCase();if(!seen.has(key)){seen.add(key);unique.push(name)}});
  return {names:unique,duplicates:names.length-unique.length};
 }
-function availableSeatCodes(){
- return orderedSeatCodes().filter(id=>!String(assignments[id]?.employee_name||"").trim());
+function availableSeatCodesForPlatform(platformName,side){
+ const target=String(platformName||"").trim().toLowerCase();
+ if(!target||!(side==="L"||side==="R"))return [];
+ return seats.filter(seat=>seat.side===side).map(seat=>seat.id).filter(id=>
+  String(assignments[id]?.platform||"").trim().toLowerCase()===target &&
+  !String(assignments[id]?.employee_name||"").trim()
+ );
 }
-function updateBulkSummary(){
- if(!$("bulkEmployeeSummary"))return;
- const {names,duplicates}=parseBulkNames(),available=availableSeatCodes().length;
- const willAdd=Math.min(names.length,available);
- bulkNamesPreview=names;
- $("applyBulkNames").disabled=!canEditSeats()||willAdd===0;
- let summary=names.length?`${names.length} nama unik terdeteksi. ${available} kursi masih kosong. ${willAdd} nama bisa dimasukkan.`:"Belum ada nama yang dimasukkan.";
- if(duplicates)summary+=` ${duplicates} nama duplikat dalam daftar akan dilewati.`;
- if(names.length>available)summary+=` Kelebihan ${names.length-available} nama karena kursi kosong tidak cukup.`;
- $("bulkEmployeeSummary").textContent=summary;
+function renderBulkPlatformOptions(side){
+ if(!side){renderBulkPlatformOptions("L");renderBulkPlatformOptions("R");return}
+ const select=$("bulkTargetPlatform"+side);if(!select)return;
+ const previous=select.value;
+ const assignedOnSide=new Set(seats.filter(seat=>seat.side===side).map(seat=>String(assignments[seat.id]?.platform||"").trim().toLowerCase()).filter(Boolean));
+ const active=platforms.filter(p=>p.active&&assignedOnSide.has(String(p.name||"").trim().toLowerCase()));
+ const emptyText=side==="L"?"Belum ada platform yang dipetakan di Sisi Kiri":"Belum ada platform yang dipetakan di Sisi Kanan";
+ select.innerHTML='<option value="">'+(active.length?"Pilih platform untuk "+sideLabel(side):emptyText)+'</option>'+active.map(p=>`<option value="${escapeAttr(p.name)}">${escapeHtml(p.name)}</option>`).join("");
+ if(active.some(p=>p.name===previous))select.value=previous;
+}
+function updateBulkSummary(side){
+ if(!side){updateBulkSummary("L");updateBulkSummary("R");return}
+ const summary=$("bulkEmployeeSummary"+side),button=$("applyBulkNames"+side),preview=$("bulkEmployeePreview"+side);
+ if(!summary||!button||!preview)return;
+ const {names,duplicates}=parseBulkNames(side);
+ const platformName=$("bulkTargetPlatform"+side)?.value||"";
+ const available=availableSeatCodesForPlatform(platformName,side);
+ const willAdd=Math.min(names.length,available.length);
+ button.disabled=!canEditSeats()||!platformName||willAdd===0;
+ let messageText;
+ if(!platformName)messageText=names.length?`${names.length} nama unik terdeteksi. Pilih platform yang dipetakan di ${sideLabel(side)}.`:`Pilih platform ${sideLabel(side).toLowerCase()}, lalu masukkan daftar nama.`;
+ else messageText=names.length?`${names.length} nama unik · ${platformName} · ${available.length} kursi kosong di ${sideLabel(side)} · ${willAdd} nama akan ditempatkan.`:`Platform ${platformName} dipilih khusus untuk ${sideLabel(side)}. Tersedia ${available.length} kursi kosong.`;
+ if(duplicates)messageText+=` ${duplicates} nama duplikat dalam daftar akan dilewati.`;
+ if(names.length>available.length)messageText+=` ${names.length-available.length} nama belum mendapat kursi karena slot di ${sideLabel(side)} tidak cukup.`;
+ summary.textContent=messageText;
+ if(names.length&&platformName&&available.length){
+  preview.classList.remove("hidden");
+  preview.textContent=names.slice(0,30).map((name,i)=>`${i+1}. ${name} → ${available[i]||"Tidak ada slot tersisa di sisi ini"}`).join("\n")+(names.length>30?`\n…dan ${names.length-30} nama lainnya`:"");
+ }else{preview.classList.add("hidden");preview.textContent=""}
 }
 function setEntryMode(mode){
  const isBulk=mode==="bulk";
@@ -861,58 +1440,71 @@ function setEntryMode(mode){
  $("bulkEntryMode").classList.toggle("active",isBulk);
  if(isBulk)updateBulkSummary();
 }
-async function applyBulkNames(){
+async function applyBulkNames(side){
+ if(!(side==="L"||side==="R")){alert("Pilih sisi kiri atau kanan terlebih dahulu.");return}
  if(!canEditSeats()){alert("Akun ini tidak memiliki izin mengubah denah.");return}
- const {names,duplicates}=parseBulkNames();
- if(!names.length){alert("Masukkan minimal satu nama karyawan.");return}
+ const {names,duplicates}=parseBulkNames(side);
+ const platformName=$("bulkTargetPlatform"+side).value;
+ if(!platformName){alert(`Pilih platform untuk ${sideLabel(side)} terlebih dahulu.`);return}
+ if(!names.length){alert(`Masukkan minimal satu nama untuk ${sideLabel(side)}.`);return}
  const date=$("workDate").value,shift=$("workShift").value;
- const available=availableSeatCodes();
- if(!available.length){alert("Tidak ada kursi kosong untuk tanggal dan shift ini.");return}
- if(names.length>available.length){alert(`Nama yang dimasukkan ${names.length}, sedangkan kursi kosong hanya ${available.length}. Kurangi daftar menjadi maksimal ${available.length} nama.`);return}
- const preview=names.map((name,i)=>`${i+1}. ${name} → ${available[i]}`).slice(0,12).join("\n");
- const more=names.length>12?`\n...dan ${names.length-12} nama lainnya`:"";
- if(!confirm(`Masukkan ${names.length} nama ke kursi kosong untuk ${date} · Shift ${shift}?\n\n${preview}${more}\n\nKursi yang sudah berisi nama tidak akan ditimpa.`))return;
+ const available=availableSeatCodesForPlatform(platformName,side);
+ if(!available.length){alert(`Tidak ada kursi kosong platform ${platformName} di ${sideLabel(side)}. Sisi lain tidak akan digunakan.`);return}
+ if(names.length>available.length){alert(`Daftar berisi ${names.length} nama, tetapi ${sideLabel(side)} hanya memiliki ${available.length} kursi kosong untuk platform ${platformName}. Kurangi daftar nama atau atur pemetaan sisi ini melalui Platform tools.`);return}
+ const preview=names.map((name,i)=>`${i+1}. ${name} → ${available[i]}`).slice(0,18).join("\n");
+ const more=names.length>18?`\n…dan ${names.length-18} nama lainnya`:"";
+ if(!confirm(`Masukkan ${names.length} nama hanya ke ${sideLabel(side)} untuk platform ${platformName}?\nTanggal ${date} · Shift ${shift}\nUrutan sisi ini: baris atas kiri ke kanan, lalu baris bawah kanan ke kiri; lanjut ke baris berikutnya. Data sisi lainnya tidak akan disentuh.\n\n${preview}${more}\n\nKursi dari platform lain dan semua kursi di sisi seberang akan dilewati.`))return;
  const rows=names.map((name,i)=>{
   const seatCode=available[i],existing=assignments[seatCode]||{};
-  return {work_date:date,shift,seat_code:seatCode,employee_name:name,platform:existing.platform||"",updated_by:currentUser.id};
+  return {work_date:date,shift,seat_code:seatCode,employee_name:name,platform:existing.platform,updated_by:currentUser.id};
  });
- const button=$("applyBulkNames");button.disabled=true;button.textContent="Menyimpan...";message(`Menyimpan ${rows.length} nama...`);
+ const button=$("applyBulkNames"+side);button.disabled=true;button.textContent="Menyimpan...";message(`Menyimpan ${rows.length} nama hanya untuk ${sideLabel(side)} · ${platformName}...`);
  try{
   const {error}=await sb.from("seat_assignments").upsert(rows,{onConflict:"work_date,shift,seat_code"});
   if(error)throw error;
-  $("bulkEmployeeNames").value="";$("bulkEmployeeFile").value="";bulkNamesPreview=[];
+  $("bulkEmployeeNames"+side).value="";$("bulkEmployeeFile"+side).value="";
   await loadAssignments();
-  $("bulkEmployeeSummary").textContent=`Berhasil memasukkan ${rows.length} nama ke denah untuk ${date}, shift ${shift}.${duplicates?` ${duplicates} nama duplikat dilewati.`:""}`;
-  message(`${rows.length} nama berhasil disimpan online`);
+  $("bulkEmployeeSummary"+side).textContent=`Berhasil memasukkan ${rows.length} nama ke ${sideLabel(side)} · platform ${platformName} · ${date} · shift ${shift}.${duplicates?` ${duplicates} nama duplikat dilewati.`:""}`;
+  $("bulkEmployeePreview"+side).classList.add("hidden");
+  message(`${rows.length} nama berhasil disimpan hanya di ${sideLabel(side)} untuk ${platformName}`);
  }catch(error){
   message("Gagal menyimpan daftar nama: "+error.message);
   alert("Gagal menyimpan daftar nama: "+error.message);
- }finally{button.disabled=false;button.textContent="Masukkan ke kursi kosong";updateBulkSummary()}
+ }finally{button.textContent=side==="L"?"Isi Sisi Kiri":"Isi Sisi Kanan";updateBulkSummary(side)}
 }
 function renderSeats(side,tableCount){
  const target=$(side==="L"?"leftRows":"rightRows");
- target.innerHTML=Array.from({length:8},(_,r)=>{
-  const desks=Array.from({length:tableCount},(_,t)=>{
+ const is8=activeFloor==="8",config=is8?floor8Config:null;
+ const rowCount=is8?config.depthRows:8;
+ const deskCount=is8?(side==="L"?config.leftTables:config.rightTables):tableCount;
+ const perFace=is8?config.seatsPerFace:3;
+ const topPcs=Array.from({length:perFace},(_,i)=>i+1);
+ const bottomPcs=Array.from({length:perFace},(_,i)=>perFace*2-i);
+ const seatCode=(r,t,pc)=>is8?`F8-${side}-R${r}-T${t}-PC${pc}`:`${side}-R${r}-T${t}-PC${pc}`;
+ target.innerHTML=Array.from({length:rowCount},(_,ri)=>{
+  const r=ri+1;
+  const desks=Array.from({length:deskCount},(_,ti)=>{
+   const t=ti+1;
    const makeSeat=pc=>{
-    const id=`${side}-R${r+1}-T${t+1}-PC${pc}`,v=assignments[id]||{};
-    return `<div class="seat ${v.employee_name?"occupied":""} ${platformColorClass(v.platform)}" data-seat="${id}">
-     <div class="seat-head"><span>${side==="L"?"K":"Kn"}${t+1} · R${r+1}</span><span>PC ${pc}</span></div>
+    const id=seatCode(r,t,pc),v=assignments[id]||{};
+    return `<div class="seat ${v.employee_name?"occupied":""} ${platformColorClass(v.platform)}" data-seat="${escapeAttr(id)}">
+     <div class="seat-head"><span>${side==="L"?"K":"Kn"}${t} · R${r}</span><span>PC ${pc}</span></div>
      <div class="seat-platform">${escapeHtml(v.platform||"Platform belum diisi")}</div>
      <textarea data-field="employee_name" rows="2" placeholder="Nama karyawan" ${canEditSeats()?"":"disabled"}>${escapeHtml(v.employee_name||"")}</textarea>
-     <textarea data-field="platform" rows="2" placeholder="Nama platform" ${canEditSeats()?"":"disabled"}>${escapeHtml(v.platform||"")}</textarea>
     </div>`;
    };
-   return `<div class="desk"><div class="desk-title">Meja ${side==="L"?"Kiri":"Kanan"} ${t+1}</div><div class="facing">
-    <div class="face-label">BARIS ATAS</div><div class="seats">${[1,2,3].map(makeSeat).join("")}</div>
-    <div class="divider"></div><div class="face-label">BARIS BAWAH</div><div class="seats">${[4,5,6].map(makeSeat).join("")}</div>
+   return `<div class="desk"><div class="desk-title">Meja ${side==="L"?"Kiri":"Kanan"} ${t}</div><div class="facing">
+    <div class="face-label">BARIS ATAS</div><div class="seats" style="grid-template-columns:repeat(${perFace},minmax(155px,1fr))">${topPcs.map(makeSeat).join("")}</div>
+    <div class="divider"></div><div class="face-label">BARIS BAWAH</div><div class="seats" style="grid-template-columns:repeat(${perFace},minmax(155px,1fr))">${bottomPcs.map(makeSeat).join("")}</div>
    </div></div>`;
   }).join("");
-  return `<div class="row-seats"><div class="row-label">BARIS ${r+1}</div><div class="desk-grid ${side==="R"?"right":""}">${desks}</div></div>`;
+  return `<div class="row-seats"><div class="row-label">BARIS ${r}</div><div class="desk-grid ${side==="R"?"right":""}" style="grid-template-columns:repeat(${deskCount},minmax(525px,1fr))">${desks}</div></div>`;
  }).join("");
- target.querySelectorAll("[data-seat] input,[data-seat] textarea").forEach(el=>{
+ target.querySelectorAll("[data-seat]").forEach(card=>applyPlatformColor(card,assignments[card.dataset.seat]?.platform||""));
+ target.querySelectorAll("[data-seat] textarea").forEach(el=>{
   el.addEventListener("change",async()=>{
    const card=el.closest("[data-seat]"),id=card.dataset.seat;
-   assignments[id] ||= {seat_code:id};
+   assignments[id] ||= {seat_code:id,employee_name:"",platform:""};
    assignments[id][el.dataset.field]=el.value.trim();
    card.classList.toggle("occupied",!!assignments[id].employee_name);
    card.querySelector(".seat-platform").textContent=assignments[id].platform||"Platform belum diisi";
@@ -921,13 +1513,14 @@ function renderSeats(side,tableCount){
   });
  });
 }
+
 async function saveSeat(id){
  if(!canEditSeats())return;
  const v=assignments[id]||{},payload={work_date:$("workDate").value,shift:$("workShift").value,seat_code:id,employee_name:v.employee_name||"",platform:v.platform||"",updated_by:currentUser.id};
  message("Menyimpan...");
  const {error}=await sb.from("seat_assignments").upsert(payload,{onConflict:"work_date,shift,seat_code"});
  if(error){message("Gagal simpan: "+error.message);return}
- message("Tersimpan online");updateStats();
+ message("Tersimpan online");updateStats();renderBulkPlatformOptions();updateBulkSummary();
 }
 function updateStats(){
  const vals=Object.values(assignments),present=vals.filter(v=>(v.employee_name||"").trim()).length;
@@ -938,11 +1531,13 @@ function updateStats(){
 }
 async function dashboard(){
  const date=$("dashDate").value,shift=$("dashShift").value;
- const {data,error}=await sb.from("seat_assignments").select("employee_name,platform").eq("work_date",date).eq("shift",shift);
+ const {data,error}=await sb.from("seat_assignments").select("seat_code,employee_name,platform").eq("work_date",date).eq("shift",shift);
  if(error){$("platformSummary").textContent=error.message;return}
- const rows=data||[],present=rows.filter(x=>(x.employee_name||"").trim()).length;
+ const activeSeatIds=new Set(seats.map(x=>x.id));
+ const rows=(data||[]).filter(x=>activeSeatIds.has(x.seat_code)),present=rows.filter(x=>(x.employee_name||"").trim()).length;
+ $("dashTotalSeats").textContent=TOTAL;
  $("dashPresent").textContent=present;$("dashEmpty").textContent=TOTAL-present;
- $("dashPercent").textContent=(present/TOTAL*100).toFixed(1)+"%";
+ $("dashPercent").textContent=(TOTAL?(present/TOTAL*100).toFixed(1):"0.0")+"%";
  const map={};rows.forEach(x=>{if((x.employee_name||"").trim()&&(x.platform||"").trim())map[x.platform]=(map[x.platform]||0)+1});
  $("dashPlatforms").textContent=Object.keys(map).length;
  $("platformSummary").innerHTML=Object.keys(map).length?`<table class="table"><thead><tr><th>Platform</th><th>Total hadir</th></tr></thead><tbody>${Object.entries(map).sort((a,b)=>a[0].localeCompare(b[0])).map(([n,c])=>`<tr><td>${escapeHtml(n)}</td><td><b>${c}</b></td></tr>`).join("")}</tbody></table>`:"Belum ada data hadir untuk tanggal dan shift ini.";
@@ -1048,29 +1643,59 @@ async function toggleManagedUser(id,isActive){
 function escapeHtml(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function escapeAttr(v){return escapeHtml(v)}
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{
+ if(b.classList.contains("hidden"))return;
  document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x===b));
  document.querySelectorAll(".tab-panel").forEach(x=>x.classList.add("hidden"));$(b.dataset.tab).classList.remove("hidden");
  if(b.dataset.tab==="dashboardPanel")dashboard();
+ if(b.dataset.tab==="platformPanel")refreshPlatformTools();
 });
+// Floor selection and Lantai 8 planning controls.
+$("activeFloorSelect").addEventListener("change",e=>setActiveFloor(e.target.value));
+["f8DepthRows","f8LeftTables","f8RightTables","f8SeatsPerFace"].forEach(id=>$(id).addEventListener("input",updateFloor8CapacityPreview));
+function previewFloor8Plan(){
+ const c=readFloor8Inputs();
+ floor8Config=c;refreshActiveSeatList();updateFloorDisplay();
+ if(activeFloor==="8"){
+  renderSeats("L",c.leftTables);renderSeats("R",c.rightTables);updateStats();renderBulkPlatformOptions();updateBulkSummary();
+ }
+ const left=c.depthRows*c.leftTables*c.seatsPerFace*2,right=c.depthRows*c.rightTables*c.seatsPerFace*2;
+ $("floor8PlanStatus").textContent=`Preview denah: ${left+right} kursi · Sisi Kiri ${left} kursi · Sisi Kanan ${right} kursi. Susunan ini belum tersimpan online. Klik Simpan denah Lantai 8 untuk menerapkannya.`;
+}
+$("previewFloor8Plan").onclick=previewFloor8Plan;
+$("saveFloor8Plan").onclick=saveFloor8Plan;
+$("resetFloor8Plan").onclick=()=>{if(!confirm("Kembalikan contoh awal Lantai 8: 5 baris, 1 meja kiri, 1 meja kanan (2 meja melintang), 3 kursi atas dan 3 kursi bawah per meja?"))return;floor8Config={...FLOOR8_DEFAULT};syncFloor8Inputs();previewFloor8Plan();};
 $("singleEntryMode").onclick=()=>setEntryMode("single");
 $("bulkEntryMode").onclick=()=>setEntryMode("bulk");
-$("bulkEmployeeNames").addEventListener("input",updateBulkSummary);
-$("previewBulkNames").onclick=updateBulkSummary;
-$("applyBulkNames").onclick=applyBulkNames;
-$("clearBulkNames").onclick=()=>{$("bulkEmployeeNames").value="";$("bulkEmployeeFile").value="";updateBulkSummary()};
-$("bulkEmployeeFile").addEventListener("change",async e=>{
- const file=e.target.files?.[0];if(!file)return;
- try{
-  const text=await file.text();
-  // Support one-column TXT/CSV/TSV. For multi-column files, use the first column as the employee name.
-  const lines=text.replace(/^\uFEFF/,"").split(/\r?\n/).filter(line=>line.trim());
-  const names=lines.map((line,index)=>{
-   const first=(line.split(/[\t,;]/)[0]||"").trim().replace(/^"|"$/g,"");
-   return index===0&&/^(nama|name|employee_name|full_name)$/i.test(first)?"":first;
-  }).filter(Boolean);
-  $("bulkEmployeeNames").value=names.join("\n");updateBulkSummary();
- }catch(error){alert("File tidak dapat dibaca: "+error.message)}
+["L","R"].forEach(side=>{
+ $("bulkEmployeeNames"+side).addEventListener("input",()=>updateBulkSummary(side));
+ $("bulkTargetPlatform"+side).addEventListener("change",()=>updateBulkSummary(side));
+ $("previewBulkNames"+side).onclick=()=>updateBulkSummary(side);
+ $("applyBulkNames"+side).onclick=()=>applyBulkNames(side);
+ $("clearBulkNames"+side).onclick=()=>{$("bulkEmployeeNames"+side).value="";$("bulkEmployeeFile"+side).value="";updateBulkSummary(side)};
+ $("bulkEmployeeFile"+side).addEventListener("change",async e=>{
+  const file=e.target.files?.[0];if(!file)return;
+  try{
+   const text=await file.text();
+   const lines=text.replace(/^\uFEFF/,"").split(/\r?\n/).filter(line=>line.trim());
+   const names=lines.map((line,index)=>{
+    const first=(line.split(/[\t,;]/)[0]||"").trim().replace(/^"|"$/g,"");
+    return index===0&&/^(nama|name|employee_name|full_name)$/i.test(first)?"":first;
+   }).filter(Boolean);
+   $("bulkEmployeeNames"+side).value=names.join("\n");updateBulkSummary(side);
+  }catch(error){alert("File tidak dapat dibaca: "+error.message)}
+ });
 });
+$("addPlatformBtn").onclick=addPlatform;
+$("bulkPlatformNames").addEventListener("input",updateBulkPlatformSummary);
+$("bulkPlatformDefaultColor").addEventListener("input",updateBulkPlatformSummary);
+$("previewBulkPlatforms").onclick=updateBulkPlatformSummary;
+$("applyBulkPlatforms").onclick=addBulkPlatforms;
+$("clearBulkPlatforms").onclick=()=>{$("bulkPlatformNames").value="";updateBulkPlatformSummary()};
+["L","R"].forEach(side=>{
+ $("platformSeatSearch"+side).addEventListener("input",()=>renderPlatformSeatEditorSide(side));
+ $("platformSeatFilter"+side).addEventListener("change",()=>renderPlatformSeatEditorSide(side));
+});
+$("refreshPlatformMap").onclick=async()=>{await loadAssignments();await loadPlatforms();renderPlatformSeatEditor()};
 $("loginBtn").onclick=login;
 $("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
 $("logoutBtn").onclick=async()=>{if(sb)await sb.auth.signOut();currentUser=null;setApp(false)};
