@@ -1930,6 +1930,66 @@ header #logoutBtn{background:rgba(255,255,255,.08)!important;color:#fff!importan
 @media print{#workspaceToggleBtn{display:none!important}}
 </style>
 
+
+<style id="fixed-platform-scroll-layout-fix">
+/* Keep the app header visible while the document scrolls.
+   The Workspace menu remains independently scrollable on desktop. */
+html, body {
+  min-height:100% !important;
+  height:auto !important;
+  overflow-x:hidden !important;
+  overflow-y:auto !important;
+  scroll-padding-top:82px;
+}
+body { min-height:100vh !important; }
+header {
+  position:sticky !important;
+  top:0 !important;
+  z-index:100 !important;
+}
+main#appScreen {
+  height:auto !important;
+  min-height:calc(100vh - 70px) !important;
+  overflow:visible !important;
+  padding-bottom:76px !important;
+}
+#appScreen > .nav {
+  position:fixed !important;
+  top:70px !important;
+  bottom:0 !important;
+  height:auto !important;
+  max-height:calc(100vh - 70px) !important;
+  overflow-x:hidden !important;
+  overflow-y:auto !important;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;
+}
+#appScreen > .tab-panel {
+  min-height:0 !important;
+  height:auto !important;
+  overflow:visible !important;
+}
+#appScreen > .tab-panel > .panel {
+  overflow:visible !important;
+  scroll-margin-top:82px;
+}
+@media (max-width:680px) {
+  main#appScreen { padding-bottom:60px !important; }
+  #appScreen > .nav {
+    position:sticky !important;
+    top:70px !important;
+    left:auto !important;
+    bottom:auto !important;
+    width:auto !important;
+    height:auto !important;
+    max-height:none !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+  }
+}
+</style>
+
 </head>
 <body>
 <header>
