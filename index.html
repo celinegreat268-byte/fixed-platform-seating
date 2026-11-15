@@ -1971,14 +1971,14 @@ header #logoutBtn{background:rgba(255,255,255,.08)!important;color:#fff!importan
     <span id="saveStatus" class="muted">Belum tersinkron</span>
    </div>
    <div class="stats">
-    <div class="stat"><small>Total kapasitas</small><b id="totalCapacity">240</b></div>
-    <div class="stat"><small>Hadir / nama terisi</small><b id="presentCount">0</b></div>
-    <div class="stat"><small>Kursi kosong</small><b id="emptyCount">240</b></div>
-    <div class="stat"><small>Platform terisi</small><b id="platformCount">0</b></div>
-    <div class="stat"><small>Platform berbeda</small><b id="platformKinds">0</b></div>
+    <div class="stat"><small id="totalCapacityLabel">Total kapasitas — Lantai 9</small><b id="totalCapacity">240</b></div>
+    <div class="stat"><small id="presentCountLabel">Hadir / nama terisi — Lantai 9</small><b id="presentCount">0</b></div>
+    <div class="stat"><small id="emptyCountLabel">Kursi kosong — Lantai 9</small><b id="emptyCount">240</b></div>
+    <div class="stat"><small id="platformCountLabel">Platform terisi — Lantai 9</small><b id="platformCount">0</b></div>
+    <div class="stat"><small id="platformKindsLabel">Platform berbeda — Lantai 9</small><b id="platformKinds">0</b></div>
    </div>
-   <p class="muted">Isi nama karyawan pada setiap kursi. Nama platform ditampilkan sebagai informasi dan hanya dapat diatur melalui tab <b>Platform tools</b> oleh Admin, agar tidak berubah karena salah ketik. Nama yang terisi otomatis dihitung sebagai hadir untuk tanggal dan shift yang dipilih.</p>
-   <p class="muted" style="margin-top:6px"><b>Salin denah harian:</b> Jika tanggal dan shift yang dipilih belum memiliki data, aplikasi akan menyalin nama, platform, dan posisi kursi dari tanggal kalender sebelumnya pada shift yang sama di lantai yang sama. Data Lantai 8 dan Lantai 9 dipisahkan.</p>
+   <p id="floorAttendanceHint" class="muted">Lantai 9 · Operasional: isi nama karyawan pada kursi yang tersedia. Nama yang terisi otomatis dihitung sebagai hadir untuk tanggal dan shift yang dipilih.</p>
+   <p id="floorCarryForwardHint" class="muted" style="margin-top:6px"><b>Salin denah harian — Lantai 9:</b> Jika tanggal dan shift yang dipilih belum memiliki data, aplikasi akan menyalin nama, platform, dan posisi kursi dari tanggal kalender sebelumnya pada shift yang sama di lantai yang sama. Data Lantai 8 dan Lantai 9 tetap dipisahkan.</p>
    <div id="floor8Planner" class="floor8-planner hidden no-print">
     <div class="toolbar" style="justify-content:space-between;align-items:center"><div><div class="floor8-planning-tag">Planning · Belum final</div><h3>Atur pemetaan meja — Lantai 8</h3><p class="muted" style="margin:0">Masukkan ukuran sementara. Denah akan dibuat otomatis dan bisa diubah lagi ketika ukuran lantai sudah pasti.</p></div><span class="status">Konfigurasi fleksibel</span></div>
     <div class="floor8-config-grid">
@@ -2290,15 +2290,33 @@ function updateFloorDisplay(){
  const is8=activeFloor==="8",c=floor8Config;
  const leftTables=is8?c.leftTables:3,rightTables=is8?c.rightTables:2,rows=is8?c.depthRows:8,perFace=is8?c.seatsPerFace:3;
  const leftTotal=rows*leftTables*perFace*2,rightTotal=rows*rightTables*perFace*2;
+ const floorName=is8?"Lantai 8 · Perencanaan":"Lantai 9 · Operasional";
+ const floorShort=`Lantai ${activeFloor}`;
  const leftMeta=`${rows} baris · ${leftTables} meja per baris · ${perFace*2} kursi per meja`;
  const rightMeta=`${rows} baris · ${rightTables} meja per baris · ${perFace*2} kursi per meja`;
- $("activeFloorLabel").textContent=is8?"Lantai 8 · Perencanaan":"Lantai 9 · Operasional";
- $("activeFloorDescription").textContent=is8?"Denah sementara dapat diatur ulang. Data kursi Lantai 8 terpisah dari Lantai 9.":"Denah tetap 240 kursi. Data Lantai 9 tidak berubah saat kamu membuka Lantai 8.";
+ // Keep the floor selector, identity banner, capacity and all summary labels in sync.
+ const floor9Option=$("activeFloorSelect")?.querySelector('option[value="9"]');
+ const floor8Option=$("activeFloorSelect")?.querySelector('option[value="8"]');
+ if(floor9Option)floor9Option.textContent=`Lantai 9 · Operasional · ${floor9Seats.length} kursi`;
+ if(floor8Option)floor8Option.textContent=`Lantai 8 · Perencanaan · ${floor8SeatList(c).length} kursi`;
+ $("activeFloorLabel").textContent=floorName;
+ $("activeFloorDescription").textContent=is8
+  ? `Kapasitas Lantai 8 saat ini ${TOTAL} kursi · ${rows} baris · ${leftTables} meja sisi kiri · ${rightTables} meja sisi kanan. Denah masih fleksibel dan datanya terpisah dari Lantai 9.`
+  : `Kapasitas tetap Lantai 9 adalah ${TOTAL} kursi. Data operasional Lantai 9 terpisah dari denah perencanaan Lantai 8.`;
  $("floorModeBadge").textContent=is8?"PLANNING":"OPERASIONAL";
  $("floorModeBadge").classList.toggle("planning",is8);
  $("floor8Planner").classList.toggle("hidden",!is8);
  $("totalCapacity").textContent=TOTAL;
- $("headerFloorSeatSummary").textContent=`${TOTAL} seats · Lantai ${activeFloor} · Employee database · Attendance dashboard`;
+ $("headerFloorSeatSummary").textContent=`${TOTAL} kursi · ${floorName} · Employee database · Attendance dashboard`;
+ $("totalCapacityLabel").textContent=`Total kapasitas — ${floorShort}`;
+ $("presentCountLabel").textContent=`Hadir / nama terisi — ${floorShort}`;
+ $("emptyCountLabel").textContent=`Kursi kosong — ${floorShort}`;
+ $("platformCountLabel").textContent=`Platform terisi — ${floorShort}`;
+ $("platformKindsLabel").textContent=`Platform berbeda — ${floorShort}`;
+ $("floorAttendanceHint").textContent=is8
+  ? `Lantai 8 · Perencanaan: isi nama karyawan pada kursi yang tersedia. Nama yang terisi dihitung sebagai hadir sesuai tanggal dan shift yang dipilih. Kapasitas mengikuti konfigurasi denah Lantai 8.`
+  : `Lantai 9 · Operasional: isi nama karyawan pada kursi yang tersedia. Nama yang terisi dihitung sebagai hadir sesuai tanggal dan shift yang dipilih. Kapasitas tetap 240 kursi.`;
+ $("floorCarryForwardHint").innerHTML=`<b>Salin denah harian — ${floorName}:</b> Jika tanggal dan shift yang dipilih belum memiliki data, aplikasi menyalin nama, platform, dan posisi kursi dari tanggal kalender sebelumnya pada lantai yang sama. Data Lantai 8 dan Lantai 9 tetap dipisahkan.`;
  $("leftSideTitle").textContent=`SISI KIRI · ${leftTables} MEJA`;
  $("leftSideCount").textContent=`${leftTotal} kursi`;
  $("leftSideMeta").textContent=leftMeta;
@@ -2309,12 +2327,12 @@ function updateFloorDisplay(){
  $("bulkRightMeta").textContent=`${rightTotal} kursi · ${rightTables} meja`;
  $("bulkLeftTitle").textContent=is8?"SISI KIRI · LANTAI 8":"SISI KIRI";
  $("bulkRightTitle").textContent=is8?"SISI KANAN · LANTAI 8":"SISI KANAN";
- $("platformMapDescription").textContent=`Pemetaan kursi untuk Lantai ${activeFloor} · ${TOTAL} kursi. Sisi Kiri dan Sisi Kanan memiliki daftar terpisah. Pemetaan mengikuti tanggal dan shift yang sedang dipilih.`;
+ $("platformMapDescription").textContent=`Pemetaan kursi untuk ${floorShort} · ${TOTAL} kursi. Sisi Kiri dan Sisi Kanan memiliki daftar terpisah. Pemetaan mengikuti tanggal dan shift yang sedang dipilih.`;
  $("platformMapLeftMeta").textContent=`${leftTotal} kursi · ${leftTables} meja per baris`;
  $("platformMapLeftCount").textContent=`${leftTotal} kursi`;
  $("platformMapRightMeta").textContent=`${rightTotal} kursi · ${rightTables} meja per baris`;
  $("platformMapRightCount").textContent=`${rightTotal} kursi`;
- $("dashFloorLabel").textContent=`Lantai ${activeFloor}`;
+ $("dashFloorLabel").textContent=floorShort;
  $("dashTotalSeats").textContent=TOTAL;
 }
 async function setActiveFloor(floor){
