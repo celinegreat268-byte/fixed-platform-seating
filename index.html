@@ -1877,6 +1877,59 @@ header #logoutBtn{background:rgba(255,255,255,.08)!important;color:#fff!importan
 #appScreen .seat.platform-custom .seat-platform{border-left:5px solid var(--platform-color,#64748b)!important;background:var(--platform-bg,#e9eef1)!important;color:var(--platform-ink,#263746)!important}
 </style>
 
+
+<style id="workspace-sidebar-toggle-style">
+/* Compact / expand the Workspace sidebar without changing existing tab functions. */
+#appScreen.workspace-collapsed{padding-left:88px!important}
+#appScreen.workspace-collapsed>.nav{width:70px!important;padding:14px 8px!important;gap:8px!important}
+#appScreen.workspace-collapsed>.nav::before{display:none!important}
+#appScreen.workspace-collapsed>.nav button:not(#workspaceToggleBtn){
+  justify-content:center!important;gap:0!important;padding:10px 7px!important;
+  font-size:0!important;text-align:center!important;min-height:44px!important;
+}
+#appScreen.workspace-collapsed>.nav button:not(#workspaceToggleBtn)::before{
+  display:inline-grid!important;place-items:center!important;flex:0 0 24px!important;
+  width:24px!important;height:24px!important;font-size:18px!important;margin:0!important;
+}
+#appScreen.workspace-collapsed>.nav #workspaceToggleBtn{
+  width:100%!important;justify-content:center!important;padding:10px 6px!important;
+}
+#appScreen.workspace-collapsed>.nav #workspaceToggleBtn .workspace-toggle-text{display:none!important}
+#appScreen>.nav #workspaceToggleBtn{
+  order:-1!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;
+  gap:9px!important;width:100%!important;min-height:40px!important;margin:0 0 5px!important;
+  padding:9px 11px!important;background:rgba(255,255,255,.09)!important;
+  color:#edf4f8!important;border:1px solid rgba(210,226,238,.22)!important;
+  border-radius:9px!important;font-size:11px!important;font-weight:800!important;
+  letter-spacing:.1px!important;box-shadow:none!important;cursor:pointer!important;
+}
+#appScreen>.nav #workspaceToggleBtn:hover{background:rgba(8,127,136,.36)!important;border-color:rgba(88,199,194,.65)!important}
+#appScreen>.nav #workspaceToggleBtn .workspace-toggle-icon{display:inline-grid;place-items:center;width:20px;flex:0 0 20px;font-size:17px;line-height:1}
+#appScreen.workspace-collapsed>.nav #workspaceToggleBtn .workspace-toggle-icon{font-size:19px}
+@media(max-width:900px) and (min-width:681px){
+  #appScreen.workspace-collapsed{padding-left:88px!important}
+  #appScreen.workspace-collapsed>.nav{width:70px!important}
+}
+@media(max-width:680px){
+  #appScreen.workspace-collapsed{padding:10px!important}
+  #appScreen.workspace-collapsed>.nav{
+    position:sticky!important;top:0!important;left:auto!important;bottom:auto!important;
+    width:auto!important;height:auto!important;min-height:0!important;
+    flex-direction:row!important;overflow-x:auto!important;overflow-y:hidden!important;
+    margin:0 -10px 12px!important;padding:8px 10px!important;border-radius:0!important;gap:6px!important;
+  }
+  #appScreen.workspace-collapsed>.nav button:not(#workspaceToggleBtn){
+    width:auto!important;min-width:max-content!important;min-height:38px!important;
+    justify-content:flex-start!important;gap:8px!important;padding:8px 10px!important;
+    font-size:12px!important;text-align:left!important;
+  }
+  #appScreen.workspace-collapsed>.nav button:not(#workspaceToggleBtn)::before{font-size:16px!important;flex:0 0 20px!important;width:20px!important;height:20px!important}
+  #appScreen>.nav #workspaceToggleBtn{width:auto!important;min-width:42px!important;min-height:38px!important;padding:8px 10px!important;margin:0!important}
+  #appScreen.workspace-collapsed>.nav #workspaceToggleBtn .workspace-toggle-text{display:inline!important;font-size:11px!important}
+}
+@media print{#workspaceToggleBtn{display:none!important}}
+</style>
+
 </head>
 <body>
 <header>
@@ -3001,5 +3054,35 @@ else{showLoginMessage("Mode online belum aktif. Lengkapi konfigurasi Supabase pa
   <button id="stayLoggedInBtn" type="button">Tetap Login</button>
  </div>
 </div>
+
+<script id="workspace-sidebar-toggle-script">
+(function(){
+  const app=document.getElementById('appScreen');
+  const nav=app&&app.querySelector(':scope > .nav');
+  if(!app||!nav||document.getElementById('workspaceToggleBtn'))return;
+  const toggle=document.createElement('button');
+  toggle.type='button';
+  toggle.id='workspaceToggleBtn';
+  toggle.className='no-print';
+  toggle.setAttribute('aria-controls','workspace-navigation');
+  toggle.setAttribute('aria-expanded','true');
+  toggle.title='Sembunyikan menu Workspace';
+  toggle.innerHTML='<span class="workspace-toggle-icon" aria-hidden="true">☰</span><span class="workspace-toggle-text">Sembunyikan menu</span>';
+  nav.id='workspace-navigation';
+  nav.insertBefore(toggle,nav.firstChild);
+  nav.querySelectorAll('button[data-tab]').forEach(function(button){
+    const label=button.textContent.trim();
+    if(label)button.title=label;
+  });
+  toggle.addEventListener('click',function(){
+    const collapsed=app.classList.toggle('workspace-collapsed');
+    toggle.setAttribute('aria-expanded',String(!collapsed));
+    toggle.title=collapsed?'Tampilkan menu Workspace':'Sembunyikan menu Workspace';
+    toggle.querySelector('.workspace-toggle-icon').textContent=collapsed?'☷':'☰';
+    toggle.querySelector('.workspace-toggle-text').textContent=collapsed?'Tampilkan menu':'Sembunyikan menu';
+  });
+})();
+</script>
+
 </body>
 </html>
