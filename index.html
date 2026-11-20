@@ -2104,6 +2104,18 @@ button.danger{background:#f8e9eb!important;color:#963d4b!important;border-color:
 }
 </style>
 
+
+<style id="sidebar-readable-contrast-fix">
+/* Improve contrast for every Workspace navigation label. */
+#appScreen>.nav{background:#172b3d!important;color:#f4f7fa!important}
+#appScreen>.nav::before{color:#b9c9d5!important}
+#appScreen>.nav button:not(#workspaceToggleBtn){background:#294457!important;color:#f4f7fa!important;border:1px solid #496274!important;opacity:1!important;text-shadow:none!important}
+#appScreen>.nav button:not(#workspaceToggleBtn):hover{background:#36586d!important;color:#fff!important}
+#appScreen>.nav button:not(#workspaceToggleBtn).active{background:#087f8c!important;color:#fff!important;border-color:#25a1a5!important}
+#appScreen>.nav #workspaceToggleBtn{background:#294457!important;color:#fff!important;border:1px solid #587184!important}
+#appScreen>.nav button:disabled{color:#e7eef3!important;opacity:1!important}
+#appScreen>.nav button *{color:inherit!important}
+</style>
 </head>
 <body>
 <header>
