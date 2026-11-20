@@ -2139,6 +2139,13 @@ button.danger{background:#f8e9eb!important;color:#963d4b!important;border-color:
 }
 </style>
 
+
+<style id="hide-unneeded-floor-hints">
+  /* Hide explanatory floor notes requested by the user; keep their DOM IDs
+     intact because the existing application updates them dynamically. */
+  #floorAttendanceHint,
+  #floorCarryForwardHint { display: none !important; }
+</style>
 </head>
 <body>
 <header>
