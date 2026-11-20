@@ -1992,84 +1992,6 @@ main#appScreen {
 
 
 
-<style id="dark-professional-compact-layout">
-/* Dark professional palette: visual-only override; application logic and data are untouched. */
-:root{
-  color-scheme:dark;
-  --dp-bg:#111a24;--dp-panel:#1b2734;--dp-panel2:#202f3d;
-  --dp-line:#354655;--dp-text:#e8edf3;--dp-muted:#b4c0ca;
-  --dp-navy:#142333;--dp-teal:#287d86;--dp-gold:#c5a36a;
-}
-html,body{background:#111a24!important;color:var(--dp-text)!important}
-body{background:linear-gradient(145deg,#111a24 0%,#172330 55%,#1b2935 100%)!important;color:var(--dp-text)!important}
-header{background:linear-gradient(110deg,#101d2b 0%,#172c40 62%,#214451 100%)!important;border-bottom:3px solid #b9975c!important;box-shadow:0 5px 18px rgba(0,0,0,.28)!important}
-header p{color:#c7d3dc!important}
-#appScreen .panel,#appScreen .side-card,#appScreen .platform-manager-card,#appScreen .platform-seat-tools,
-#appScreen .bulk-side-card,#appScreen .platform-map-side{background:#1b2734!important;border-color:#3a4b5a!important;color:#e8edf3!important;box-shadow:0 4px 14px rgba(0,0,0,.2)!important}
-#appScreen>.nav{background:linear-gradient(180deg,#14283a 0%,#101d2b 100%)!important;border-color:#35495a!important}
-#appScreen>.nav button{color:#dbe5ec!important}
-#appScreen>.nav button.active,#appScreen button.primary,#appScreen .entry-mode button.active{background:linear-gradient(120deg,#246b77,#328c91)!important;color:#fff!important;border-color:#4ba3a4!important}
-#appScreen button:not(.primary):not(.danger){background:#2a3a49!important;color:#e5edf2!important;border-color:#465968!important}
-#appScreen button.danger{background:#512d37!important;color:#ffdce1!important;border-color:#8b4c59!important}
-#appScreen input,#appScreen select,#appScreen textarea{background:#111d28!important;color:#e8edf3!important;border-color:#506272!important}
-#appScreen input::placeholder,#appScreen textarea::placeholder{color:#aab8c3!important;opacity:1}
-#appScreen label,#appScreen .entry-mode strong{color:#d7e1e8!important}
-#appScreen .muted,#appScreen .bulk-summary{color:#b3c1cb!important}
-#appScreen .status{background:#24483e!important;color:#c8f0dc!important;border-color:#3b7660!important}
-#appScreen .notice{background:#463a27!important;color:#f4dfb5!important;border-color:#80663b!important}
-#appScreen .stats .stat{background:#202f3d!important;color:#e8edf3!important;border-color:#405261!important}
-#appScreen .stats .stat b{color:#f0f4f7!important}
-#appScreen .side-head{border-color:#3a4b59!important}
-#appScreen .side-head h3,#appScreen .side-head span,#appScreen .side-head b{color:#e4edf3!important}
-#appScreen .row-label{background:#263746!important;color:#d4e0e8!important;border-color:#405363!important}
-#appScreen .desk{background:#202d39!important;border-color:#40515f!important}
-#appScreen .desk-title{color:#e0e9ef!important}
-#appScreen .facing{background:#293946!important;border-color:#465966!important}
-#appScreen .face-label{color:#c1ced7!important}
-#appScreen .seat{background:#172431!important;border-color:#465866!important;box-shadow:0 2px 7px rgba(0,0,0,.2)!important}
-#appScreen .seat-head{color:#d2dee6!important}
-#appScreen .seat textarea{background:#101b26!important;color:#edf2f6!important;border-color:#506170!important}
-#appScreen .seat textarea::placeholder{color:#aebbc5!important}
-#appScreen .seat .seat-platform{background:#293947!important;color:#edf2f6!important;border-left-color:#71889a!important}
-/* Platform-specific colors remain distinct, with enough contrast for the full label. */
-#appScreen .seat.platform-jinx{background:#30232c!important;border-color:#b85a6b!important}
-#appScreen .seat.platform-jinx .seat-platform{background:#512d39!important;color:#ffe0e5!important;border-left:4px solid #d36b7c!important}
-#appScreen .seat.platform-jinx textarea[data-field="platform"]{border-color:#a85a6b!important;color:#ffe0e5!important}
-#appScreen .seat.platform-vega{background:#332b20!important;border-color:#bd8544!important}
-#appScreen .seat.platform-vega .seat-platform{background:#51402a!important;color:#ffebcb!important;border-left:4px solid #d99a4b!important}
-#appScreen .seat.platform-vega textarea[data-field="platform"]{border-color:#b9854b!important;color:#ffebcb!important}
-#appScreen .seat.platform-zane{background:#1d302b!important;border-color:#4d9a78!important}
-#appScreen .seat.platform-zane .seat-platform{background:#24483a!important;color:#d8f5e5!important;border-left:4px solid #5eb58b!important}
-#appScreen .seat.platform-zane textarea[data-field="platform"]{border-color:#579b7a!important;color:#d8f5e5!important}
-#appScreen .seat.platform-custom{background:#202d39!important}
-#appScreen .seat.platform-custom .seat-platform{filter:brightness(.78) saturate(1.15);color:#f3f6f8!important}
-#appScreen .divider{background:linear-gradient(90deg,#526a79,#344957)!important}
-#appScreen .entry-mode,#appScreen .bulk-entry,#appScreen .bulk-side-platform{background:#202f3d!important;border-color:#405361!important}
-#appScreen .table th,#appScreen .platform-admin-table th,#appScreen .platform-seat-list th{background:#293b49!important;color:#e1eaf0!important}
-#appScreen .table td,#appScreen .platform-admin-table td,#appScreen .platform-seat-list td{color:#d7e1e8!important;border-color:#394b59!important}
-#appScreen .platform-map-count,#appScreen .bulk-preview{background:#293b49!important;color:#e0e9ef!important;border-color:#465966!important}
-#appScreen .platform-map-side-head{border-color:#405260!important}
-#appScreen .platform-map-side-head h3,#appScreen .platform-map-side-head p{color:#dce6ec!important}
-#appScreen .platform-bulk-add{background:#202f3d!important;border-color:#506575!important}
-#appScreen .platform-bulk-title h4{color:#e1eaf0!important}
-#appScreen .platform-save-state{color:#9fe0bb!important}
-/* Slightly tighter desk footprint (about 5%); retain readable platform text and wrapping. */
-#appScreen .desk-grid{grid-template-columns:repeat(3,minmax(570px,1fr))!important;gap:8px!important}
-#appScreen .desk-grid.right{grid-template-columns:repeat(2,minmax(570px,1fr))!important}
-#appScreen .desk{padding:8px!important}
-#appScreen .seats{grid-template-columns:repeat(3,minmax(170px,1fr))!important;gap:6px!important}
-#appScreen .seat{padding:7px!important;gap:6px!important}
-#appScreen .seat .seat-platform{font-size:12px!important;line-height:1.4!important;min-height:44px!important;height:auto!important;padding:7px!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important;word-break:normal!important}
-#appScreen .seat-head{font-size:10px!important}
-#appScreen .seat textarea{font-size:11px!important;min-height:52px!important}
-#appScreen .layout-scroll{scrollbar-color:#61798a #202f3d!important}
-#appScreen .layout-scroll::-webkit-scrollbar-track{background:#202f3d!important}
-#appScreen .layout-scroll::-webkit-scrollbar-thumb{background:#61798a!important;border-color:#202f3d!important}
-@media(max-width:1500px){#appScreen .desk-grid{grid-template-columns:repeat(3,minmax(570px,1fr))!important}#appScreen .desk-grid.right{grid-template-columns:repeat(2,minmax(570px,1fr))!important}}
-@media print{html,body{background:#fff!important;color:#111!important}#appScreen .seat .seat-platform{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
-</style>
-
-
 <style id="professional-balanced-theme">
 /* Professional balanced theme: light workspace, deep navy navigation, restrained platform accents. */
 :root{color-scheme:light;--ink:#243444;--muted:#647587;--line:#d7e0e7;--navy:#172b3d;--blue:#315a75;--accent:#b58a4b}
@@ -2123,6 +2045,63 @@ button.danger{background:#f8e9eb!important;color:#963d4b!important;border-color:
 .layout-scroll::-webkit-scrollbar-track{background:#e7edf1!important}
 .layout-scroll::-webkit-scrollbar-thumb{background:#9aabb7!important;border-color:#e7edf1!important}
 @media print{body{background:#fff!important;color:#222!important}.side-card,.desk,.seat{background:#fff!important;box-shadow:none!important}}
+
+/* Final light-corporate enforcement: navy navigation, bright workspace, white seating cards. */
+#appScreen{background:#eef2f5!important;color:#243444!important}
+#appScreen .panel,#appScreen .side-card,#appScreen .platform-manager-card,#appScreen .platform-seat-tools,#appScreen .bulk-side-card,#appScreen .platform-map-side{background:#fff!important;color:#243444!important;border-color:#d5dfe6!important;box-shadow:0 3px 12px rgba(30,49,65,.055)!important}
+#appScreen .stats .stat{background:#fff!important;color:#243444!important}
+#appScreen .stats .stat b{color:#203b50!important}
+#appScreen .row-label{background:#e8eef2!important;color:#2c4355!important;border-color:#d4dee5!important}
+#appScreen .desk{background:#f7f9fa!important;color:#263b4b!important;border-color:#d7e0e6!important}
+#appScreen .facing{background:#edf2f5!important;border-color:#d8e1e7!important}
+#appScreen .seat{background:#fff!important;color:#263b4b!important;border-color:#cbd7df!important;box-shadow:0 1px 5px rgba(24,43,58,.045)!important}
+#appScreen .seat-head,#appScreen .desk-title,#appScreen .face-label{color:#43596b!important}
+#appScreen .seat textarea,#appScreen input,#appScreen select,#appScreen textarea{background:#fff!important;color:#243444!important;border-color:#cbd6df!important}
+#appScreen .seat textarea::placeholder{color:#718091!important;opacity:1!important}
+#appScreen .seat .seat-platform{background:#edf1f4!important;color:#263d50!important;border-left:4px solid #8296a5!important}
+#appScreen .seat.platform-jinx{background:#fffafa!important;border:2px solid #a94b5b!important}
+#appScreen .seat.platform-jinx .seat-platform{background:#f8e9eb!important;color:#803442!important;border-left:4px solid #a94b5b!important}
+#appScreen .seat.platform-vega{background:#fffdf8!important;border:2px solid #b87932!important}
+#appScreen .seat.platform-vega .seat-platform{background:#f8efdf!important;color:#80501e!important;border-left:4px solid #b87932!important}
+#appScreen .seat.platform-zane{background:#f9fcfa!important;border:2px solid #438267!important}
+#appScreen .seat.platform-zane .seat-platform{background:#e8f2ec!important;color:#2e624b!important;border-left:4px solid #438267!important}
+#appScreen .seat.platform-custom{background:#fbfcfd!important}
+#appScreen .entry-mode,#appScreen .bulk-entry,#appScreen .bulk-side-card,#appScreen .bulk-side-platform{background:#f7f9fa!important;color:#243444!important;border-color:#d7e0e7!important}
+#appScreen .table th,#appScreen .platform-admin-table th,#appScreen .platform-seat-list th{background:#eaf0f3!important;color:#2c4355!important}
+#appScreen .table td,#appScreen .platform-admin-table td,#appScreen .platform-seat-list td{color:#34495a!important;border-color:#dce4e9!important}
+#appScreen .platform-map-count,#appScreen .bulk-preview{background:#edf2f5!important;color:#34495a!important;border-color:#d7e0e7!important}
+#appScreen .side-head h3,#appScreen .side-head span,#appScreen .side-head b,#appScreen label{color:#2c4355!important}
+#appScreen .muted,#appScreen .bulk-summary{color:#647587!important}
+#appScreen .divider{background:#c6d1d8!important}
+#appScreen .status{background:#e8f2ec!important;color:#2e624b!important;border-color:#c4ddce!important}
+#appScreen .notice{background:#fbf5e9!important;color:#765725!important;border-color:#e8d7b5!important}
+#appScreen>.nav{background:#172b3d!important;color:#edf3f7!important}
+#appScreen>.nav button{background:#e7edf2!important;color:#263d50!important;border-color:#cbd6df!important}
+#appScreen>.nav button.active{background:#315a75!important;color:#fff!important;border-color:#315a75!important}
+
+
+
+/* Compact empty space inside each seat card without clipping platform labels. */
+#appScreen .seat{
+  min-height:0!important;
+  height:auto!important;
+  align-self:start!important;
+  padding:6px!important;
+  gap:5px!important;
+}
+#appScreen .seat .seat-platform{
+  min-height:34px!important;
+  height:auto!important;
+  padding:6px 7px!important;
+  line-height:1.3!important;
+  overflow-wrap:anywhere!important;
+  word-break:normal!important;
+}
+#appScreen .seat textarea{
+  min-height:40px!important;
+  height:auto!important;
+  padding:6px 7px!important;
+}
 </style>
 
 </head>
