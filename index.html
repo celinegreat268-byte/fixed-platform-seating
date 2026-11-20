@@ -2413,7 +2413,7 @@ function seatList(){
  for(let r=1;r<=8;r++){
   for(const [side,tableCount] of [["L",3],["R",2]]){
    for(let t=1;t<=tableCount;t++)for(let pc=1;pc<=3;pc++)list.push({id:`${side}-R${r}-T${t}-PC${pc}`,side,row:r,table:t,pc});
-   for(let t=tableCount;t>=1;t--)for(let pc=6;pc>=4;pc--)list.push({id:`${side}-R${r}-T${t}-PC${pc}`,side,row:r,table:t,pc});
+   for(let t=tableCount;t>=1;t--)for(let pc=4;pc<=6;pc++)list.push({id:`${side}-R${r}-T${t}-PC${pc}`,side,row:r,table:t,pc});
   }
  }
  return list;
@@ -2432,7 +2432,7 @@ function floor8SeatList(config=floor8Config){
   for(const side of ["L","R"]){
    const tableCount=side==="L"?c.leftTables:c.rightTables;
    for(let t=1;t<=tableCount;t++)for(let pc=1;pc<=c.seatsPerFace;pc++)list.push({id:`F8-${side}-R${r}-T${t}-PC${pc}`,side,row:r,table:t,pc});
-   for(let t=tableCount;t>=1;t--)for(let pc=c.seatsPerFace*2;pc>c.seatsPerFace;pc--)list.push({id:`F8-${side}-R${r}-T${t}-PC${pc}`,side,row:r,table:t,pc});
+   for(let t=tableCount;t>=1;t--)for(let pc=c.seatsPerFace+1;pc<=c.seatsPerFace*2;pc++)list.push({id:`F8-${side}-R${r}-T${t}-PC${pc}`,side,row:r,table:t,pc});
   }
  }
  return list;
