@@ -2124,6 +2124,21 @@ button.danger{background:#f8e9eb!important;color:#963d4b!important;border-color:
 #appScreen .face-label{font-size:0!important;line-height:1!important;margin:6px 0!important;color:inherit!important}
 #appScreen .face-label::before{content:"🖥️";display:inline-block;font-family:Arial,sans-serif;font-size:20px;line-height:1.1;vertical-align:middle}
 </style>
+
+<style id="center-seat-text-adjustment">
+/* Center platform labels and employee names inside each seat without changing layout or data. */
+#appScreen .seat .seat-platform {
+  text-align: center !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#appScreen .seat textarea[data-field="platform"],
+#appScreen .seat textarea[data-field="name"] {
+  text-align: center !important;
+}
+</style>
+
 </head>
 <body>
 <header>
