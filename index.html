@@ -2408,9 +2408,13 @@ let floor8SavedConfig={...FLOOR8_DEFAULT};
 let activeFloor=(localStorage.getItem("fps_active_floor_v1")==="8")?"8":"9";
 function seatList(){
  const list=[];
+ // Urutan mengikuti denah fisik: semua kursi BARIS ATAS dari kiri ke kanan,
+ // lalu BARIS BAWAH dari kanan ke kiri, kemudian lanjut ke baris berikutnya.
  for(let r=1;r<=8;r++){
-  for(let t=1;t<=3;t++)for(let pc=1;pc<=6;pc++)list.push({id:`L-R${r}-T${t}-PC${pc}`,side:"L",row:r,table:t,pc});
-  for(let t=1;t<=2;t++)for(let pc=1;pc<=6;pc++)list.push({id:`R-R${r}-T${t}-PC${pc}`,side:"R",row:r,table:t,pc});
+  for(const [side,tableCount] of [["L",3],["R",2]]){
+   for(let t=1;t<=tableCount;t++)for(let pc=1;pc<=3;pc++)list.push({id:`${side}-R${r}-T${t}-PC${pc}`,side,row:r,table:t,pc});
+   for(let t=tableCount;t>=1;t--)for(let pc=6;pc>=4;pc--)list.push({id:`${side}-R${r}-T${t}-PC${pc}`,side,row:r,table:t,pc});
+  }
  }
  return list;
 }
@@ -2423,9 +2427,10 @@ function safeFloor8Config(value){
 }
 function floor8SeatList(config=floor8Config){
  const c=safeFloor8Config(config),list=[];
- for(const side of ["L","R"]){
-  const tableCount=side==="L"?c.leftTables:c.rightTables;
-  for(let r=1;r<=c.depthRows;r++){
+ // Sama seperti denah Lantai 9: atas kiri→kanan, bawah kanan→kiri.
+ for(let r=1;r<=c.depthRows;r++){
+  for(const side of ["L","R"]){
+   const tableCount=side==="L"?c.leftTables:c.rightTables;
    for(let t=1;t<=tableCount;t++)for(let pc=1;pc<=c.seatsPerFace;pc++)list.push({id:`F8-${side}-R${r}-T${t}-PC${pc}`,side,row:r,table:t,pc});
    for(let t=tableCount;t>=1;t--)for(let pc=c.seatsPerFace*2;pc>c.seatsPerFace;pc--)list.push({id:`F8-${side}-R${r}-T${t}-PC${pc}`,side,row:r,table:t,pc});
   }
