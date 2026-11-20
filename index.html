@@ -2146,6 +2146,25 @@ button.danger{background:#f8e9eb!important;color:#963d4b!important;border-color:
   #floorAttendanceHint,
   #floorCarryForwardHint { display: none !important; }
 </style>
+<style>
+
+/* Minimal Platform Tools mapping view: hide redundant seat-count detail,
+   seat-code search and seat-code column without changing IDs or behavior. */
+.platform-map-side-head > div > p[id$="Meta"]{
+  display:none !important;
+}
+.platform-seat-filter .field:first-child{
+  display:none !important;
+}
+.platform-seat-filter{
+  grid-template-columns:minmax(0,1fr) !important;
+}
+.platform-seat-list table th:first-child,
+.platform-seat-list table td:first-child{
+  display:none !important;
+}
+
+</style>
 </head>
 <body>
 <header>
