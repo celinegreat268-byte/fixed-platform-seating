@@ -3350,5 +3350,34 @@ else{showLoginMessage("Mode online belum aktif. Lengkapi konfigurasi Supabase pa
 }
 </style>
 
+
+<style id="force-center-employee-name-final">
+/* Force typed employee names to appear centered in every seating card. */
+.seat textarea[data-field="employee_name"],
+#appScreen .seat textarea[data-field="employee_name"],
+#appScreen .seat textarea {
+  text-align: center !important;
+  text-align-last: center !important;
+}
+</style>
+
+
+<style id="employee-name-optical-center-final">
+/* Center employee text both horizontally and vertically within the name field. */
+#appScreen .seat textarea[data-field="employee_name"] {
+  box-sizing: border-box !important;
+  height: 52px !important;
+  min-height: 52px !important;
+  padding: 15px 8px !important;
+  line-height: 20px !important;
+  text-align: center !important;
+  text-align-last: center !important;
+  vertical-align: middle !important;
+}
+#appScreen .seat textarea[data-field="employee_name"]::placeholder {
+  text-align: center !important;
+}
+</style>
+
 </body>
 </html>
