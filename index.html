@@ -2116,6 +2116,14 @@ button.danger{background:#f8e9eb!important;color:#963d4b!important;border-color:
 #appScreen>.nav button:disabled{color:#e7eef3!important;opacity:1!important}
 #appScreen>.nav button *{color:inherit!important}
 </style>
+
+<style id="seat-header-cleanup-pc-icons">
+/* Requested seating-label cleanup: hide the small K/R and PC numbering row. */
+#appScreen .seat-head{display:none!important}
+/* Replace BARIS ATAS / BARIS BAWAH captions with a clear desktop-PC symbol. */
+#appScreen .face-label{font-size:0!important;line-height:1!important;margin:6px 0!important;color:inherit!important}
+#appScreen .face-label::before{content:"🖥️";display:inline-block;font-family:Arial,sans-serif;font-size:20px;line-height:1.1;vertical-align:middle}
+</style>
 </head>
 <body>
 <header>
