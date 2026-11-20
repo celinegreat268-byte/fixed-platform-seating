@@ -3379,5 +3379,23 @@ else{showLoginMessage("Mode online belum aktif. Lengkapi konfigurasi Supabase pa
 }
 </style>
 
+
+<style id="seat-employee-field-no-scrollbar-no-resize">
+/* Remove native textarea scrollbar controls and resize grip from seat name fields only. */
+#appScreen .seat textarea[data-field="employee_name"] {
+  resize: none !important;
+  overflow: hidden !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+#appScreen .seat textarea[data-field="employee_name"]::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+#appScreen .seat textarea[data-field="employee_name"]::-webkit-resizer {
+  display: none !important;
+}
+</style>
 </body>
 </html>
