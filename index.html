@@ -2488,7 +2488,10 @@ Taylor"></textarea>
        <h3 style="margin:0 0 8px">Daftar platform</h3>
        <p class="muted" style="margin:0">Semua platform yang tersedia, status aktif, serta pengaturan nama dan warna.</p>
       </div>
-      <span class="status">Katalog platform</span>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+       <span class="status">Katalog platform</span>
+       <button id="resetPlatformCatalogBtn" class="danger" type="button">Reset katalog platform</button>
+      </div>
      </div>
      <div class="platform-catalog-list">
       <table class="platform-admin-table"><thead><tr><th>Platform</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="platformCatalogBody"><tr><td colspan="3">Memuat daftar platform...</td></tr></tbody></table>
@@ -2898,15 +2901,45 @@ function applyPermissions(){
   }else{roleSelect.disabled=false;roleSelect.innerHTML='<option value="expat">Expat</option><option value="tl">TL</option><option value="admin">Admin</option>';}
  }
 }
+function platformGroupRank(name){
+ const value=String(name||"").trim().toUpperCase();
+ const match=value.match(/^(VEGA|ZANE|JAX|REX|JINX|KANE|IRIS)(?=$|[-_\s])/);
+ const order=["VEGA","ZANE","JAX","REX","JINX","KANE","IRIS"];
+ return match?order.indexOf(match[1]):order.length;
+}
+function comparePlatformNames(a,b){
+ const left=String(a?.name||"").trim(),right=String(b?.name||"").trim();
+ const groupDiff=platformGroupRank(left)-platformGroupRank(right);
+ if(groupDiff)return groupDiff;
+ return left.localeCompare(right,undefined,{numeric:true,sensitivity:"base"});
+}
 async function loadPlatforms(){
- const {data,error}=await sb.from("platforms").select("id,name,color,active").order("name");
- if(error){platforms=[];console.error(error);if(typeof setPlatformManagerMessage==="function")setPlatformManagerMessage("Gagal memuat daftar platform: "+error.message)}else platforms=data||[];
+ const {data,error}=await sb.from("platforms").select("id,name,color,active");
+ if(error){platforms=[];console.error(error);if(typeof setPlatformManagerMessage==="function")setPlatformManagerMessage("Gagal memuat daftar platform: "+error.message)}else platforms=(data||[]).sort(comparePlatformNames);
  if(typeof renderPlatformCatalog==="function")renderPlatformCatalog();
  if(typeof renderBulkPlatformOptions==="function")renderBulkPlatformOptions();
  if(typeof renderPlatformSeatFilters==="function")renderPlatformSeatFilters();
 }
 function setPlatformManagerMessage(text){if($("platformManagerMessage"))$("platformManagerMessage").textContent=text||""}
 function setPlatformSeatMessage(text){if($("platformSeatMessage"))$("platformSeatMessage").textContent=text||""}
+async function resetPlatformCatalog(){
+ if(!canAdmin()){alert("Hanya Admin yang dapat mereset katalog platform.");return}
+ const ids=platforms.map(p=>p.id).filter(Boolean);
+ if(!ids.length){setPlatformManagerMessage("Katalog platform sudah kosong. Kamu bisa menambahkan daftar baru.");return}
+ const ok=confirm(`Reset katalog platform?\n\n${ids.length} nama platform akan dihapus dari katalog agar kamu bisa mengisi ulang.\n\nPENTING: Pemetaan kursi, nama employee, data attendance, akun, dan tabel lain TIDAK akan dihapus atau diubah. Nama platform lama yang sudah tertulis pada kursi mungkin tetap terlihat sebagai teks sampai kamu atur ulang pemetaannya.\n\nLanjutkan?`);
+ if(!ok)return;
+ const button=$("resetPlatformCatalogBtn");if(button){button.disabled=true;button.textContent="Mereset..."}
+ try{
+  const {error}=await sb.from("platforms").delete().in("id",ids);
+  if(error)throw error;
+  await loadPlatforms();
+  renderPlatformSeatEditor();
+  setPlatformManagerMessage(`Katalog berhasil dikosongkan (${ids.length} nama). Data kursi dan employee tidak disentuh. Silakan isi ulang daftar platform.`);
+ }catch(error){
+  setPlatformManagerMessage("Reset katalog gagal: "+error.message);
+  alert("Reset katalog platform gagal: "+error.message);
+ }finally{if(button){button.disabled=false;button.textContent="Reset katalog platform"}}
+}
 function platformCatalogColor(p){return /^#[0-9a-f]{6}$/i.test(String(p.color||""))?p.color:"#64748b"}
 function renderPlatformCatalog(){
  const body=$("platformCatalogBody");if(!body)return;
@@ -3492,6 +3525,7 @@ $("bulkEntryMode").onclick=()=>setEntryMode("bulk");
  });
 });
 $("addPlatformBtn").onclick=addPlatform;
+$("resetPlatformCatalogBtn").onclick=resetPlatformCatalog;
 $("bulkPlatformNames").addEventListener("input",updateBulkPlatformSummary);
 $("bulkPlatformDefaultColor").addEventListener("input",updateBulkPlatformSummary);
 $("previewBulkPlatforms").onclick=updateBulkPlatformSummary;
