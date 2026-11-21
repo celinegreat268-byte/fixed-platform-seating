@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<title>Fixed Platform Seating Management</title>
+<title>HARMONY SEATING ARRANGEMENT</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <!-- V18 COLOR FIX: catalog colors now override JINX/VEGA/ZANE fallback colors. -->
 <style>
@@ -2165,10 +2165,64 @@ button.danger{background:#f8e9eb!important;color:#963d4b!important;border-color:
 }
 
 </style>
+
+<style id="harmony-orange-branding-final">
+/* HARMONY branding and warm orange corporate palette. Visual-only overrides;
+   all seating data, layout geometry, Supabase settings, and application logic stay unchanged. */
+:root{
+  --harmony-orange:#d97706;
+  --harmony-orange-deep:#a94f05;
+  --harmony-orange-soft:#fff0dc;
+  --harmony-charcoal:#26323a;
+  --harmony-ink:#29343b;
+  --harmony-line:#e4d5c4;
+}
+html,body{background:#f7f4ef!important;color:var(--harmony-ink)!important}
+body{background:linear-gradient(145deg,#faf7f1 0%,#f2eee7 58%,#f8f4ed 100%)!important}
+header{position:relative!important;display:flex!important;justify-content:center!important;align-items:center!important;min-height:76px!important;padding:15px 190px!important;text-align:center!important;background:linear-gradient(110deg,#252f36 0%,#35434a 58%,#6d472b 100%)!important;border-bottom:4px solid #e28a27!important;box-shadow:0 5px 18px rgba(54,43,32,.18)!important}
+header>div:first-child{margin:0 auto!important;text-align:center!important}
+header h1{margin:0!important;color:#fff!important;font-size:23px!important;font-weight:900!important;letter-spacing:.45px!important;text-align:center!important}
+header p{margin:5px 0 0!important;color:#f7e7d4!important;text-align:center!important}
+header .toolbar{position:absolute!important;right:22px!important;top:50%!important;transform:translateY(-50%)!important}
+#appScreen>.nav{background:linear-gradient(180deg,#303b42 0%,#202a30 100%)!important;border-right:1px solid #48545a!important;box-shadow:5px 0 18px rgba(40,44,44,.12)!important}
+#appScreen>.nav button:not(#workspaceToggleBtn){background:#3a474d!important;color:#f7f2eb!important;border:1px solid #58636a!important}
+#appScreen>.nav button:not(#workspaceToggleBtn):hover{background:#505d62!important;color:#fff!important}
+#appScreen>.nav button:not(#workspaceToggleBtn).active{background:linear-gradient(120deg,#c76508,#e58a25)!important;color:#fff!important;border-color:#f0a34e!important;box-shadow:0 4px 12px rgba(174,91,12,.22)!important}
+#appScreen>.nav #workspaceToggleBtn{background:#3a474d!important;color:#fff!important;border:1px solid #68757a!important}
+#appScreen .panel,#appScreen .side-card{background:#fffdfa!important;border-color:#e5d9ca!important;box-shadow:0 4px 15px rgba(69,52,33,.055)!important}
+#appScreen .floor-switcher{border-left-color:#d97706!important;background:linear-gradient(110deg,#fffdfa,#fff5e8)!important}
+#appScreen button.primary,#appScreen .entry-mode button.active{background:linear-gradient(120deg,#c76508,#e58a25)!important;color:#fff!important;border-color:#d97706!important}
+#appScreen .toolbar button,#appScreen .floor8-plan-actions button,#appScreen .entry-mode button{border-color:#e4d4c1!important;background:linear-gradient(180deg,#fffefa,#f7efe4)!important;color:#65421f!important}
+#appScreen input:focus,#appScreen select:focus,#appScreen textarea:focus{border-color:#d97706!important;outline:2px solid rgba(217,119,6,.18)!important}
+#appScreen label{color:#65421f!important}
+#appScreen .stats .stat{border-color:#e7d9c9!important}
+#appScreen .stats .stat:nth-child(1){background:linear-gradient(140deg,#fffaf2,#f8ead7)!important;border-top-color:#d97706!important}
+#appScreen .stats .stat:nth-child(2){background:linear-gradient(140deg,#f7fbf7,#e8f3e9)!important;border-top-color:#6e9c73!important}
+#appScreen .stats .stat:nth-child(3){background:linear-gradient(140deg,#fffaf1,#ffedcf)!important;border-top-color:#d68a2c!important}
+#appScreen .stats .stat:nth-child(4){background:linear-gradient(140deg,#fff7f3,#f8e5dc)!important;border-top-color:#c87554!important}
+#appScreen .stats .stat:nth-child(5){background:linear-gradient(140deg,#faf7f1,#eee8df)!important;border-top-color:#9b8064!important}
+#appScreen .stats .stat b{color:#74420e!important}
+#appScreen .side-head h3{color:#4b3828!important}
+#appScreen .row-label{background:#f4ece1!important;color:#76502b!important;border-color:#e5d7c5!important}
+#appScreen .desk{background:#faf7f1!important;border-color:#e5d8c8!important}
+#appScreen .desk-title{color:#65421f!important}
+#appScreen .facing{background:#f3eee6!important;border-color:#e5d9ca!important}
+#appScreen .seat{border-color:#dfd4c7!important}
+#appScreen .seat .seat-platform{background:#f3eee7!important;color:#654a30!important}
+#appScreen .divider{background:linear-gradient(90deg,#d7b58d,#eadbca)!important}
+#appScreen .entry-mode{background:#faf4eb!important;border-color:#e8d9c7!important}
+#appScreen .table th,#appScreen .platform-admin-table th{background:#f5eadb!important;color:#65421f!important}
+#appScreen .platform-map-left{border-top-color:#d97706!important}
+#appScreen .platform-map-right{border-top-color:#a8794c!important}
+#appScreen .bulk-side-left{border-top-color:#d97706!important}
+#appScreen .bulk-side-right{border-top-color:#a8794c!important}
+#appScreen .notice{background:#fff5e7!important;border-color:#edcf9f!important;color:#76501e!important}
+@media(max-width:760px){header{padding:14px 12px 62px!important}header .toolbar{top:auto!important;right:12px!important;bottom:10px!important;transform:none!important}header h1{font-size:18px!important}}
+</style>
 </head>
 <body>
 <header>
- <div><h1>Fixed Platform Seating Management</h1><p id="headerFloorSeatSummary">240 seats · Employee database · Attendance dashboard</p></div>
+ <div><h1>HARMONY SEATING ARRANGEMENT</h1><p id="headerFloorSeatSummary">240 seats · Employee database · Attendance dashboard</p></div>
  <div class="toolbar"><span id="userBadge" class="status hidden"></span><button id="logoutBtn" class="hidden">Logout</button></div>
 </header>
 
