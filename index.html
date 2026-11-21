@@ -3407,7 +3407,16 @@ async function loadAssignments(){
  const date=SEATING_DATA_DATE,shift=$("workShift").value;
  const {data,error}=await sb.from("seat_assignments").select("seat_code,employee_name,platform").eq("work_date",date).eq("shift",shift);
  if(loadSequence!==assignmentLoadSequence)return;
- if(error){message("Gagal memuat: "+error.message);return}
+ if(error){
+  // Render the seat map even when Supabase is temporarily unreachable or RLS blocks the read.
+  // This keeps the physical seat layout visible and does not write/delete any database rows.
+  renderSeats("L",activeFloor==="8"?floor8Config.leftTables:3);
+  renderSeats("R",activeFloor==="8"?floor8Config.rightTables:2);
+  updateStats();renderBulkPlatformOptions();updateBulkSummary();
+  message("Denah kursi ditampilkan, tetapi data online belum tersinkron: "+error.message);
+  console.warn("Seat assignments could not be loaded; showing empty seat layout without changing saved data.",error);
+  return;
+ }
  const activeSeatIds=new Set(seats.map(x=>x.id));
  let rows=(data||[]).filter(x=>activeSeatIds.has(x.seat_code));
  let loadMessage="Tersinkron online · Denah tetap untuk setiap hari";
@@ -4519,6 +4528,14 @@ header h1,header h1 *,header p{color:#fff!important}
 #appScreen .seat.platform-custom{border-color:var(--platform-color,#607d8e)!important;background:var(--platform-seat-bg,#f5f7f5)!important}
 #appScreen .seat.platform-custom .seat-platform{border-left:5px solid var(--platform-color,#607d8e)!important;background:var(--platform-bg,#e7edeb)!important;color:var(--platform-ink,#203b49)!important}
 @media(max-width:680px){header{padding:12px!important}header h1{font-size:18px!important}}
+</style>
+
+<style id="seat-layout-visibility-fix">
+/* Keep the physical seat rows visible even if the online assignment read fails. */
+#appScreen #leftRows,#appScreen #rightRows{display:block!important;visibility:visible!important;min-height:40px!important}
+#appScreen .row-seats{display:grid!important;visibility:visible!important;min-height:120px!important}
+#appScreen .desk-grid{display:grid!important;visibility:visible!important}
+#appScreen .desk,#appScreen .facing,#appScreen .seat{visibility:visible!important}
 </style>
 
 </body>
