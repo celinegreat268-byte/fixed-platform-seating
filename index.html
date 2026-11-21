@@ -3670,5 +3670,95 @@ main#appScreen{background:transparent!important;color:var(--harmony-ink)!importa
 }
 </style>
 
+
+<script id="harmony-carry-forward-addition-v1">
+/*
+ * ADD-ONLY PATCH:
+ * Keep all original application code unchanged.
+ * For a date/shift with missing seat records, fill only the missing seat rows
+ * from the most recent earlier date that has seating data for the same shift.
+ * Existing rows on the selected date are never overwritten.
+ */
+async function loadAssignments(){
+ const loadSequence=++assignmentLoadSequence;
+ message("Memuat data online...");
+ const date=$("workDate").value,shift=$("workShift").value;
+ const {data,error}=await sb.from("seat_assignments")
+  .select("seat_code,employee_name,platform")
+  .eq("work_date",date).eq("shift",shift);
+ if(loadSequence!==assignmentLoadSequence)return;
+ if(error){message("Gagal memuat: "+error.message);return}
+ const activeSeatIds=new Set(seats.map(x=>x.id));
+ let rows=(data||[]).filter(x=>activeSeatIds.has(x.seat_code));
+ let loadMessage="Tersinkron online";
+
+ /* Only look backward when the selected date has seats that have not yet
+    been saved. This also handles dates containing only partial records. */
+ const existingSeatIds=new Set(rows.map(x=>x.seat_code));
+ const missingSeatIds=[...activeSeatIds].filter(id=>!existingSeatIds.has(id));
+
+ if(missingSeatIds.length){
+  const {data:latestDateRows,error:latestDateError}=await sb.from("seat_assignments")
+   .select("work_date")
+   .lt("work_date",date)
+   .eq("shift",shift)
+   .in("seat_code",[...activeSeatIds])
+   .order("work_date",{ascending:false})
+   .limit(1);
+  if(loadSequence!==assignmentLoadSequence)return;
+  if(latestDateError){
+   message("Gagal memeriksa data hari sebelumnya: "+latestDateError.message);
+   return;
+  }
+
+  const sourceDate=latestDateRows?.[0]?.work_date;
+  if(sourceDate){
+   const {data:sourceRows,error:sourceError}=await sb.from("seat_assignments")
+    .select("seat_code,employee_name,platform")
+    .eq("work_date",sourceDate).eq("shift",shift)
+    .in("seat_code",missingSeatIds);
+   if(loadSequence!==assignmentLoadSequence)return;
+   if(sourceError){
+    message("Gagal membaca denah tanggal "+sourceDate+": "+sourceError.message);
+    return;
+   }
+
+   const copiedRows=(sourceRows||[])
+    .filter(x=>activeSeatIds.has(x.seat_code))
+    .map(x=>({
+     work_date:date,
+     shift,
+     seat_code:x.seat_code,
+     employee_name:x.employee_name||"",
+     platform:x.platform||"",
+     updated_by:currentUser.id
+    }));
+
+   if(copiedRows.length){
+    const {error:copyError}=await sb.from("seat_assignments")
+     .upsert(copiedRows,{onConflict:"work_date,shift,seat_code"});
+    if(loadSequence!==assignmentLoadSequence)return;
+    if(copyError){
+     message("Gagal melanjutkan denah dari "+sourceDate+": "+copyError.message);
+     return;
+    }
+    rows=rows.concat(copiedRows);
+    loadMessage=`Denah dilanjutkan dari ${sourceDate} · Shift ${shift}. Data yang sudah ada pada tanggal ini tidak diubah.`;
+   }
+  }
+ }
+
+ assignments={};
+ rows.forEach(x=>assignments[x.seat_code]=x);
+ renderSeats("L",activeFloor==="8"?floor8Config.leftTables:3);
+ renderSeats("R",activeFloor==="8"?floor8Config.rightTables:2);
+ updateStats();
+ renderBulkPlatformOptions();
+ updateBulkSummary();
+ if($("platformPanel")&&!$("platformPanel").classList.contains("hidden"))renderPlatformSeatEditor();
+ message(loadMessage);
+}
+</script>
+
 </body>
 </html>
