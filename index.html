@@ -1779,6 +1779,88 @@ header #logoutBtn{background:#fff8fb!important;color:#713653!important;border:1p
 #autoLogoutCountdown{font-size:28px;font-weight:800;color:#087f8c;margin:8px 0 18px}
 #stayLoggedInBtn{background:linear-gradient(135deg,#087f8c,#0e9a9a);color:#fff;border:0;border-radius:10px;padding:11px 20px;font-weight:700;cursor:pointer}
 
+
+
+/* HARMONY PREMIUM THEME — Midnight Navy, Champagne Gold, Warm Ivory.
+   Visual-only overrides. Existing data, Supabase queries, permissions and layout logic remain unchanged. */
+:root{
+ --harmony-navy:#17232D!important;--harmony-deep:#202E38!important;
+ --harmony-gold:#B79555!important;--harmony-ivory:#F3F0E8!important;
+ --harmony-ink:#263746!important;--harmony-muted:#64717A!important;
+ --harmony-line:#D8D5CC!important;
+ color:var(--harmony-ink)!important;background:var(--harmony-ivory)!important;
+}
+body{background:#F3F0E8!important;color:#263746!important}
+header{background:linear-gradient(110deg,#17232D 0%,#263642 68%,#34414A 100%)!important;color:#fff!important;border-bottom:3px solid #B79555!important}
+header h1{color:#fff!important;letter-spacing:.2px!important}
+header p,header small{color:#E4D9C3!important}
+#appScreen{background:#F3F0E8!important;color:#263746!important}
+#appScreen>.nav{background:linear-gradient(180deg,#202E38,#17232D)!important;border-right:1px solid #40515C!important;box-shadow:5px 0 18px rgba(23,35,45,.12)!important}
+#appScreen>.nav button{background:#2B3B46!important;border:1px solid #465965!important;color:#E9E7E0!important;border-radius:9px!important}
+#appScreen>.nav button::before{color:#D6B777!important}
+#appScreen>.nav button.active{background:linear-gradient(110deg,#A98545,#C4A66B)!important;border-color:#D9BD82!important;color:#17232D!important;box-shadow:0 3px 10px rgba(23,35,45,.18)!important}
+#appScreen>.nav button.active::before{color:#17232D!important}
+#appScreen main,#appScreen .content,#appScreen .workspace{background:#F3F0E8!important}
+#appScreen .panel,#appScreen .side-card,#appScreen .dashboard-card,#appScreen .platform-manager-card{
+ background:#FFFEFB!important;border:1px solid #D8D5CC!important;border-radius:13px!important;
+ box-shadow:0 4px 14px rgba(35,48,56,.07)!important;color:#263746!important
+}
+#appScreen .floor-switcher{background:#FFFEFB!important;border:1px solid #D8D5CC!important;border-left:5px solid #B79555!important;border-radius:12px!important}
+#appScreen h1,#appScreen h2,#appScreen h3,#appScreen .desk-title,#appScreen .side-head h3{color:#263746!important}
+#appScreen p,#appScreen label,#appScreen .muted,#appScreen small{color:#52616B!important}
+#appScreen label,#appScreen .entry-mode strong{font-weight:800!important}
+#appScreen input,#appScreen select,#appScreen textarea{background:#FFFFFF!important;color:#263746!important;border:1px solid #B9C2C5!important;border-radius:8px!important}
+#appScreen input::placeholder,#appScreen textarea::placeholder{color:#77838A!important;opacity:1!important}
+#appScreen input:focus,#appScreen select:focus,#appScreen textarea:focus{border-color:#B79555!important;outline:2px solid rgba(183,149,85,.2)!important}
+#appScreen button{background:#F0EEE8!important;color:#263746!important;border:1px solid #C9C5BA!important;border-radius:8px!important;font-weight:800!important}
+#appScreen button.primary,#appScreen .entry-mode button.active,#appScreen .toolbar button.primary{background:linear-gradient(120deg,#A98545,#C4A66B)!important;border-color:#A98545!important;color:#17232D!important}
+#appScreen .notice{background:#F5EFE2!important;border-color:#D9C69D!important;color:#554528!important}
+#appScreen .status{background:#E7F0E9!important;color:#35654B!important;border:1px solid #C7DDCD!important}
+#appScreen .table th,#appScreen .platform-seat-list th{background:#E8E4D9!important;color:#263746!important}
+#appScreen .table td,#appScreen .platform-seat-list td{color:#344550!important;border-color:#E2DED4!important}
+#appScreen .desk{background:#E9E8E2!important;border-color:#C9CBC5!important}
+#appScreen .facing{background:#E2E4DF!important;border-color:#C7CBC5!important}
+#appScreen .row-label{background:#DDE2E1!important;color:#334650!important;border-color:#C4CDCA!important}
+#appScreen .seat{background:#FFFEFB!important;border:1px solid #BFC9C9!important;box-shadow:0 2px 7px rgba(32,46,56,.07)!important}
+#appScreen .seat .seat-platform{background:#E9ECE9!important;color:#344650!important;font-weight:900!important}
+#appScreen .seat textarea{background:#FFFFFF!important;color:#263746!important;border:1px solid #B8C2C5!important;font-size:13px!important;font-weight:700!important}
+#appScreen .seat textarea::placeholder{color:#77838A!important}
+#appScreen .divider{background:#B9C4C3!important}
+#appScreen .entry-mode,#appScreen .bulk-entry{background:#F7F5EF!important;border:1px solid #DED9CD!important;border-radius:10px!important}
+#appScreen .stats .stat{background:#FFFEFB!important;border:1px solid #D8D5CC!important;border-top:4px solid #B79555!important;border-radius:11px!important}
+#appScreen .stats .stat:nth-child(1){border-top-color:#647C98!important;background:#EEF1F3!important}
+#appScreen .stats .stat:nth-child(2){border-top-color:#43866A!important;background:#EDF3EE!important}
+#appScreen .stats .stat:nth-child(3){border-top-color:#B79555!important;background:#F5F0E5!important}
+#appScreen .stats .stat:nth-child(4){border-top-color:#A64E50!important;background:#F4EBE9!important}
+#appScreen .stats .stat:nth-child(5){border-top-color:#77709A!important;background:#F0EEF4!important}
+#appScreen .stats .stat small{color:#52616B!important;font-weight:800!important}
+#appScreen .stats .stat b{color:#263746!important}
+#appScreen .platform-map-side,#appScreen .platform-manager-card,#appScreen .platform-seat-tools{background:#F8F7F2!important;border-color:#D8D5CC!important;border-radius:12px!important}
+#appScreen .platform-map-left{border-top-color:#B79555!important}
+#appScreen .platform-map-right{border-top-color:#647C98!important}
+#appScreen .platform-map-side-head h3{color:#263746!important}
+#appScreen .platform-map-count{background:#E8E4D9!important;color:#344550!important}
+#appScreen .platform-seat-list,#appScreen .platform-catalog-list{background:#FFFEFB!important;border-color:#D8D5CC!important}
+#appScreen .platform-seat-list th{background:#E8E4D9!important;color:#263746!important}
+#platformCatalogBody tr:nth-child(even){background:#F8F7F2!important}
+#platformCatalogBody tr:hover{background:#F2EBDD!important}
+#platformCatalogBody td:first-child b{color:#263746!important;font-weight:800!important}
+#platformCatalogBody .platform-swatch{width:16px!important;height:16px!important;border:1px solid rgba(38,55,70,.22)!important;box-shadow:0 0 0 2px #fff!important;border-radius:5px!important}
+#appScreen .platform-custom{background:var(--platform-seat-bg,#F8F7F2)!important;border:2px solid var(--platform-color,#647C98)!important}
+#appScreen .platform-custom .seat-platform{background:var(--platform-bg,#E9ECE9)!important;color:var(--platform-ink,#263746)!important;border-left:5px solid var(--platform-color,#647C98)!important}
+#appScreen .platform-custom textarea[data-field="platform"]{border-color:var(--platform-color,#647C98)!important}
+/* Platform colors are stored in the catalog and applied to seats and tools. */
+#appScreen .seat.platform-vega{border-color:#C18B36!important;background:#FBF7ED!important}
+#appScreen .seat.platform-vega .seat-platform{background:#F0E4C9!important;color:#654B20!important;border-left:5px solid #C18B36!important}
+#appScreen .seat.platform-zane{border-color:#43866A!important;background:#F4F8F4!important}
+#appScreen .seat.platform-zane .seat-platform{background:#DDEBE2!important;color:#285A43!important;border-left:5px solid #43866A!important}
+#appScreen .seat.platform-jinx{border-color:#A64E50!important;background:#FBF5F4!important}
+#appScreen .seat.platform-jinx .seat-platform{background:#EEDDDD!important;color:#71383B!important;border-left:5px solid #A64E50!important}
+@media(max-width:680px){
+ header{background:#17232D!important}
+ #appScreen>.nav{background:#202E38!important}
+}
+
 </style>
 
 <style id="professional-navy-teal-theme">
@@ -2461,7 +2543,7 @@ Taylor"></textarea>
      <p class="muted" style="margin:0 0 12px">Tambahkan satu platform atau masukkan banyak nama sekaligus. Daftar platform dan tombol edit sekarang berada di panel sebelah kanan.</p>
      <div class="platform-form">
       <div><label for="newPlatformName">Nama platform baru</label><input id="newPlatformName" placeholder="Contoh: VEGA-12"></div>
-      <div><label for="newPlatformColor">Warna</label><input id="newPlatformColor" type="color" value="#d97706"></div>
+      <div><label for="newPlatformColor">Warna</label><input id="newPlatformColor" type="color" value="#C18B36"></div>
       <button id="addPlatformBtn" class="primary" type="button">+ Tambah</button>
      </div>
      <div class="platform-bulk-add">
@@ -2473,7 +2555,7 @@ Taylor"></textarea>
       <label for="bulkPlatformNames">Daftar nama platform</label>
       <textarea id="bulkPlatformNames" rows="5" placeholder="JINX-11&#10;JINX-20&#10;VEGA-12&#10;VEGA-13&#10;ZANE-15"></textarea>
       <div class="platform-bulk-controls">
-       <div class="platform-bulk-default-color"><label for="bulkPlatformDefaultColor">Warna default nama lain</label><input id="bulkPlatformDefaultColor" type="color" value="#64748b"></div>
+       <div class="platform-bulk-default-color"><label for="bulkPlatformDefaultColor">Warna default nama lain</label><input id="bulkPlatformDefaultColor" type="color" value="#647C98"></div>
        <button id="previewBulkPlatforms" type="button">Periksa daftar</button>
        <button id="applyBulkPlatforms" class="primary" type="button" disabled>+ Tambahkan semua</button>
        <button id="clearBulkPlatforms" type="button">Bersihkan</button>
@@ -2913,9 +2995,15 @@ function comparePlatformNames(a,b){
  if(groupDiff)return groupDiff;
  return left.localeCompare(right,undefined,{numeric:true,sensitivity:"base"});
 }
+function harmonyPlatformPalette(name){
+ const value=String(name||"").trim().toUpperCase();
+ const match=value.match(/^(VEGA|ZANE|JAX|REX|JINX|KANE|IRIS)(?=$|[-_\s])/);
+ const palette={VEGA:"#C18B36",ZANE:"#43866A",JAX:"#647C98",REX:"#967B58",JINX:"#A64E50",KANE:"#77709A",IRIS:"#4D8D91"};
+ return match?palette[match[1]]:null;
+}
 async function loadPlatforms(){
  const {data,error}=await sb.from("platforms").select("id,name,color,active");
- if(error){platforms=[];console.error(error);if(typeof setPlatformManagerMessage==="function")setPlatformManagerMessage("Gagal memuat daftar platform: "+error.message)}else platforms=(data||[]).sort(comparePlatformNames);
+ if(error){platforms=[];console.error(error);if(typeof setPlatformManagerMessage==="function")setPlatformManagerMessage("Gagal memuat daftar platform: "+error.message)}else platforms=(data||[]).map(p=>({...p,color:harmonyPlatformPalette(p.name)||p.color})).sort(comparePlatformNames);
  if(typeof renderPlatformCatalog==="function")renderPlatformCatalog();
  if(typeof renderBulkPlatformOptions==="function")renderBulkPlatformOptions();
  if(typeof renderPlatformSeatFilters==="function")renderPlatformSeatFilters();
@@ -2970,10 +3058,9 @@ async function addPlatform(){
 }
 function bulkPlatformColorForName(name){
  const value=String(name||"").trim().toUpperCase();
- if(/^JINX(?:\b|[-_])/.test(value)||value==="JINX")return "#dc2626";
- if(/^VEGA(?:\b|[-_])/.test(value)||value==="VEGA")return "#d97706";
- if(/^ZANE(?:\b|[-_])/.test(value)||value==="ZANE")return "#16a36a";
- return $("bulkPlatformDefaultColor")?.value||"#64748b";
+ const match=value.match(/^(VEGA|ZANE|JAX|REX|JINX|KANE|IRIS)(?=$|[-_\s])/);
+ const palette={VEGA:"#C18B36",ZANE:"#43866A",JAX:"#647C98",REX:"#967B58",JINX:"#A64E50",KANE:"#77709A",IRIS:"#4D8D91"};
+ return (match&&palette[match[1]])||$("bulkPlatformDefaultColor")?.value||"#647C98";
 }
 function parseBulkPlatformNames(){
  const lines=String($("bulkPlatformNames")?.value||"").replace(/^\uFEFF/,"").split(/\r?\n/);
