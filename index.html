@@ -2305,6 +2305,28 @@ table td{color:#344247!important}
 /* Hide the small subtitle beneath the Harmony title, as requested. */
 #headerFloorSeatSummary { display: none !important; }
 </style>
+
+<style id="harmony-platform-history-dashboard">
+#dashboardPanel .platform-daily-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:8px;margin:10px 0 18px}
+#dashboardPanel .platform-daily-card{background:#f7f6f1;border:1px solid #cbd2cf;border-top:3px solid #a96838;border-radius:9px;padding:8px 10px;min-height:62px}
+#dashboardPanel .platform-daily-card .platform-name{font-size:11px;font-weight:800;color:#526064;overflow-wrap:anywhere}
+#dashboardPanel .platform-daily-card strong{display:block;font-size:20px;line-height:1.15;color:#29373b;margin-top:3px}
+#dashboardPanel .platform-daily-card small{font-size:10px}
+#dashboardPanel .platform-attendance-wrap{margin-top:14px;padding:14px;background:#fbfaf6;border:1px solid #cbd2cf;border-radius:12px}
+#dashboardPanel .platform-attendance-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+#dashboardPanel .platform-attendance-head h3{margin:0}
+#dashboardPanel .platform-attendance-table{width:100%;border-collapse:collapse;background:#fffefa;border:1px solid #d7dcd7;border-radius:9px;overflow:hidden}
+#dashboardPanel .platform-attendance-table th,#dashboardPanel .platform-attendance-table td{padding:9px 11px;border-bottom:1px solid #e0e5e2;text-align:left;vertical-align:middle}
+#dashboardPanel .platform-attendance-table th{background:#e7eceb;color:#29373b;font-weight:800}
+#dashboardPanel .platform-attendance-table td:first-child{font-weight:700;white-space:nowrap}
+#dashboardPanel .platform-attendance-table td:nth-child(2){font-weight:600}
+#dashboardPanel .need-to-know-input{width:100%;min-width:180px;min-height:34px;padding:7px 9px;border:1px solid #cbd4d8;border-radius:7px;background:#fff;color:#29373b;font:inherit}
+#dashboardPanel .need-to-know-input:focus{outline:2px solid #c18a52;outline-offset:1px}
+#dashboardPanel .need-to-know-status{font-size:11px;color:#557363;margin-left:6px}
+#dashboardPanel .platform-attendance-empty{padding:16px;text-align:center;color:#657176;background:#fffefa;border:1px solid #d7dcd7;border-radius:9px}
+@media(max-width:650px){#dashboardPanel .platform-daily-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#dashboardPanel .platform-attendance-wrap{padding:9px}#dashboardPanel .platform-attendance-table th,#dashboardPanel .platform-attendance-table td{padding:7px}#dashboardPanel .need-to-know-input{min-width:130px}}
+</style>
+
 </head>
 <body>
 <header>
@@ -2511,7 +2533,12 @@ Taylor"></textarea>
     <div class="stat"><small>Belum terisi</small><b id="dashEmpty">240</b></div><div class="stat"><small>Persentase hadir</small><b id="dashPercent">0%</b></div>
     <div class="stat"><small>Platform aktif</small><b id="dashPlatforms">0</b></div>
    </div>
-   <h3>Hadir per platform</h3><div id="platformSummary" class="muted">Belum ada data.</div>
+   <h3>Jumlah employee per platform — tanggal terpilih</h3>
+   <div id="platformSummary" class="platform-daily-grid"><p class="muted">Belum ada data.</p></div>
+   <div class="platform-attendance-wrap">
+    <div class="platform-attendance-head"><h3>Hadir per platform</h3><span class="muted">Need to know disimpan berdasarkan tanggal dan shift yang dipilih.</span></div>
+    <div id="platformAttendanceTable"><div class="platform-attendance-empty">Pilih tanggal untuk melihat daftar employee.</div></div>
+   </div>
   </div>
  </section>
 
@@ -3263,18 +3290,63 @@ function updateStats(){
  $("presentCount").textContent=present;$("emptyCount").textContent=TOTAL-present;
  $("platformCount").textContent=withPlatform;$("platformKinds").textContent=kinds.size;
 }
+function getDashboardPlatformNames(){
+ const base=['VEGA','ZANE','JINX','JAX','IRIS','KANE','REX'];
+ const catalog=(platforms||[]).filter(p=>p.active!==false).map(p=>String(p.name||'').trim()).filter(Boolean);
+ // Always show the seven confirmed platforms; also include future active platforms from Platform Tools.
+ return [...new Set([...base,...catalog].filter(n=>n.toUpperCase()!=='BFC'))].sort((a,b)=>a.localeCompare(b));
+}
+function renderDailyPlatformCards(counts,names){
+ const host=$('platformSummary');
+ host.innerHTML=names.length?names.map(name=>`<div class="platform-daily-card"><div class="platform-name">${escapeHtml(name)}</div><strong>${counts[name]||0}</strong><small>employee</small></div>`).join(''):'<p class="muted">Belum ada platform aktif.</p>';
+}
+async function loadPlatformAttendanceRows(rows,date,shift){
+ const host=$('platformAttendanceTable');
+ const occupied=(rows||[]).filter(x=>(x.employee_name||'').trim()&&(x.platform||'').trim()&&String(x.platform).trim().toUpperCase()!=='BFC');
+ if(!occupied.length){host.innerHTML='<div class="platform-attendance-empty">Belum ada employee yang mengisi platform pada tanggal ini.</div>';return;}
+ let noteMap={};
+ try{
+  const {data,error}=await sb.from('dashboard_need_to_know').select('seat_code,employee_name,need_to_know').eq('work_date',date).eq('shift',shift).eq('floor_number',String(activeFloor));
+  if(error)throw error;
+  (data||[]).forEach(x=>noteMap[x.seat_code+'|'+String(x.employee_name||'').trim().toLowerCase()]=x.need_to_know||'');
+ }catch(error){
+  host.innerHTML=`<div class="platform-attendance-empty">Tidak dapat memuat kolom Need to know. Jalankan SQL setup yang disertakan terlebih dahulu. Detail: ${escapeHtml(error.message||error)}</div>`;
+  return;
+ }
+ const seen=new Set(),list=[];
+ occupied.forEach(x=>{
+  const platform=String(x.platform).trim(),name=String(x.employee_name).trim();
+  const key=platform.toLowerCase()+'|'+name.toLowerCase();
+  if(seen.has(key))return;seen.add(key);
+  list.push({seat_code:x.seat_code,platform,name,note:noteMap[x.seat_code+'|'+name.toLowerCase()]||''});
+ });
+ list.sort((a,b)=>a.platform.localeCompare(b.platform)||a.name.localeCompare(b.name));
+ host.innerHTML=`<div style="overflow-x:auto"><table class="platform-attendance-table"><thead><tr><th style="width:30%">Platform</th><th style="width:25%">Nama employee</th><th>Need to know</th></tr></thead><tbody>${list.map(x=>`<tr><td>${escapeHtml(x.platform)}</td><td>${escapeHtml(x.name)}</td><td><input class="need-to-know-input" type="text" maxlength="500" placeholder="Contoh: Leave, pindah platform, tambahan platform..." value="${escapeAttr(x.note)}" data-note-seat="${escapeAttr(x.seat_code)}" data-note-employee="${escapeAttr(x.name)}"><span class="need-to-know-status" aria-live="polite"></span></td></tr>`).join('')}</tbody></table></div>`;
+ host.querySelectorAll('[data-note-seat]').forEach(input=>{
+  input.addEventListener('change',async()=>{
+   const status=input.parentElement.querySelector('.need-to-know-status');
+   status.textContent='Menyimpan...';
+   const payload={work_date:date,shift,floor_number:String(activeFloor),seat_code:input.dataset.noteSeat,platform:list.find(x=>x.seat_code===input.dataset.noteSeat)?.platform||'',employee_name:input.dataset.noteEmployee||'',need_to_know:input.value.trim(),updated_by:currentUser?.id||null};
+   const {error}=await sb.from('dashboard_need_to_know').upsert(payload,{onConflict:'work_date,shift,floor_number,seat_code'});
+   if(error){status.textContent='Gagal menyimpan';status.title=error.message;}
+   else status.textContent='Tersimpan';
+  });
+ });
+}
 async function dashboard(){
- const date=$("dashDate").value,shift=$("dashShift").value;
- const {data,error}=await sb.from("seat_assignments").select("seat_code,employee_name,platform").eq("work_date",date).eq("shift",shift);
- if(error){$("platformSummary").textContent=error.message;return}
+ const date=$('dashDate').value,shift=$('dashShift').value;
+ const {data,error}=await sb.from('seat_assignments').select('seat_code,employee_name,platform').eq('work_date',date).eq('shift',shift);
+ if(error){$('platformSummary').textContent=error.message;return}
  const activeSeatIds=new Set(seats.map(x=>x.id));
- const rows=(data||[]).filter(x=>activeSeatIds.has(x.seat_code)),present=rows.filter(x=>(x.employee_name||"").trim()).length;
- $("dashTotalSeats").textContent=TOTAL;
- $("dashPresent").textContent=present;$("dashEmpty").textContent=TOTAL-present;
- $("dashPercent").textContent=(TOTAL?(present/TOTAL*100).toFixed(1):"0.0")+"%";
- const map={};rows.forEach(x=>{if((x.employee_name||"").trim()&&(x.platform||"").trim())map[x.platform]=(map[x.platform]||0)+1});
- $("dashPlatforms").textContent=Object.keys(map).length;
- $("platformSummary").innerHTML=Object.keys(map).length?`<table class="table"><thead><tr><th>Platform</th><th>Total hadir</th></tr></thead><tbody>${Object.entries(map).sort((a,b)=>a[0].localeCompare(b[0])).map(([n,c])=>`<tr><td>${escapeHtml(n)}</td><td><b>${c}</b></td></tr>`).join("")}</tbody></table>`:"Belum ada data hadir untuk tanggal dan shift ini.";
+ const rows=(data||[]).filter(x=>activeSeatIds.has(x.seat_code)),present=rows.filter(x=>(x.employee_name||'').trim()).length;
+ $('dashTotalSeats').textContent=TOTAL;
+ $('dashPresent').textContent=present;$('dashEmpty').textContent=TOTAL-present;
+ $('dashPercent').textContent=(TOTAL?(present/TOTAL*100).toFixed(1):'0.0')+'%';
+ const names=getDashboardPlatformNames(),counts={};
+ const seen=new Set();rows.forEach(x=>{const employee=String(x.employee_name||'').trim(),platform=String(x.platform||'').trim();if(!employee||!platform||platform.toUpperCase()==='BFC')return;const canonical=names.find(n=>n.toLowerCase()===platform.toLowerCase());if(!canonical)return;const key=canonical.toLowerCase()+'|'+employee.toLowerCase();if(seen.has(key))return;seen.add(key);counts[canonical]=(counts[canonical]||0)+1});
+ $('dashPlatforms').textContent=names.length;
+ renderDailyPlatformCards(counts,names);
+ await loadPlatformAttendanceRows(rows,date,shift);
 }
 function renderEmployees(){
  const q=$("employeeSearch").value.toLowerCase(),filter=$("employeeStatus").value;
