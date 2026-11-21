@@ -2626,7 +2626,6 @@ table td{color:#344247!important}
  <section id="seatingPanel" class="tab-panel">
   <div class="panel">
    <div class="toolbar">
-    <div class="field"><label>Tanggal kerja</label><input id="workDate" type="date"></div>
     <div class="field"><label>Shift</label><select id="workShift"><option>Pagi</option><option>Malam</option></select></div>
     <button id="reloadBtn">Refresh data</button><button id="printBtn">Print denah</button>
     <span id="saveStatus" class="muted">Belum tersinkron</span>
@@ -2638,8 +2637,7 @@ table td{color:#344247!important}
     <div class="stat"><small id="platformCountLabel">Platform terisi — Lantai 9</small><b id="platformCount">0</b></div>
     <div class="stat"><small id="platformKindsLabel">Platform berbeda — Lantai 9</small><b id="platformKinds">0</b></div>
    </div>
-   <p id="floorAttendanceHint" class="muted">Lantai 9 · Operasional: isi nama karyawan pada kursi yang tersedia. Nama yang terisi otomatis dihitung sebagai hadir untuk tanggal dan shift yang dipilih.</p>
-   <p id="floorCarryForwardHint" class="muted" style="margin-top:6px"><b>Salin denah harian — Lantai 9:</b> Jika tanggal dan shift yang dipilih belum memiliki data, aplikasi akan menyalin nama, platform, dan posisi kursi dari tanggal kalender sebelumnya pada shift yang sama di lantai yang sama. Data Lantai 8 dan Lantai 9 tetap dipisahkan.</p>
+   <p id="floorAttendanceHint" class="muted">Denah tersimpan tetap dan digunakan setiap hari. Pilih shift Pagi atau Malam untuk melihat susunan masing-masing.</p>
    <div id="floor8Planner" class="floor8-planner hidden no-print">
     <div class="toolbar" style="justify-content:space-between;align-items:center"><div><div class="floor8-planning-tag">Planning · Belum final</div><h3>Atur pemetaan meja — Lantai 8</h3><p class="muted" style="margin:0">Masukkan ukuran sementara. Denah akan dibuat otomatis dan bisa diubah lagi ketika ukuran lantai sudah pasti.</p></div><span class="status">Konfigurasi fleksibel</span></div>
     <div class="floor8-config-grid">
@@ -2794,24 +2792,32 @@ Taylor"></textarea>
  <section id="dashboardPanel" class="tab-panel hidden">
   <div class="panel">
    <h2>Dashboard kehadiran — <span id="dashFloorLabel">Lantai 9</span></h2>
-   <div class="toolbar"><div class="field"><label>Tanggal</label><input id="dashDate" type="date"></div><div class="field"><label>Shift</label><select id="dashShift"><option>Pagi</option><option>Malam</option></select></div><button id="dashRefresh" class="primary">Tampilkan rekap</button></div>
+   <div class="toolbar"><div class="field"><label>Shift</label><select id="dashShift"><option>Pagi</option><option>Malam</option></select></div><button id="dashRefresh" class="primary">Tampilkan rekap</button><span class="muted">Data denah tetap, berlaku setiap hari.</span></div>
    <div class="stats">
     <div class="stat"><small>Total kursi</small><b id="dashTotalSeats">240</b></div><div class="stat"><small>Total hadir</small><b id="dashPresent">0</b></div>
     <div class="stat"><small>Belum terisi</small><b id="dashEmpty">240</b></div><div class="stat"><small>Persentase hadir</small><b id="dashPercent">0%</b></div>
     <div class="stat"><small>Platform aktif</small><b id="dashPlatforms">0</b></div>
    </div>
-   <h3>Jumlah employee per platform — tanggal terpilih</h3>
+   <h3>Jumlah employee per platform</h3>
    <div id="platformSummary" class="platform-daily-grid"><p class="muted">Belum ada data.</p></div>
    <div class="platform-attendance-wrap">
-    <div class="platform-attendance-head"><h3>Hadir per platform</h3><span class="muted">Need to know disimpan berdasarkan tanggal dan shift yang dipilih.</span></div>
-    <div id="platformAttendanceTable"><div class="platform-attendance-empty">Pilih tanggal untuk melihat daftar employee.</div></div>
+    <div class="platform-attendance-head"><h3>Hadir per platform</h3><span class="muted">Need to know disimpan tetap berdasarkan shift.</span></div>
+    <div id="platformAttendanceTable"><div class="platform-attendance-empty">Pilih shift untuk melihat daftar employee.</div></div>
    </div>
   </div>
  </section>
 
  <section id="employeePanel" class="tab-panel hidden">
   <div class="panel">
-   <div class="toolbar" style="justify-content:space-between"><div><h2>Employee database</h2><p class="muted">Daftar master karyawan terpisah dari denah kursi.</p></div><button id="addEmployee" class="primary">+ Tambah karyawan</button></div>
+   <div class="toolbar" style="justify-content:space-between"><div><h2>Employee database</h2><p class="muted">Daftar master karyawan terpisah dari denah kursi.</p></div><div class="actions"><button id="addEmployee" class="primary">+ Tambah karyawan</button><button id="toggleBulkEmployees" type="button">+ Tambah banyak sekaligus</button></div></div>
+   <div id="bulkEmployeeDatabase" class="bulk-entry hidden" style="margin:14px 0">
+    <h3 style="margin:0 0 6px">Tambah banyak karyawan sekaligus</h3>
+    <p class="muted">Satu karyawan per baris dengan format <b>ID karyawan, Nama lengkap, Tim</b>. Tim boleh dikosongkan. Gunakan koma atau TAB sebagai pemisah.</p>
+    <textarea id="bulkEmployeeDatabaseText" placeholder="EMP001, Nina, CS&#10;EMP002, Jule, CS&#10;EMP003, Elis, CS"></textarea>
+    <div class="bulk-tools"><button id="previewBulkEmployees" type="button">Periksa daftar</button><button id="saveBulkEmployees" class="primary" type="button" disabled>Simpan semua karyawan</button><button id="clearBulkEmployees" type="button">Bersihkan</button></div>
+    <p id="bulkEmployeeDatabaseSummary" class="bulk-summary" aria-live="polite">Belum ada daftar yang diperiksa.</p>
+    <div id="bulkEmployeeDatabasePreview" class="bulk-preview hidden"></div>
+   </div>
    <div class="toolbar"><div class="field"><label>Cari nama / ID</label><input id="employeeSearch" placeholder="Ketik nama atau ID karyawan"></div><div class="field"><label>Filter status</label><select id="employeeStatus"><option value="active">Aktif</option><option value="all">Semua</option></select></div></div>
    <div style="overflow:auto;margin-top:12px"><table class="table"><thead><tr><th>ID karyawan</th><th>Nama</th><th>Tim</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="employeeBody"></tbody></table></div>
   </div>
@@ -2852,8 +2858,7 @@ const sb = supabaseReady ? window.supabase.createClient(SUPABASE_URL,SUPABASE_AN
 
 let currentUser=null, currentRole="expat", assignments={}, employees=[], platforms=[];
 const $=id=>document.getElementById(id);
-const today=()=>new Date().toLocaleDateString("en-CA");
-$("workDate").value=today();$("dashDate").value=today();
+const SEATING_DATA_DATE="2000-01-01"; // Kunci tetap agar denah yang sama dipakai setiap hari.
 const FLOOR8_DEFAULT={depthRows:5,leftTables:1,rightTables:1,seatsPerFace:3};
 const FLOOR8_META_DATE="1900-01-01", FLOOR8_META_SHIFT="Pagi", FLOOR8_META_CODE="__FLOOR8_LAYOUT_CONFIG_V1__";
 let floor8Config={...FLOOR8_DEFAULT};
@@ -3381,7 +3386,7 @@ async function saveSeatPlatform(seatCode,platformName){
  if(state)state.textContent="Menyimpan...";
  assignments[seatCode] ||= {seat_code:seatCode,employee_name:"",platform:""};
  assignments[seatCode].platform=platformName;
- const payload={work_date:$("workDate").value,shift:$("workShift").value,seat_code:seatCode,employee_name:assignments[seatCode].employee_name||"",platform:platformName||"",updated_by:currentUser.id};
+ const payload={work_date:SEATING_DATA_DATE,shift:$("workShift").value,seat_code:seatCode,employee_name:assignments[seatCode].employee_name||"",platform:platformName||"",updated_by:currentUser.id};
  const {error}=await sb.from("seat_assignments").upsert(payload,{onConflict:"work_date,shift,seat_code"});
  if(error){if(state)state.textContent="Gagal";setPlatformSeatMessage("Gagal menyimpan "+seatCode+": "+error.message);await loadAssignments();return}
  if(state)state.textContent="Tersimpan";
@@ -3396,48 +3401,34 @@ async function loadEmployees(){
  if(error){console.error(error);return}employees=data||[];renderEmployees();
 }
 let assignmentLoadSequence=0;
-function previousCalendarDate(dateText){
- const parts=String(dateText||"").split("-").map(Number);
- if(parts.length!==3||parts.some(n=>!Number.isFinite(n)))return "";
- const d=new Date(Date.UTC(parts[0],parts[1]-1,parts[2]));
- d.setUTCDate(d.getUTCDate()-1);
- return d.toISOString().slice(0,10);
-}
 async function loadAssignments(){
  const loadSequence=++assignmentLoadSequence;
  message("Memuat data online...");
- const date=$("workDate").value,shift=$("workShift").value;
+ const date=SEATING_DATA_DATE,shift=$("workShift").value;
  const {data,error}=await sb.from("seat_assignments").select("seat_code,employee_name,platform").eq("work_date",date).eq("shift",shift);
  if(loadSequence!==assignmentLoadSequence)return;
  if(error){message("Gagal memuat: "+error.message);return}
  const activeSeatIds=new Set(seats.map(x=>x.id));
  let rows=(data||[]).filter(x=>activeSeatIds.has(x.seat_code));
- let loadMessage="Tersinkron online";
- // Only carry forward when the selected date/shift has no records at all.
- // The source is the immediately preceding calendar date for the same shift.
+ let loadMessage="Tersinkron online · Denah tetap untuk setiap hari";
+ // Jika belum ada data pada kunci tetap, ambil susunan terbaru yang sudah ada.
+ // Data lama tidak dihapus; salinan tetap dibuat agar denah tidak reset saat ganti hari.
  if(rows.length===0){
-  const sourceDate=previousCalendarDate(date);
-  if(sourceDate){
-   const {data:sourceRows,error:sourceError}=await sb.from("seat_assignments")
-    .select("seat_code,employee_name,platform")
-    .eq("work_date",sourceDate).eq("shift",shift);
+  const {data:recentRows,error:recentError}=await sb.from("seat_assignments")
+   .select("work_date,seat_code,employee_name,platform")
+   .eq("shift",shift).order("work_date",{ascending:false}).limit(500);
+  if(loadSequence!==assignmentLoadSequence)return;
+  if(recentError){message("Gagal memeriksa denah tersimpan: "+recentError.message);return}
+  const validRecent=(recentRows||[]).filter(x=>activeSeatIds.has(x.seat_code));
+  if(validRecent.length){
+   const latestDate=validRecent[0].work_date;
+   const source=validRecent.filter(x=>x.work_date===latestDate);
+   const copiedRows=source.map(x=>({work_date:date,shift,seat_code:x.seat_code,employee_name:x.employee_name||"",platform:x.platform||"",updated_by:currentUser.id}));
+   const {error:copyError}=await sb.from("seat_assignments").upsert(copiedRows,{onConflict:"work_date,shift,seat_code"});
    if(loadSequence!==assignmentLoadSequence)return;
-   if(sourceError){message("Data hari ini kosong. Gagal memeriksa denah hari sebelumnya: "+sourceError.message);return}
-   const source=(sourceRows||[]).filter(x=>activeSeatIds.has(x.seat_code)&&(String(x.employee_name||"").trim()||String(x.platform||"").trim()));
-   if(source.length){
-    const copiedRows=source.map(x=>({
-     work_date:date,shift,seat_code:x.seat_code,
-     employee_name:x.employee_name||"",platform:x.platform||"",updated_by:currentUser.id
-    }));
-    const {error:copyError}=await sb.from("seat_assignments").upsert(copiedRows,{onConflict:"work_date,shift,seat_code"});
-    if(loadSequence!==assignmentLoadSequence)return;
-    if(copyError){
-     message("Gagal menyalin denah dari "+sourceDate+": "+copyError.message);
-     return;
-    }
-    rows=copiedRows;
-    loadMessage=`Denah disalin dari ${sourceDate} · Shift ${shift}. Kamu bisa mengedit tanggal ini tanpa mengubah tanggal sebelumnya.`;
-   }
+   if(copyError){message("Gagal menyiapkan denah tetap: "+copyError.message);return}
+   rows=copiedRows;
+   loadMessage="Denah terbaru berhasil disiapkan sebagai denah tetap. Susunan ini akan digunakan setiap hari.";
   }
  }
  assignments={};rows.forEach(x=>assignments[x.seat_code]=x);
@@ -3510,13 +3501,13 @@ async function applyBulkNames(side){
  const platformName=$("bulkTargetPlatform"+side).value;
  if(!platformName){alert(`Pilih platform untuk ${sideLabel(side)} terlebih dahulu.`);return}
  if(!names.length){alert(`Masukkan minimal satu nama untuk ${sideLabel(side)}.`);return}
- const date=$("workDate").value,shift=$("workShift").value;
+ const date=SEATING_DATA_DATE,shift=$("workShift").value;
  const available=availableSeatCodesForPlatform(platformName,side);
  if(!available.length){alert(`Tidak ada kursi kosong platform ${platformName} di ${sideLabel(side)}. Sisi lain tidak akan digunakan.`);return}
  if(names.length>available.length){alert(`Daftar berisi ${names.length} nama, tetapi ${sideLabel(side)} hanya memiliki ${available.length} kursi kosong untuk platform ${platformName}. Kurangi daftar nama atau atur pemetaan sisi ini melalui Platform tools.`);return}
  const preview=names.map((name,i)=>`${i+1}. ${name} → ${available[i]}`).slice(0,18).join("\n");
  const more=names.length>18?`\n…dan ${names.length-18} nama lainnya`:"";
- if(!confirm(`Masukkan ${names.length} nama hanya ke ${sideLabel(side)} untuk platform ${platformName}?\nTanggal ${date} · Shift ${shift}\nUrutan sisi ini: baris atas kiri ke kanan, lalu baris bawah kanan ke kiri; lanjut ke baris berikutnya. Data sisi lainnya tidak akan disentuh.\n\n${preview}${more}\n\nKursi dari platform lain dan semua kursi di sisi seberang akan dilewati.`))return;
+ if(!confirm(`Masukkan ${names.length} nama hanya ke ${sideLabel(side)} untuk platform ${platformName}?\nShift ${shift}\nUrutan sisi ini: baris atas kiri ke kanan, lalu baris bawah kanan ke kiri; lanjut ke baris berikutnya. Data sisi lainnya tidak akan disentuh.\n\n${preview}${more}\n\nKursi dari platform lain dan semua kursi di sisi seberang akan dilewati.`))return;
  const rows=names.map((name,i)=>{
   const seatCode=available[i],existing=assignments[seatCode]||{};
   return {work_date:date,shift,seat_code:seatCode,employee_name:name,platform:existing.platform,updated_by:currentUser.id};
@@ -3527,7 +3518,7 @@ async function applyBulkNames(side){
   if(error)throw error;
   $("bulkEmployeeNames"+side).value="";$("bulkEmployeeFile"+side).value="";
   await loadAssignments();
-  $("bulkEmployeeSummary"+side).textContent=`Berhasil memasukkan ${rows.length} nama ke ${sideLabel(side)} · platform ${platformName} · ${date} · shift ${shift}.${duplicates?` ${duplicates} nama duplikat dilewati.`:""}`;
+  $("bulkEmployeeSummary"+side).textContent=`Berhasil memasukkan ${rows.length} nama ke ${sideLabel(side)} · platform ${platformName} · shift ${shift}.${duplicates?` ${duplicates} nama duplikat dilewati.`:""}`;
   $("bulkEmployeePreview"+side).classList.add("hidden");
   message(`${rows.length} nama berhasil disimpan hanya di ${sideLabel(side)} untuk ${platformName}`);
  }catch(error){
@@ -3579,7 +3570,7 @@ function renderSeats(side,tableCount){
 
 async function saveSeat(id){
  if(!canEditSeats())return;
- const v=assignments[id]||{},payload={work_date:$("workDate").value,shift:$("workShift").value,seat_code:id,employee_name:v.employee_name||"",platform:v.platform||"",updated_by:currentUser.id};
+ const v=assignments[id]||{},payload={work_date:SEATING_DATA_DATE,shift:$("workShift").value,seat_code:id,employee_name:v.employee_name||"",platform:v.platform||"",updated_by:currentUser.id};
  message("Menyimpan...");
  const {error}=await sb.from("seat_assignments").upsert(payload,{onConflict:"work_date,shift,seat_code"});
  if(error){message("Gagal simpan: "+error.message);return}
@@ -3636,7 +3627,7 @@ async function loadPlatformAttendanceRows(rows,date,shift){
  });
 }
 async function dashboard(){
- const date=$('dashDate').value,shift=$('dashShift').value;
+ const date=SEATING_DATA_DATE,shift=$('dashShift').value;
  const {data,error}=await sb.from('seat_assignments').select('seat_code,employee_name,platform').eq('work_date',date).eq('shift',shift);
  if(error){$('platformSummary').textContent=error.message;return}
  const activeSeatIds=new Set(seats.map(x=>x.id));
@@ -3656,6 +3647,49 @@ function renderEmployees(){
  $("employeeBody").innerHTML=list.map(e=>`<tr><td>${escapeHtml(e.employee_code)}</td><td>${escapeHtml(e.full_name)}</td><td>${escapeHtml(e.team||"-")}</td><td>${e.active?"Aktif":"Nonaktif"}</td><td class="actions">${canManageEmployees()?`<button class="small" data-edit="${e.id}">Edit</button><button class="small danger" data-toggle="${e.id}">${e.active?"Nonaktifkan":"Aktifkan"}</button>`:"Read only"}</td></tr>`).join("");
  $("employeeBody").querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editEmployee(b.dataset.edit));
  $("employeeBody").querySelectorAll("[data-toggle]").forEach(b=>b.onclick=()=>toggleEmployee(b.dataset.toggle));
+}
+function parseBulkEmployeeDatabase(){
+ const raw=$("bulkEmployeeDatabaseText").value||"", existing=new Set(employees.map(e=>String(e.employee_code||"").trim().toLowerCase()));
+ const seen=new Set(), rows=[], problems=[];
+ raw.split(/\r?\n/).forEach((line,index)=>{
+  const value=line.trim();if(!value)return;
+  const tab=value.includes("\t"),parts=tab?value.split("\t"):value.split(",");
+  const code=String(parts[0]||"").trim(),name=String(parts[1]||"").trim(),team=String(parts.slice(2).join(tab?" ":" , ")||"").trim();
+  if(!code||!name){problems.push("Baris "+(index+1)+": ID dan nama wajib diisi.");return}
+  const key=code.toLowerCase();
+  if(existing.has(key)){problems.push("Baris "+(index+1)+": ID "+code+" sudah ada di database.");return}
+  if(seen.has(key)){problems.push("Baris "+(index+1)+": ID "+code+" duplikat dalam daftar.");return}
+  seen.add(key);rows.push({employee_code:code,full_name:name,team,active:true});
+ });
+ return {rows,problems};
+}
+function previewBulkEmployeeDatabase(){
+ const {rows,problems}=parseBulkEmployeeDatabase(),box=$("bulkEmployeeDatabasePreview");
+ box.classList.remove("hidden");
+ box.textContent=(rows.length?"Siap disimpan: "+rows.length+" karyawan\n"+rows.slice(0,12).map((r,i)=>(i+1)+". "+r.employee_code+" — "+r.full_name+(r.team?" ("+r.team+")":"")).join("\n")+(rows.length>12?"\n...":""):"Tidak ada data valid.")+(problems.length?"\n\nPerlu diperiksa:\n"+problems.slice(0,15).join("\n")+(problems.length>15?"\n...":""):"");
+ $("bulkEmployeeDatabaseSummary").textContent=rows.length+" data siap disimpan · "+problems.length+" baris perlu diperiksa.";
+ $("saveBulkEmployees").disabled=!canManageEmployees()||!rows.length;
+}
+async function saveBulkEmployeeDatabase(){
+ if(!canManageEmployees())return;
+ const {rows,problems}=parseBulkEmployeeDatabase();
+ if(!rows.length){alert("Tidak ada data valid untuk disimpan.");return}
+ if(!confirm("Simpan "+rows.length+" karyawan baru ke database? Data karyawan yang sudah ada tidak akan diubah."))return;
+ const button=$("saveBulkEmployees");button.disabled=true;button.textContent="Menyimpan...";
+ let inserted=0,failed=[];
+ try{
+  for(let i=0;i<rows.length;i+=50){
+   const {error}=await sb.from("employees").insert(rows.slice(i,i+50));
+   if(error)failed.push("Batch "+(Math.floor(i/50)+1)+": "+error.message);
+   else inserted+=Math.min(50,rows.length-i);
+  }
+  await loadEmployees();
+  if(!failed.length)$("bulkEmployeeDatabaseText").value="";
+  $("bulkEmployeeDatabasePreview").classList.add("hidden");
+  $("bulkEmployeeDatabaseSummary").textContent="Berhasil menyimpan "+inserted+" karyawan."+(failed.length?" Gagal: "+failed.join(" | "):"")+(problems.length?" Baris dilewati: "+problems.length+".":"");
+  if(failed.length)alert("Tersimpan "+inserted+" karyawan. Sebagian batch gagal: "+failed.join(" | "));
+  else alert("Berhasil menambahkan "+inserted+" karyawan.");
+ }finally{button.textContent="Simpan semua karyawan";button.disabled=true}
 }
 async function addEmployee(){
  const code=prompt("ID karyawan:");if(!code)return;
@@ -3808,9 +3842,14 @@ $("refreshPlatformMap").onclick=async()=>{await loadAssignments();await loadPlat
 $("loginBtn").onclick=login;
 $("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
 $("logoutBtn").onclick=async()=>{clearInactivityTimers();if(sb)await sb.auth.signOut();currentUser=null;setApp(false)};
-$("workDate").onchange=loadAssignments;$("workShift").onchange=loadAssignments;
+$("workShift").onchange=loadAssignments;
 $("reloadBtn").onclick=loadAssignments;$("printBtn").onclick=()=>window.print();
 $("dashRefresh").onclick=dashboard;$("addEmployee").onclick=addEmployee;
+ $("toggleBulkEmployees").onclick=()=>{$("bulkEmployeeDatabase").classList.toggle("hidden")};
+ $("previewBulkEmployees").onclick=previewBulkEmployeeDatabase;
+ $("saveBulkEmployees").onclick=saveBulkEmployeeDatabase;
+ $("clearBulkEmployees").onclick=()=>{$("bulkEmployeeDatabaseText").value="";$("bulkEmployeeDatabasePreview").classList.add("hidden");$("bulkEmployeeDatabaseSummary").textContent="Belum ada daftar yang diperiksa.";$("saveBulkEmployees").disabled=true};
+ $("bulkEmployeeDatabaseText").addEventListener("input",()=>{$("saveBulkEmployees").disabled=true;$("bulkEmployeeDatabaseSummary").textContent="Daftar berubah. Klik Periksa daftar sebelum menyimpan."});
 $("createUserBtn").onclick=createManagedUser;
 $("refreshUsersBtn").onclick=loadUserAccounts;
 $("employeeSearch").oninput=renderEmployees;$("employeeStatus").onchange=renderEmployees;
