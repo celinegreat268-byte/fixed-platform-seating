@@ -3760,5 +3760,131 @@ async function loadAssignments(){
 }
 </script>
 
+
+<style id="harmony-platform-side-quantity-addition">
+/* ADD-ONLY UI patch: replace the wide catalog/add panel with two side-specific forms. */
+#platformPanel .platform-tools-grid,
+#platformPanel .platform-catalog-card { display:none !important; }
+#platformSideQuantityTools {
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin:12px 0 18px;
+}
+#platformSideQuantityTools .side-add-card {
+  background:#fff; border:1px solid var(--line); border-top:4px solid var(--blue);
+  border-radius:12px; padding:14px; min-width:0;
+}
+#platformSideQuantityTools .side-add-card.right { border-top-color:#64748b; }
+#platformSideQuantityTools .side-add-fields {
+  display:grid; grid-template-columns:minmax(0,1fr) 105px auto; gap:8px; align-items:end;
+}
+#platformSideQuantityTools .side-add-card label { margin-bottom:5px; }
+#platformSideQuantityTools .side-add-card button { min-height:39px; }
+#platformSideQuantityTools .side-add-help { margin:8px 0 0; }
+@media(max-width:760px) {
+  #platformSideQuantityTools { grid-template-columns:1fr; }
+  #platformSideQuantityTools .side-add-fields { grid-template-columns:minmax(0,1fr) 90px; }
+  #platformSideQuantityTools .side-add-fields button { grid-column:1/-1; }
+}
+</style>
+<script id="harmony-platform-side-quantity-addition-v1">
+(function(){
+ const panel=document.getElementById("platformPanel");
+ const mapTools=panel?.querySelector(".platform-seat-tools");
+ if(!panel||!mapTools||document.getElementById("platformSideQuantityTools"))return;
+
+ const tools=document.createElement("div");
+ tools.id="platformSideQuantityTools";
+ tools.innerHTML=`
+  <section class="side-add-card left">
+   <h3 style="margin:0 0 10px">Tambah platform — SISI KIRI</h3>
+   <div class="side-add-fields">
+    <div><label for="sidePlatformNameL">Nama platform</label><input id="sidePlatformNameL" placeholder="Contoh: ZANE-3"></div>
+    <div><label for="sidePlatformQtyL">Jumlah orang</label><input id="sidePlatformQtyL" type="number" min="1" step="1" value="1"></div>
+    <button id="sidePlatformAddL" class="primary" type="button">+ Tambah kiri</button>
+   </div>
+   <p class="muted side-add-help">Masukkan nama platform dan jumlah orang. Sistem mengisi kursi kosong di sisi kiri terlebih dahulu.</p>
+   <p id="sidePlatformMessageL" class="muted" aria-live="polite"></p>
+  </section>
+  <section class="side-add-card right">
+   <h3 style="margin:0 0 10px">Tambah platform — SISI KANAN</h3>
+   <div class="side-add-fields">
+    <div><label for="sidePlatformNameR">Nama platform</label><input id="sidePlatformNameR" placeholder="Contoh: ZANE-3"></div>
+    <div><label for="sidePlatformQtyR">Jumlah orang</label><input id="sidePlatformQtyR" type="number" min="1" step="1" value="1"></div>
+    <button id="sidePlatformAddR" type="button">+ Tambah kanan</button>
+   </div>
+   <p class="muted side-add-help">Masukkan nama platform dan jumlah orang. Sistem mengisi kursi kosong di sisi kanan terlebih dahulu.</p>
+   <p id="sidePlatformMessageR" class="muted" aria-live="polite"></p>
+  </section>`;
+ mapTools.parentNode.insertBefore(tools,mapTools);
+
+ async function addPlatformToSide(side){
+  const suffix=side, nameEl=document.getElementById("sidePlatformName"+suffix);
+  const qtyEl=document.getElementById("sidePlatformQty"+suffix);
+  const msg=document.getElementById("sidePlatformMessage"+suffix);
+  const btn=document.getElementById("sidePlatformAdd"+suffix);
+  const name=(nameEl.value||"").trim();
+  const qty=Number(qtyEl.value);
+  if(!canAdmin()){alert("Hanya Admin yang dapat menambahkan platform.");return}
+  if(!name){msg.textContent="Isi nama platform terlebih dahulu.";nameEl.focus();return}
+  if(!Number.isInteger(qty)||qty<1){msg.textContent="Jumlah orang harus berupa angka minimal 1.";qtyEl.focus();return}
+
+  const sideCode=side==="L"?"L":"R";
+  const available=seats.filter(seat=>seat.side===sideCode && !String(assignments[seat.id]?.platform||"").trim());
+  if(available.length<qty){
+   msg.textContent=`Kursi kosong di sisi ${side==="L"?"kiri":"kanan"} hanya ${available.length}. Tidak ada data yang diubah.`;
+   return;
+  }
+
+  btn.disabled=true;const oldText=btn.textContent;btn.textContent="Menyimpan...";
+  msg.textContent="Memeriksa katalog platform...";
+  try{
+   let platform=platforms.find(x=>String(x.name).toLowerCase()===name.toLowerCase());
+   if(!platform){
+    const color=typeof bulkPlatformColorForName==="function"?bulkPlatformColorForName(name):"#64748b";
+    const {data,error}=await sb.from("platforms").insert({name,color,active:true}).select("*").single();
+    if(error)throw error;
+    platform=data;
+    platforms.push(platform);
+   }else if(!platform.active){
+    const {error}=await sb.from("platforms").update({active:true}).eq("id",platform.id);
+    if(error)throw error;
+    platform.active=true;
+   }
+
+   const chosen=available.slice(0,qty);
+   const date=document.getElementById("workDate").value;
+   const shift=document.getElementById("workShift").value;
+   const payload=chosen.map(seat=>({
+    work_date:date,shift,seat_code:seat.id,
+    employee_name:assignments[seat.id]?.employee_name||"",
+    platform:name,updated_by:currentUser.id
+   }));
+   const {error:saveError}=await sb.from("seat_assignments").upsert(payload,{onConflict:"work_date,shift,seat_code"});
+   if(saveError)throw saveError;
+
+   chosen.forEach((seat,i)=>{
+    assignments[seat.id] ||= {seat_code:seat.id,employee_name:"",platform:""};
+    assignments[seat.id].platform=name;
+   });
+   renderPlatformCatalog();
+   renderPlatformSeatEditor();
+   renderSeats("L",activeFloor==="8"?floor8Config.leftTables:3);
+   renderSeats("R",activeFloor==="8"?floor8Config.rightTables:2);
+   updateStats();
+   renderBulkPlatformOptions();
+   updateBulkSummary();
+   msg.textContent=`Berhasil: ${name} ditambahkan ke ${qty} kursi kosong di sisi ${side==="L"?"kiri":"kanan"}.`;
+   nameEl.value="";
+   qtyEl.value="1";
+  }catch(error){
+   msg.textContent="Gagal menyimpan: "+error.message;
+  }finally{
+   btn.disabled=false;btn.textContent=oldText;
+  }
+ }
+ document.getElementById("sidePlatformAddL").addEventListener("click",()=>addPlatformToSide("L"));
+ document.getElementById("sidePlatformAddR").addEventListener("click",()=>addPlatformToSide("R"));
+})();
+</script>
+
 </body>
 </html>
