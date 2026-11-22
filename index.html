@@ -4705,5 +4705,78 @@ html body #appScreen textarea {
 }
 </style>
 
+
+<style id="harmony-burgundy-panel-background-hard-fix">
+/* HARD FIX: the complete containers behind white text must be burgundy. */
+html body #appScreen > .panel.floor-switcher.no-print {
+  background: linear-gradient(135deg,#64243d 0%,#7b304d 100%) !important;
+  border: 1px solid #8d4a64 !important;
+  border-top: 4px solid #542037 !important;
+  color:#fff !important;
+  padding:16px 18px !important;
+}
+html body #appScreen > .panel.floor-switcher.no-print label,
+html body #appScreen > .panel.floor-switcher.no-print .floor-switcher-copy,
+html body #appScreen > .panel.floor-switcher.no-print .floor-active-label,
+html body #appScreen > .panel.floor-switcher.no-print #activeFloorDescription {
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  text-shadow:0 1px 2px rgba(0,0,0,.3) !important;
+  background:transparent !important;
+}
+html body #appScreen > .panel.floor-switcher.no-print .floor-mode-badge {
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  background:#542037 !important;
+  border:1px solid #c08a9e !important;
+}
+/* Burgundy background for the whole work-date/shift/action toolbar strip. */
+html body #appScreen #seatingPanel > .panel > .toolbar {
+  background:linear-gradient(135deg,#64243d 0%,#7b304d 100%) !important;
+  border:1px solid #8d4a64 !important;
+  border-top:4px solid #542037 !important;
+  border-radius:9px !important;
+  padding:12px !important;
+  color:#fff !important;
+}
+html body #appScreen #seatingPanel > .panel > .toolbar .field > label,
+html body #appScreen #seatingPanel > .panel > .toolbar #saveStatus {
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  text-shadow:0 1px 2px rgba(0,0,0,.3) !important;
+  background:transparent !important;
+  border:0 !important;
+  padding:0 2px 5px !important;
+}
+html body #appScreen #seatingPanel > .panel > .toolbar #saveStatus {
+  display:inline-block !important;
+  padding:7px 10px !important;
+  border-radius:6px !important;
+  background:#542037 !important;
+  border:1px solid #a96b83 !important;
+}
+/* Inputs remain white with dark text for legibility and normal use. */
+html body #appScreen > .panel.floor-switcher.no-print select,
+html body #appScreen #seatingPanel > .panel > .toolbar input,
+html body #appScreen #seatingPanel > .panel > .toolbar select {
+  background:#fff !important;
+  color:#26313a !important;
+  -webkit-text-fill-color:#26313a !important;
+  border:1px solid #d7b8c4 !important;
+}
+html body #appScreen #seatingPanel > .panel > .toolbar button {
+  background:linear-gradient(135deg,#542037 0%,#71304b 100%) !important;
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  border:1px solid #b47b91 !important;
+}
+html body #appScreen #seatingPanel > .panel > .toolbar button:disabled {
+  background:#98677a !important;
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  opacity:1 !important;
+}
+</style>
+
 </body>
 </html>
