@@ -3233,7 +3233,7 @@ function renderSeats(side,tableCount){
     const id=seatCode(r,t,pc),v=assignments[id]||{};
     return `<div class="seat ${v.employee_name?"occupied":""} ${platformColorClass(v.platform)}" data-seat="${escapeAttr(id)}">
      <div class="seat-head"><span>${side==="L"?"K":"Kn"}${t} · R${r}</span><span>PC ${pc}</span></div>
-     <div class="seat-platform">${escapeHtml(v.platform||"Platform belum diisi")}</div>
+     <input class="seat-platform-input" type="text" data-field="platform" value="${escapeAttr(v.platform||"")}" placeholder="Nama platform" aria-label="Nama platform kursi ${escapeAttr(id)}" ${canEditSeats()?"":"disabled"}>
      <textarea data-field="employee_name" rows="2" placeholder="Nama karyawan" ${canEditSeats()?"":"disabled"}>${escapeHtml(v.employee_name||"")}</textarea>
     </div>`;
    };
@@ -3246,13 +3246,17 @@ return `<div class="desk"><div class="desk-title">Meja ${side==="L"?"Kiri":"Kana
   return `<div class="row-seats"><div class="row-label">BARIS ${r}</div><div class="desk-grid ${side==="R"?"right":""}" style="grid-template-columns:repeat(${deskCount},minmax(525px,1fr))">${desks}</div></div>`;
  }).join("");
  target.querySelectorAll("[data-seat]").forEach(card=>applyPlatformColor(card,assignments[card.dataset.seat]?.platform||""));
- target.querySelectorAll("[data-seat] textarea").forEach(el=>{
+ target.querySelectorAll("[data-seat] [data-field]").forEach(el=>{
+  // Preview the platform color immediately while typing; persist on change/blur.
+  if(el.dataset.field==="platform")el.addEventListener("input",()=>{
+   const card=el.closest("[data-seat]");
+   applyPlatformColor(card,el.value.trim());
+  });
   el.addEventListener("change",async()=>{
    const card=el.closest("[data-seat]"),id=card.dataset.seat;
    assignments[id] ||= {seat_code:id,employee_name:"",platform:""};
    assignments[id][el.dataset.field]=el.value.trim();
    card.classList.toggle("occupied",!!assignments[id].employee_name);
-   card.querySelector(".seat-platform").textContent=assignments[id].platform||"Platform belum diisi";
    applyPlatformColor(card,assignments[id].platform);
    await saveSeat(id);
   });
@@ -3897,5 +3901,23 @@ async function loadAssignments(){
 })();
 </script>
 
+
+<style id="direct-seat-platform-edit-feature">
+/* Admin/TL/Expat can edit a platform name directly inside its seat card. */
+#appScreen .seat .seat-platform-input{
+ display:block;width:100%;min-width:0;max-width:100%;min-height:34px;height:auto;
+ padding:6px 7px;border:1px solid #aebdc7;border-radius:7px;
+ background:#fff;color:#172936;text-align:center;
+ font:800 12px/1.3 'Merriweather',Georgia,serif;
+ overflow-wrap:anywhere;
+}
+#appScreen .seat .seat-platform-input::placeholder{color:#586874;opacity:1;font-weight:600}
+#appScreen .seat.platform-jinx .seat-platform-input{border-color:#db8795;background:#fffafb;color:#76182a}
+#appScreen .seat.platform-vega .seat-platform-input{border-color:#dfa65f;background:#fffdf8;color:#75400b}
+#appScreen .seat.platform-zane .seat-platform-input{border-color:#80c6a4;background:#fbfffc;color:#104f38}
+#appScreen .seat.platform-custom .seat-platform-input{border-color:var(--platform-color,#64748b)}
+#appScreen .seat .seat-platform-input:focus{outline:2px solid rgba(54,86,107,.2);outline-offset:1px}
+#appScreen .seat .seat-platform-input:disabled{opacity:1;cursor:not-allowed}
+</style>
 </body>
 </html>
