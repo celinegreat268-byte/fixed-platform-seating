@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <title>HARMONY SEATING ARRANGEMENT</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <!-- V18 COLOR FIX: catalog colors now override JINX/VEGA/ZANE fallback colors. -->
 <style>
 :root{font-family:Inter,Arial,sans-serif;color:#17212b;background:#f3f6fa;--navy:#17345b;--blue:#2563eb;--line:#d6e0eb}
@@ -4890,50 +4891,82 @@ html body #appScreen #seatingPanel .layout-wrap::before {
 
 
 
-<!-- PDF EXPORT: the PDF button opens the browser's Save as PDF dialog. -->
-<style id="harmony-pdf-export-v1">
-@media print {
-  @page { size: 900mm 420mm; margin: 8mm; }
-  html, body { width: auto !important; max-width: none !important; overflow: visible !important; background: #fff !important; }
-  body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-  header, #loginScreen, #appScreen > .nav, #appScreen > .floor-switcher,
-  #appScreen > section:not(#seatingPanel),
-  #seatingPanel > .panel:first-child .toolbar,
-  #seatingPanel > .panel:first-child .stats,
-  #floorAttendanceHint, #floorCarryForwardHint,
-  #floor8Planner, .no-print, #dashboardPanel, #employeePanel, #userHelpPanel,
-  #platformPanel, #editSeatPlatformsBtn, #saveSeatPlatformsBtn, #savePdfBtn,
-  #reloadBtn, #printBtn { display: none !important; }
-  #appScreen, #seatingPanel, #seatingPanel > .panel:first-child,
-  #seatingPanel .layout-scroll { display: block !important; width: auto !important; max-width: none !important; margin: 0 !important; padding: 0 !important; border: 0 !important; box-shadow: none !important; overflow: visible !important; }
-  #seatingPanel .layout-wrap {
-    display: grid !important;
-    grid-template-columns: 1880px 52px 1280px !important;
-    width: 3240px !important; min-width: 3240px !important;
-    gap: 14px !important; transform: none !important;
-    break-inside: avoid !important; page-break-inside: avoid !important;
-  }
-  #seatingPanel .layout-wrap > .side-card:first-child { grid-column: 1 !important; grid-row: 1 !important; }
-  #seatingPanel .layout-wrap > .side-card:last-child { grid-column: 3 !important; grid-row: 1 !important; }
-  #seatingPanel .layout-wrap::before { grid-column: 2 !important; grid-row: 1 !important; }
-  #seatingPanel .side-card, #seatingPanel .desk, #seatingPanel .seat { break-inside: avoid !important; page-break-inside: avoid !important; }
-  #seatingPanel .seat textarea, #seatingPanel .seat input { color: #111 !important; opacity: 1 !important; }
-}
+<!-- PDF EXPORT V2: create and download a single-page PDF directly; no print dialog. -->
+<style id="harmony-pdf-export-v2">
+#harmonyPdfExportStage { position: fixed; left: -100000px; top: 0; z-index: -1; background: #fff; }
+#harmonyPdfExportStage .layout-wrap { display:grid !important; grid-template-columns:1880px 52px 1280px !important; width:3240px !important; min-width:3240px !important; gap:14px !important; transform:none !important; }
+#harmonyPdfExportStage .layout-wrap > .side-card:first-child { grid-column:1 !important; grid-row:1 !important; }
+#harmonyPdfExportStage .layout-wrap > .side-card:last-child { grid-column:3 !important; grid-row:1 !important; }
+#harmonyPdfExportStage .layout-wrap::before { grid-column:2 !important; grid-row:1 !important; }
+#harmonyPdfExportStage, #harmonyPdfExportStage * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+#harmonyPdfExportStage .seat, #harmonyPdfExportStage .desk, #harmonyPdfExportStage .side-card { break-inside:avoid !important; }
 </style>
-<script id="harmony-pdf-export-handler-v1">
+<script id="harmony-pdf-export-handler-v2">
 (function(){
-  const button = document.getElementById('savePdfBtn');
-  if (!button) return;
-  button.addEventListener('click', function(){
-    if (typeof pendingSeatPlatformEdits !== 'undefined' && Object.keys(pendingSeatPlatformEdits).length) {
+  const button=document.getElementById('savePdfBtn');
+  if(!button) return;
+  button.addEventListener('click', async function(){
+    if(typeof pendingSeatPlatformEdits!=='undefined' && Object.keys(pendingSeatPlatformEdits).length){
       alert('Masih ada perubahan platform yang belum disimpan. Klik Done Edit & Simpan terlebih dahulu, lalu Simpan PDF.');
       return;
     }
-    if (!document.getElementById('seatingPanel') || document.getElementById('seatingPanel').classList.contains('hidden')) {
+    const panel=document.getElementById('seatingPanel');
+    const source=panel?.querySelector('.layout-wrap');
+    if(!panel || panel.classList.contains('hidden') || !source){
       alert('Buka tab Seating arrangement terlebih dahulu.');
       return;
     }
-    window.print();
+    if(typeof html2pdf==='undefined'){
+      alert('Fitur PDF belum berhasil dimuat. Periksa koneksi internet lalu coba lagi.');
+      return;
+    }
+    const oldText=button.textContent;
+    button.disabled=true;
+    button.textContent='Membuat PDF...';
+    let stage;
+    try{
+      stage=document.createElement('div');
+      stage.id='harmonyPdfExportStage';
+      const clone=source.cloneNode(true);
+      clone.style.width='3240px';
+      clone.style.minWidth='3240px';
+      clone.style.maxWidth='none';
+      clone.style.margin='0';
+      clone.style.padding='0';
+      clone.style.transform='none';
+      clone.style.overflow='visible';
+      const title=document.createElement('div');
+      title.textContent='HARMONY SEATING ARRANGEMENT — '+(document.getElementById('activeFloorLabel')?.textContent||'')+' — SHIFT '+(document.getElementById('workShift')?.value||'');
+      title.style.cssText='font: bold 28px Arial,sans-serif;color:#17345b;text-align:center;padding:0 0 18px 0;width:3240px;';
+      stage.appendChild(title);
+      stage.appendChild(clone);
+      document.body.appendChild(stage);
+      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+      const widthPx=Math.ceil(stage.scrollWidth);
+      const heightPx=Math.ceil(stage.scrollHeight);
+      const margin=8;
+      const mmPerPx=25.4/96;
+      const pageWidth=widthPx*mmPerPx+margin*2;
+      const pageHeight=heightPx*mmPerPx+margin*2;
+      const shift=(document.getElementById('workShift')?.value||'Shift').replace(/[^a-z0-9_-]/gi,'_');
+      const floor=(document.getElementById('activeFloorSelect')?.value||'Lantai').replace(/[^a-z0-9_-]/gi,'_');
+      const opt={
+        margin:margin,
+        filename:'Harmony_Seating_'+floor+'_'+shift+'.pdf',
+        image:{type:'jpeg',quality:0.98},
+        html2canvas:{scale:1.5,useCORS:true,backgroundColor:'#ffffff',windowWidth:widthPx,scrollX:0,scrollY:0},
+        jsPDF:{unit:'mm',format:[pageWidth,pageHeight],orientation:'landscape',compress:true},
+        pagebreak:{mode:[]}
+      };
+      await html2pdf().set(opt).from(stage).save();
+    }catch(err){
+      console.error('PDF export failed:',err);
+      alert('PDF belum berhasil dibuat: '+(err?.message||err));
+    }finally{
+      if(stage?.parentNode) stage.parentNode.removeChild(stage);
+      button.disabled=false;
+      button.textContent=oldText;
+    }
   });
 })();
 </script>
