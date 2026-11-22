@@ -1779,6 +1779,52 @@ header #logoutBtn{background:#fff8fb!important;color:#713653!important;border:1p
 #autoLogoutCountdown{font-size:28px;font-weight:800;color:#087f8c;margin:8px 0 18px}
 #stayLoggedInBtn{background:linear-gradient(135deg,#087f8c,#0e9a9a);color:#fff;border:0;border-radius:10px;padding:11px 20px;font-weight:700;cursor:pointer}
 
+
+
+/* FINAL READABILITY REFINEMENT: burgundy is used as trim/borders, not large text backgrounds. */
+html,body,#appScreen{background:#f5f3f2!important;color:#26313a!important}
+header{background:#5b1830!important;color:#fff!important;border-bottom:3px solid #8a5267!important}
+header h1,header p,header *{color:#fff!important}
+/* Sidebar: light surface, burgundy outline; active item remains clearly highlighted. */
+#appScreen>.nav{background:#fff!important;color:#3b2730!important;border-right:2px solid #5b1830!important;box-shadow:2px 0 12px rgba(50,20,32,.08)!important}
+#appScreen>.nav button:not(#workspaceToggleBtn){background:#fff!important;color:#382832!important;border:1px solid #c9a8b5!important}
+#appScreen>.nav button:not(#workspaceToggleBtn).active,
+#appScreen>.nav button:not(#workspaceToggleBtn):hover{background:#5b1830!important;color:#fff!important;border:1px solid #5b1830!important}
+#appScreen>.nav #workspaceToggleBtn{background:#fff!important;color:#382832!important;border:1px solid #5b1830!important}
+#appScreen>.nav *{text-shadow:none!important}
+/* Non-seating workspace panels: white surfaces, dark readable copy, burgundy outlines. */
+#appScreen>.floor-switcher,
+#seatingPanel>.panel:first-child,
+#appScreen .panel:not(#seatingPanel),
+#appScreen .toolbar,
+#appScreen .card,
+#appScreen .section-card{background:#fff!important;color:#26313a!important;border:1px solid #d7c5cc!important;border-top:3px solid #5b1830!important;box-shadow:0 3px 12px rgba(38,20,28,.06)!important}
+#appScreen>.floor-switcher *,
+#seatingPanel>.panel:first-child *,
+#seatingPanel>.panel:first-child .toolbar *,
+#seatingPanel>.panel:first-child .stats *{color:#26313a!important}
+#appScreen>.floor-switcher .muted,
+#seatingPanel>.panel:first-child .muted{color:#5d6871!important}
+#seatingPanel>.panel:first-child input,
+#seatingPanel>.panel:first-child select,
+#appScreen input:not(.seat-platform-input),
+#appScreen select{background:#fff!important;color:#26313a!important;border:1px solid #b9c3c8!important}
+#seatingPanel>.panel:first-child button,
+#appScreen button:not(.seat button):not(.seat-platform-input){color:#402632!important}
+#seatingPanel>.panel:first-child button.primary,
+#appScreen button.primary{background:#5b1830!important;color:#fff!important;border:1px solid #5b1830!important}
+#editSeatPlatformsBtn{background:#5b1830!important;color:#fff!important;border:1px solid #5b1830!important}
+#saveSeatPlatformsBtn{background:#286b4e!important;color:#fff!important}
+#savePdfBtn{background:#fff!important;color:#5b1830!important;border:2px solid #5b1830!important}
+/* KPI cards: white fill and burgundy top/side trim; dark labels and numbers. */
+#seatingPanel>.panel:first-child .stat{background:#fff!important;color:#26313a!important;border:1px solid #d7c5cc!important;border-top:3px solid #5b1830!important;box-shadow:none!important}
+#seatingPanel>.panel:first-child .stat small{color:#39434b!important}
+#seatingPanel>.panel:first-child .stat b{color:#5b1830!important}
+/* Do not recolor the seating map or its JINX/VEGA/ZANE platform coding. */
+#seatingPanel .desk,#seatingPanel .facing,#seatingPanel .side-card,#seatingPanel .row-label{background:#fff!important;color:#26313a!important}
+#seatingPanel .desk-title,#seatingPanel .side-head,#seatingPanel .desk h3{color:#3b2730!important}
+#seatingPanel .section-title,#seatingPanel .side-head{border-top-color:#5b1830!important}
+
 </style>
 
 <style id="professional-navy-teal-theme">
