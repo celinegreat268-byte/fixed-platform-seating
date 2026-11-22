@@ -4476,5 +4476,69 @@ header, header *,
   text-shadow:none;
 }
 </style>
+
+<style id="harmony-burgundy-text-white-final-v10">
+/* FINAL V10: make every label/text inside burgundy surfaces white.
+   Only targets burgundy chrome and burgundy action controls; keeps white work areas
+   and the green/orange/red platform seat colors unchanged. */
+html body header,
+html body header *,
+html body #appScreen > .nav,
+html body #appScreen > .nav *,
+html body #appScreen > .nav button.active,
+html body #appScreen > .nav button.active *,
+html body #appScreen .toolbar button,
+html body #appScreen .toolbar button *,
+html body #appScreen .entry-mode button,
+html body #appScreen .entry-mode button *,
+html body #appScreen button.primary,
+html body #appScreen button.primary *,
+html body #appScreen #reloadBtn,
+html body #appScreen #reloadBtn *,
+html body #appScreen #printBtn,
+html body #appScreen #printBtn *,
+html body #appScreen #editSeatPlatformsBtn,
+html body #appScreen #editSeatPlatformsBtn *,
+html body #appScreen #saveSeatPlatformsBtn,
+html body #appScreen #saveSeatPlatformsBtn *,
+html body #appScreen #savePdfBtn,
+html body #appScreen #savePdfBtn *,
+html body #appScreen #singleEntryMode,
+html body #appScreen #singleEntryMode *,
+html body #appScreen #bulkEntryMode,
+html body #appScreen #bulkEntryMode * {
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  text-shadow:0 1px 2px rgba(0,0,0,.28) !important;
+}
+/* Retain white text even on disabled burgundy buttons. */
+html body #appScreen .toolbar button:disabled,
+html body #appScreen .entry-mode button:disabled,
+html body #appScreen button.primary:disabled,
+html body #appScreen #saveSeatPlatformsBtn:disabled {
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  opacity:1 !important;
+}
+/* The burgundy sidebar/navigation background itself uses white typography. */
+html body #appScreen > .nav,
+html body #appScreen > .nav .nav-title,
+html body #appScreen > .nav .workspace-label,
+html body #appScreen > .nav .menu-label {
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+}
+/* Preserve readable dark text on white/light controls and all platform seat colors. */
+html body #appScreen input,
+html body #appScreen select,
+html body #appScreen textarea,
+html body #appScreen .seat,
+html body #appScreen .seat *,
+html body #appScreen .seat-platform-input,
+html body #appScreen .employee-name-input {
+  text-shadow:none !important;
+}
+</style>
+
 </body>
 </html>
