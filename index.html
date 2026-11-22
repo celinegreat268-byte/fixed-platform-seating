@@ -4888,5 +4888,54 @@ html body #appScreen #seatingPanel .layout-wrap::before {
 })();
 </script>
 
+
+
+<!-- PDF EXPORT: the PDF button opens the browser's Save as PDF dialog. -->
+<style id="harmony-pdf-export-v1">
+@media print {
+  @page { size: 900mm 420mm; margin: 8mm; }
+  html, body { width: auto !important; max-width: none !important; overflow: visible !important; background: #fff !important; }
+  body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  header, #loginScreen, #appScreen > .nav, #appScreen > .floor-switcher,
+  #appScreen > section:not(#seatingPanel),
+  #seatingPanel > .panel:first-child .toolbar,
+  #seatingPanel > .panel:first-child .stats,
+  #floorAttendanceHint, #floorCarryForwardHint,
+  #floor8Planner, .no-print, #dashboardPanel, #employeePanel, #userHelpPanel,
+  #platformPanel, #editSeatPlatformsBtn, #saveSeatPlatformsBtn, #savePdfBtn,
+  #reloadBtn, #printBtn { display: none !important; }
+  #appScreen, #seatingPanel, #seatingPanel > .panel:first-child,
+  #seatingPanel .layout-scroll { display: block !important; width: auto !important; max-width: none !important; margin: 0 !important; padding: 0 !important; border: 0 !important; box-shadow: none !important; overflow: visible !important; }
+  #seatingPanel .layout-wrap {
+    display: grid !important;
+    grid-template-columns: 1880px 52px 1280px !important;
+    width: 3240px !important; min-width: 3240px !important;
+    gap: 14px !important; transform: none !important;
+    break-inside: avoid !important; page-break-inside: avoid !important;
+  }
+  #seatingPanel .layout-wrap > .side-card:first-child { grid-column: 1 !important; grid-row: 1 !important; }
+  #seatingPanel .layout-wrap > .side-card:last-child { grid-column: 3 !important; grid-row: 1 !important; }
+  #seatingPanel .layout-wrap::before { grid-column: 2 !important; grid-row: 1 !important; }
+  #seatingPanel .side-card, #seatingPanel .desk, #seatingPanel .seat { break-inside: avoid !important; page-break-inside: avoid !important; }
+  #seatingPanel .seat textarea, #seatingPanel .seat input { color: #111 !important; opacity: 1 !important; }
+}
+</style>
+<script id="harmony-pdf-export-handler-v1">
+(function(){
+  const button = document.getElementById('savePdfBtn');
+  if (!button) return;
+  button.addEventListener('click', function(){
+    if (typeof pendingSeatPlatformEdits !== 'undefined' && Object.keys(pendingSeatPlatformEdits).length) {
+      alert('Masih ada perubahan platform yang belum disimpan. Klik Done Edit & Simpan terlebih dahulu, lalu Simpan PDF.');
+      return;
+    }
+    if (!document.getElementById('seatingPanel') || document.getElementById('seatingPanel').classList.contains('hidden')) {
+      alert('Buka tab Seating arrangement terlebih dahulu.');
+      return;
+    }
+    window.print();
+  });
+})();
+</script>
 </body>
 </html>
