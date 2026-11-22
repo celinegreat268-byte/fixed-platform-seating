@@ -3240,7 +3240,7 @@ function renderSeats(side,tableCount){
      <textarea data-field="employee_name" rows="2" placeholder="Nama karyawan" ${canEditSeats()?"":"disabled"}>${escapeHtml(v.employee_name||"")}</textarea>
     </div>`;
    };
-   const deskLabel = t;
+   const deskLabel = deskCount - t + 1;
 return `<div class="desk"><div class="desk-title">Meja ${side==="L"?"Kiri":"Kanan"} ${deskLabel}</div><div class="facing">
     <div class="face-label">BARIS ATAS</div><div class="seats" style="grid-template-columns:repeat(${perFace},minmax(155px,1fr))">${topPcs.map(makeSeat).join("")}</div>
     <div class="divider"></div><div class="face-label">BARIS BAWAH</div><div class="seats" style="grid-template-columns:repeat(${perFace},minmax(155px,1fr))">${bottomPcs.map(makeSeat).join("")}</div>
@@ -4786,19 +4786,19 @@ html body #appScreen > .nav #workspaceToggleBtn * {
 
 
 <style id="harmony-swap-seating-sides-v1">
-/* Swap the physical display positions of the two seating groups.
-   Keep each group's seats, labels, assignments and JavaScript IDs intact. */
+/* Restore the original physical positions: LEFT side (3 desks) on the left,
+   RIGHT side (2 desks) on the right. Keep all seat IDs and assignments intact. */
 html body #appScreen #seatingPanel .layout-wrap {
-  grid-template-columns: 1280px 52px 1880px !important;
+  grid-template-columns: 1880px 52px 1280px !important;
   width: 3240px !important;
   min-width: 3240px !important;
 }
 html body #appScreen #seatingPanel .layout-wrap > .side-card:first-child {
-  grid-column: 3 !important;
+  grid-column: 1 !important;
   grid-row: 1 !important;
 }
 html body #appScreen #seatingPanel .layout-wrap > .side-card:last-child {
-  grid-column: 1 !important;
+  grid-column: 3 !important;
   grid-row: 1 !important;
 }
 html body #appScreen #seatingPanel .layout-wrap::before {
@@ -4807,7 +4807,7 @@ html body #appScreen #seatingPanel .layout-wrap::before {
 }
 @media print {
   html body #appScreen #seatingPanel .layout-wrap {
-    grid-template-columns: 1280px 52px 1880px !important;
+    grid-template-columns: 1880px 52px 1280px !important;
     width: 3240px !important;
     min-width: 3240px !important;
   }
