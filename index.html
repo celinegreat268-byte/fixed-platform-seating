@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<title>HARMONY SEATING ARRANGEMENT</title>
+<title>HARMONY SEATING ARRANGEMENT - FIXED SAVED LAYOUT</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <!-- V18 COLOR FIX: catalog colors now override JINX/VEGA/ZANE fallback colors. -->
@@ -25,6 +25,8 @@ label{display:block;font-size:12px;font-weight:700;margin-bottom:5px}.muted{font
 .stats{display:grid;grid-template-columns:repeat(5,minmax(130px,1fr));gap:10px;margin:12px 0}
 .stat{border:1px solid var(--line);border-radius:10px;padding:13px;background:#fbfdff}.stat small{color:#68798d}.stat b{display:block;font-size:27px;margin-top:5px;color:#18395f}
 .layout-scroll{overflow-x:auto;padding:0 0 12px;max-width:100%;overscroll-behavior-x:contain}
+.seat .seat-platform-input{display:block;width:100%;min-width:0;height:40px;border:1px solid #cbd6e2;border-radius:8px;padding:8px 9px;background:#fff;color:#17212b;font:700 12px/1.3 Inter,Arial,sans-serif;text-align:center;box-shadow:none}
+.seat .seat-platform-input:disabled{opacity:1;background:#f8fafc;color:#52677f}
 /* Meja dan kursi diperlebar agar nama karyawan serta nama platform terbaca. */
 .layout-wrap{display:grid;grid-template-columns:minmax(1610px,1.5fr) minmax(1110px,1fr);gap:18px;min-width:2740px;align-items:start}
 .side-card{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff;min-width:0}.side-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.side-head h3{margin:0;font-size:16px}
@@ -2362,6 +2364,7 @@ table td{color:#344247!important}
 }
 </style>
 
+<meta name="harmony-layout-persistence" content="fixed-key-1900-01-02-no-daily-reset-v2">
 </head>
 <body>
 <header>
@@ -2912,7 +2915,7 @@ function renderPlatformCatalog(){
  const body=$("platformCatalogBody");if(!body)return;
  if(!canAdmin()){body.innerHTML='<tr><td colspan="3">Hanya Admin yang dapat mengelola daftar platform.</td></tr>';return}
  if(!platforms.length){body.innerHTML='<tr><td colspan="3">Belum ada platform. Tambahkan platform baru di atas.</td></tr>';return}
- body.innerHTML=platforms.filter(p=>String(p.name||"").trim().toUpperCase()!=="OFF").map(p=>`<tr>
+ body.innerHTML=platforms.map(p=>`<tr>
   <td><span class="platform-swatch" style="background:${escapeAttr(platformCatalogColor(p))}"></span><b>${escapeHtml(p.name)}</b></td>
   <td>${p.active?'<span class="status">Aktif</span>':'<span class="muted">Nonaktif</span>'}</td>
   <td class="actions"><button type="button" data-platform-edit="${escapeAttr(p.id)}">Edit</button><button type="button" class="${p.active?'danger':'primary'}" data-platform-toggle="${escapeAttr(p.id)}">${p.active?'Nonaktifkan':'Aktifkan'}</button></td>
@@ -2929,7 +2932,7 @@ async function addPlatform(){
  if(!canAdmin()){alert("Hanya Admin yang dapat menambahkan platform.");return}
  const name=$("newPlatformName").value.trim(),color=$("newPlatformColor").value||"#64748b";
  if(!name){alert("Isi nama platform terlebih dahulu.");return}
- if(name.toUpperCase()==="OFF"){alert("Pilihan OFF tidak digunakan. Masukkan nama platform yang valid.");return}
+ 
  const duplicate=platforms.some(p=>p.name.toLowerCase()===name.toLowerCase());
  if(duplicate){alert("Nama platform sudah ada. Gunakan nama yang berbeda atau edit platform yang ada.");return}
  const {error}=await sb.from("platforms").insert({name,color,active:true});
@@ -2949,7 +2952,7 @@ function parseBulkPlatformNames(){
  const existing=new Set(platforms.map(p=>String(p.name||"").trim().toLocaleLowerCase()));
  for(const raw of lines){
   const name=raw.trim();if(!name){blank++;continue}
-  if(name.toUpperCase()==="OFF"){blank++;continue}
+  
   const key=name.toLocaleLowerCase();
   if(seen.has(key)){duplicateInList++;continue}
   seen.add(key);
@@ -3066,10 +3069,10 @@ function renderPlatformSeatEditorSide(side){
   return (!q||code.includes(q))&&(!activeFilter||(activeFilter==="__empty__"?!current:current.toLowerCase()===activeFilter.toLowerCase()));
  });
  if(!rows.length){body.innerHTML='<tr><td colspan="3">Tidak ada kursi yang cocok pada '+(side==="L"?"Sisi Kiri":"Sisi Kanan")+'.</td></tr>';return}
- const active=platforms.filter(p=>p.active&&String(p.name||"").trim().toUpperCase()!=="OFF");
+ const active=platforms.filter(p=>p.active);
  body.innerHTML=rows.map(seat=>{
   const current=String(assignments[seat.id]?.platform||"");
-  const hasCurrent=current&&current.trim().toUpperCase()!=="OFF"&&!active.some(p=>p.name===current);
+  const hasCurrent=current&&!active.some(p=>p.name===current);
   const options='<option value="">Belum ditentukan</option>'+(hasCurrent?`<option value="${escapeAttr(current)}" selected>${escapeHtml(current)} (lama/nonaktif)</option>`:'')+active.map(p=>`<option value="${escapeAttr(p.name)}" ${p.name===current?'selected':''}>${escapeHtml(p.name)}</option>`).join("");
   return `<tr><td>${escapeHtml(seat.id)}</td><td><select data-seat-platform="${escapeAttr(seat.id)}">${options}</select></td><td><span class="platform-save-state" data-platform-state="${escapeAttr(seat.id)}">${current?'Tersimpan':'Kosong'}</span></td></tr>`;
  }).join("");
@@ -3077,11 +3080,15 @@ function renderPlatformSeatEditorSide(side){
 }
 async function saveSeatPlatform(seatCode,platformName){
  if(!canAdmin()){alert("Hanya Admin yang dapat mengubah pemetaan platform.");return}
+ if(String(platformName||"").trim().toUpperCase()==="OFF"){
+  alert("Platform OFF tidak diperbolehkan. Kosongkan pilihan atau gunakan nama platform lain.");
+  return;
+ }
  const state=document.querySelector(`[data-platform-state="${CSS.escape(seatCode)}"]`);
  if(state)state.textContent="Menyimpan...";
  assignments[seatCode] ||= {seat_code:seatCode,employee_name:"",platform:""};
  assignments[seatCode].platform=platformName;
- const payload={work_date:$("workDate").value,shift:$("workShift").value,seat_code:seatCode,employee_name:assignments[seatCode].employee_name||"",platform:platformName||"",updated_by:currentUser.id};
+ const payload={work_date:HARMONY_FIXED_LAYOUT_DATE,shift:$("workShift").value,seat_code:seatCode,employee_name:assignments[seatCode].employee_name||"",platform:platformName||"",updated_by:currentUser.id};
  const {error}=await sb.from("seat_assignments").upsert(payload,{onConflict:"work_date,shift,seat_code"});
  if(error){if(state)state.textContent="Gagal";setPlatformSeatMessage("Gagal menyimpan "+seatCode+": "+error.message);await loadAssignments();return}
  if(state)state.textContent="Tersimpan";
@@ -3116,12 +3123,15 @@ async function loadAssignments(){
  let rows=(data||[]).filter(x=>activeSeatIds.has(x.seat_code));
  let loadMessage="Denah tetap tersinkron online · tidak reset saat pergantian hari.";
 
- // One-time migration per shift: if the permanent key is empty, copy the newest
- // saved value for each seat from the existing dated records. Historical rows are untouched.
- if(rows.length===0){
+ // Safe one-time migration PER SEAT and per shift.
+ // Existing permanent rows (including intentionally empty seats) are never overwritten.
+ // Only seats missing from the permanent key are filled from their newest dated record.
+ const permanentSeatIds=new Set(rows.map(row=>row.seat_code));
+ const missingSeatIds=[...activeSeatIds].filter(id=>!permanentSeatIds.has(id));
+ if(missingSeatIds.length){
   const {data:historyRows,error:historyError}=await sb.from("seat_assignments")
    .select("work_date,seat_code,employee_name,platform")
-   .neq("work_date",date).eq("shift",shift).in("seat_code",[...activeSeatIds])
+   .neq("work_date",date).eq("shift",shift).in("seat_code",missingSeatIds)
    .order("work_date",{ascending:false}).limit(10000);
   if(loadSequence!==assignmentLoadSequence)return;
   if(historyError){message("Gagal mengambil denah tersimpan sebelumnya: "+historyError.message);return}
@@ -3135,8 +3145,9 @@ async function loadAssignments(){
    const {error:migrateError}=await sb.from("seat_assignments").upsert(migrated,{onConflict:"work_date,shift,seat_code"});
    if(loadSequence!==assignmentLoadSequence)return;
    if(migrateError){message("Migrasi denah tetap gagal: "+migrateError.message);return}
-   rows=migrated;
-   loadMessage=`Denah ${shift} berhasil dipertahankan dari data terakhir. Riwayat tanggal lama tidak dihapus.`;
+   const migratedIds=new Set(migrated.map(row=>row.seat_code));
+   rows=[...rows,...migrated.filter(row=>!permanentSeatIds.has(row.seat_code))];
+   loadMessage=`Denah ${shift} dipertahankan. Kursi yang belum punya data permanen dilengkapi dari data terakhir; riwayat lama tidak dihapus.`;
   }
  }
  assignments={};rows.forEach(x=>assignments[x.seat_code]=x);
@@ -3171,7 +3182,7 @@ function renderBulkPlatformOptions(side){
  const select=$("bulkTargetPlatform"+side);if(!select)return;
  const previous=select.value;
  const assignedOnSide=new Set(seats.filter(seat=>seat.side===side).map(seat=>String(assignments[seat.id]?.platform||"").trim().toLowerCase()).filter(Boolean));
- const active=platforms.filter(p=>p.active&&String(p.name||"").trim().toUpperCase()!=="OFF"&&assignedOnSide.has(String(p.name||"").trim().toLowerCase()));
+ const active=platforms.filter(p=>p.active&&assignedOnSide.has(String(p.name||"").trim().toLowerCase()));
  const emptyText=side==="L"?"Belum ada platform yang dipetakan di Sisi Kiri":"Belum ada platform yang dipetakan di Sisi Kanan";
  select.innerHTML='<option value="">'+(active.length?"Pilih platform untuk "+sideLabel(side):emptyText)+'</option>'+active.map(p=>`<option value="${escapeAttr(p.name)}">${escapeHtml(p.name)}</option>`).join("");
  if(active.some(p=>p.name===previous))select.value=previous;
@@ -3211,7 +3222,7 @@ async function applyBulkNames(side){
  const platformName=$("bulkTargetPlatform"+side).value;
  if(!platformName){alert(`Pilih platform untuk ${sideLabel(side)} terlebih dahulu.`);return}
  if(!names.length){alert(`Masukkan minimal satu nama untuk ${sideLabel(side)}.`);return}
- const date=$("workDate").value,shift=$("workShift").value;
+ const date=HARMONY_FIXED_LAYOUT_DATE,shift=$("workShift").value;
  const available=availableSeatCodesForPlatform(platformName,side);
  if(!available.length){alert(`Tidak ada kursi kosong platform ${platformName} di ${sideLabel(side)}. Sisi lain tidak akan digunakan.`);return}
  if(names.length>available.length){alert(`Daftar berisi ${names.length} nama, tetapi ${sideLabel(side)} hanya memiliki ${available.length} kursi kosong untuk platform ${platformName}. Kurangi daftar nama atau atur pemetaan sisi ini melalui Platform tools.`);return}
@@ -3255,10 +3266,7 @@ function renderSeats(side,tableCount){
     const id=seatCode(r,t,pc),v=assignments[id]||{};
     return `<div class="seat ${v.employee_name?"occupied":""} ${platformColorClass(v.platform)}" data-seat="${escapeAttr(id)}">
      <div class="seat-head"><span>${side==="L"?"K":"Kn"}${t} · R${r}</span><span>PC ${pc}</span></div>
-     <select class="seat-platform-input" data-field="platform" aria-label="Platform kursi ${escapeAttr(id)}" ${canEditSeats()&&seatPlatformEditMode?"":"disabled"}>
-      <option value="" ${!String(v.platform||"").trim()?"selected":""}>Pilih platform</option>
-      ${(()=>{const current=String(v.platform||"").trim();const active=platforms.filter(p=>p.active&&String(p.name||"").trim().toUpperCase()!=="OFF");const known=active.some(p=>String(p.name).toLowerCase()===current.toLowerCase());const legacy=current&&current.toUpperCase()!=="OFF"&&!known?`<option value="${escapeAttr(current)}" selected>${escapeHtml(current)} (tersimpan)</option>`:"";return legacy+active.map(p=>`<option value="${escapeAttr(p.name)}" ${String(p.name).toLowerCase()===current.toLowerCase()?"selected":""}>${escapeHtml(p.name)}</option>`).join("");})()}
-     </select>
+     <input type="text" class="seat-platform-input" data-field="platform" aria-label="Platform kursi ${escapeAttr(id)}" placeholder="Nama platform" value="${escapeAttr(v.platform||"")}" autocomplete="off" ${canEditSeats()&&seatPlatformEditMode?"":"disabled"}>
      <textarea data-field="employee_name" rows="2" placeholder="Nama karyawan" ${canEditSeats()?"":"disabled"}>${escapeHtml(v.employee_name||"")}</textarea>
     </div>`;
    };
@@ -3293,8 +3301,14 @@ return `<div class="desk"><div class="desk-title">Meja ${side==="L"?"Kiri":"Kana
 }
 
 async function saveSeat(id){
- if(!canEditSeats())return;
- const v=assignments[id]||{},payload={work_date:$("workDate").value,shift:$("workShift").value,seat_code:id,employee_name:v.employee_name||"",platform:v.platform||"",updated_by:currentUser.id};
+ if(!canEditSeats())return false;
+ const v=assignments[id]||{};
+ if(String(v.platform||"").trim().toUpperCase()==="OFF"){
+  message("Pilihan OFF tidak diperbolehkan. Kosongkan kolom platform atau masukkan nama platform.");
+  alert("Platform OFF tidak diperbolehkan. Silakan kosongkan kolom atau masukkan nama platform yang benar.");
+  return false;
+ }
+ const payload={work_date:HARMONY_FIXED_LAYOUT_DATE,shift:$("workShift").value,seat_code:id,employee_name:v.employee_name||"",platform:v.platform||"",updated_by:currentUser.id};
  message("Menyimpan...");
  const {error}=await sb.from("seat_assignments").upsert(payload,{onConflict:"work_date,shift,seat_code"});
  if(error){message("Gagal simpan: "+error.message);return false}
@@ -3308,7 +3322,7 @@ function updateStats(){
  $("platformCount").textContent=withPlatform;$("platformKinds").textContent=kinds.size;
 }
 async function dashboard(){
- const date=$("dashDate").value,shift=$("dashShift").value;
+ const date=HARMONY_FIXED_LAYOUT_DATE,shift=$("dashShift").value;
  const {data,error}=await sb.from("seat_assignments").select("seat_code,employee_name,platform").eq("work_date",date).eq("shift",shift);
  if(error){$("platformSummary").textContent=error.message;return}
  const activeSeatIds=new Set(seats.map(x=>x.id));
@@ -3490,6 +3504,11 @@ function setSeatPlatformEditMode(enabled){
 $("editSeatPlatformsBtn").onclick=()=>setSeatPlatformEditMode(true);
 $("saveSeatPlatformsBtn").onclick=async()=>{
  const ids=Object.keys(pendingSeatPlatformEdits);
+ const offSeat=ids.find(id=>String(pendingSeatPlatformEdits[id]||"").trim().toUpperCase()==="OFF");
+ if(offSeat){
+  alert("Platform OFF tidak diperbolehkan (kursi "+offSeat+"). Kosongkan kolom atau masukkan nama platform lain.");
+  return;
+ }
  const btn=$("saveSeatPlatformsBtn");
  btn.disabled=true;btn.textContent="Menyimpan...";
  try{
@@ -3834,7 +3853,7 @@ main#appScreen{background:transparent!important;color:var(--harmony-ink)!importa
    }
 
    const chosen=available.slice(0,qty);
-   const date=document.getElementById("workDate").value;
+   const date=HARMONY_FIXED_LAYOUT_DATE;
    const shift=document.getElementById("workShift").value;
    const payload=chosen.map(seat=>({
     work_date:date,shift,seat_code:seat.id,
@@ -4750,55 +4769,45 @@ html body #appScreen #seatingPanel .layout-wrap::before {
 </style>
 
 
-<script id="harmony-preserve-edits-and-mirror-platforms-v1">
-/*
- * Additive safety patch:
- * 1) Keep the existing Supabase save flow as the source of truth.
- * 2) After a Pagi seat save succeeds, mirror ONLY its platform to Malam.
- *    The Malam employee_name is read first and preserved.
- * 3) Warn before leaving if platform edits are still waiting for the
- *    existing "Done Edit & Simpan" action.
- */
+<script id="harmony-preserve-edits-and-mirror-platforms-v2">
+/* Sinkronisasi platform dua arah: Pagi <-> Malam.
+   Hanya kolom platform yang disalin; nama karyawan setiap shift tetap milik shift itu sendiri. */
 (function(){
   if(typeof window.saveSeat!=="function") return;
-
   const originalSaveSeat=window.saveSeat;
 
-  async function mirrorMorningPlatformToNight(seatCode){
-    const date=document.getElementById("workDate")?.value;
+  async function mirrorPlatformToOtherShift(seatCode, sourceShift){
+    const date=HARMONY_FIXED_LAYOUT_DATE;
     const user=currentUser;
     if(!date || !user?.id) return false;
-
+    const targetShift=sourceShift==="Pagi"?"Malam":"Pagi";
     const platformValue=String(assignments?.[seatCode]?.platform||"");
 
-    const {data:nightRow,error:readError}=await sb
+    const {data:targetRow,error:readError}=await sb
       .from("seat_assignments")
       .select("employee_name")
       .eq("work_date",date)
-      .eq("shift","Malam")
+      .eq("shift",targetShift)
       .eq("seat_code",seatCode)
       .maybeSingle();
-
     if(readError){
-      console.error("Gagal membaca nama shift Malam sebelum menyalin platform:",readError);
+      console.error(`Gagal membaca nama shift ${targetShift}:`,readError);
       return false;
     }
 
     const payload={
       work_date:date,
-      shift:"Malam",
+      shift:targetShift,
       seat_code:seatCode,
-      employee_name:nightRow?.employee_name||"",
+      employee_name:targetRow?.employee_name||"",
       platform:platformValue,
       updated_by:user.id
     };
-
     const {error:writeError}=await sb
       .from("seat_assignments")
       .upsert(payload,{onConflict:"work_date,shift,seat_code"});
-
     if(writeError){
-      console.error("Gagal menyalin platform dari Pagi ke Malam:",writeError);
+      console.error(`Gagal menyinkronkan platform ke shift ${targetShift}:`,writeError);
       return false;
     }
     return true;
@@ -4807,16 +4816,14 @@ html body #appScreen #seatingPanel .layout-wrap::before {
   window.saveSeat=async function(seatCode){
     const saved=await originalSaveSeat.call(this,seatCode);
     if(!saved) return false;
-
-    const shift=document.getElementById("workShift")?.value;
-    if(shift==="Pagi"){
-      const mirrored=await mirrorMorningPlatformToNight(seatCode);
-      if(!mirrored){
-        message("Data Pagi tersimpan. Platform ke Malam belum berhasil disalin; coba simpan ulang.");
-      }else{
-        message("Data Pagi tersimpan. Platform juga diperbarui di Malam; nama Malam tetap.");
-      }
+    const sourceShift=document.getElementById("workShift")?.value||"Pagi";
+    const targetShift=sourceShift==="Pagi"?"Malam":"Pagi";
+    const mirrored=await mirrorPlatformToOtherShift(seatCode,sourceShift);
+    if(!mirrored){
+      message(`Data ${sourceShift} tersimpan, tetapi platform ke ${targetShift} belum berhasil disinkronkan. Coba simpan ulang.`);
+      return false;
     }
+    message(`Platform ${seatCode} tersinkron ke ${targetShift}. Nama karyawan di kedua shift tetap terpisah.`);
     return true;
   };
 
@@ -4874,6 +4881,25 @@ html body #appScreen #seatingPanel .layout-wrap::before {
    const {error}=await sb.from("seat_assignments")
     .upsert(rows,{onConflict:"work_date,shift,seat_code"});
    if(error)throw error;
+
+   // Setelah simpan seluruh denah, salin platform untuk semua kursi ke shift lawan.
+   // Nama karyawan shift tujuan dibaca dari database dan tidak pernah ditimpa.
+   const otherShift=shift==="Pagi"?"Malam":"Pagi";
+   const seatCodes=rows.map(row=>row.seat_code);
+   const {data:otherRows,error:otherReadError}=await sb.from("seat_assignments")
+    .select("seat_code,employee_name")
+    .eq("work_date",date).eq("shift",otherShift).in("seat_code",seatCodes);
+   if(otherReadError)throw otherReadError;
+   const otherNameBySeat=new Map((otherRows||[]).map(row=>[row.seat_code,row.employee_name||""]));
+   const mirroredRows=rows.map(row=>({
+    work_date:date,shift:otherShift,seat_code:row.seat_code,
+    employee_name:otherNameBySeat.get(row.seat_code)||"",
+    platform:row.platform||"",updated_by:currentUser.id
+   }));
+   const {error:mirrorError}=await sb.from("seat_assignments")
+    .upsert(mirroredRows,{onConflict:"work_date,shift,seat_code"});
+   if(mirrorError)throw mirrorError;
+
    Object.keys(pendingSeatPlatformEdits).forEach(id=>delete pendingSeatPlatformEdits[id]);
    if(seatPlatformEditMode)setSeatPlatformEditMode(false);
    message(`Berhasil menyimpan ${rows.length} data kursi · ${date} · Shift ${shift}.`);
@@ -4893,9 +4919,9 @@ html body #appScreen #seatingPanel .layout-wrap::before {
 
 
 
-<!-- PDF EXPORT V2: create and download a single-page PDF directly; no print dialog. -->
-<style id="harmony-pdf-export-v2">
-#harmonyPdfExportStage { position: fixed; left: 0; top: 0; z-index: 2147483647; background: #fff; pointer-events: none; display: block; }
+<!-- PDF EXPORT V3: export only both seating sides as one wide PDF; no print dialog. -->
+<style id="harmony-pdf-export-v3">
+#harmonyPdfExportStage { position: fixed; left: 0; top: 0; z-index: 2147483647; background: #fff; pointer-events: none; display: block; width: 3268px !important; min-width: 3268px !important; max-width: none !important; height: auto !important; overflow: visible !important; contain: layout style; }
 #harmonyPdfExportStage .layout-wrap, #harmonyPdfExportStage .side-card { visibility: visible !important; opacity: 1 !important; }
 #harmonyPdfExportStage .layout-wrap { display:grid !important; grid-template-columns:1880px 52px 1280px !important; width:3240px !important; min-width:3240px !important; gap:14px !important; transform:none !important; }
 #harmonyPdfExportStage .layout-wrap > .side-card:first-child { grid-column:1 !important; grid-row:1 !important; }
@@ -4904,7 +4930,7 @@ html body #appScreen #seatingPanel .layout-wrap::before {
 #harmonyPdfExportStage, #harmonyPdfExportStage * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
 #harmonyPdfExportStage .seat, #harmonyPdfExportStage .desk, #harmonyPdfExportStage .side-card { break-inside:avoid !important; }
 </style>
-<script id="harmony-pdf-export-handler-v2">
+<script id="harmony-pdf-export-handler-v3">
 (function(){
   const button=document.getElementById('savePdfBtn');
   if(!button) return;
@@ -4930,7 +4956,14 @@ html body #appScreen #seatingPanel .layout-wrap::before {
     try{
       stage=document.createElement('div');
       stage.id='harmonyPdfExportStage';
+      stage.style.width='3268px';
+      stage.style.minWidth='3268px';
+      stage.style.maxWidth='none';
+      stage.style.height='auto';
+      stage.style.overflow='visible';
       const clone=source.cloneNode(true);
+      // Export only the seating diagram: the left and right side cards, without dashboard, menus or toolbar.
+      clone.querySelectorAll('.side-card').forEach(card=>{card.style.visibility='visible';card.style.opacity='1';});
       // Preserve the currently displayed values in cloned form controls.
       const srcControls=source.querySelectorAll('input,select,textarea');
       const cloneControls=clone.querySelectorAll('input,select,textarea');
