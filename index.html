@@ -4814,5 +4814,88 @@ html body #appScreen #seatingPanel .layout-wrap::before {
 }
 </style>
 
+
+<script id="harmony-preserve-edits-and-mirror-platforms-v1">
+/*
+ * Additive safety patch:
+ * 1) Keep the existing Supabase save flow as the source of truth.
+ * 2) After a Pagi seat save succeeds, mirror ONLY its platform to Malam.
+ *    The Malam employee_name is read first and preserved.
+ * 3) Warn before leaving if platform edits are still waiting for the
+ *    existing "Done Edit & Simpan" action.
+ */
+(function(){
+  if(typeof window.saveSeat!=="function") return;
+
+  const originalSaveSeat=window.saveSeat;
+
+  async function mirrorMorningPlatformToNight(seatCode){
+    const date=document.getElementById("workDate")?.value;
+    const user=window.currentUser;
+    if(!date || !user?.id) return false;
+
+    const platformValue=String(window.assignments?.[seatCode]?.platform||"");
+
+    const {data:nightRow,error:readError}=await window.sb
+      .from("seat_assignments")
+      .select("employee_name")
+      .eq("work_date",date)
+      .eq("shift","Malam")
+      .eq("seat_code",seatCode)
+      .maybeSingle();
+
+    if(readError){
+      console.error("Gagal membaca nama shift Malam sebelum menyalin platform:",readError);
+      return false;
+    }
+
+    const payload={
+      work_date:date,
+      shift:"Malam",
+      seat_code:seatCode,
+      employee_name:nightRow?.employee_name||"",
+      platform:platformValue,
+      updated_by:user.id
+    };
+
+    const {error:writeError}=await window.sb
+      .from("seat_assignments")
+      .upsert(payload,{onConflict:"work_date,shift,seat_code"});
+
+    if(writeError){
+      console.error("Gagal menyalin platform dari Pagi ke Malam:",writeError);
+      return false;
+    }
+    return true;
+  }
+
+  window.saveSeat=async function(seatCode){
+    const saved=await originalSaveSeat.call(this,seatCode);
+    if(!saved) return false;
+
+    const shift=document.getElementById("workShift")?.value;
+    if(shift==="Pagi"){
+      const mirrored=await mirrorMorningPlatformToNight(seatCode);
+      if(!mirrored){
+        if(typeof window.message==="function"){
+          window.message("Data Pagi tersimpan. Platform ke Malam belum berhasil disalin; coba simpan ulang.");
+        }
+      }else if(typeof window.message==="function"){
+        window.message("Data Pagi tersimpan. Platform juga diperbarui di Malam; nama Malam tetap.");
+      }
+    }
+    return true;
+  };
+
+  window.addEventListener("beforeunload",function(event){
+    const pending=window.pendingSeatPlatformEdits;
+    if(pending && Object.keys(pending).length){
+      event.preventDefault();
+      event.returnValue="";
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
