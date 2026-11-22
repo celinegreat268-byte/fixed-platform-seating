@@ -4428,5 +4428,53 @@ html body #appScreen button#saveSeatPlatformsBtn:disabled {
 }
 </style>
 
+
+
+<style id="harmony-global-burgundy-white-typography-v9">
+/* V9: White lettering across every burgundy control/chrome area.
+   Keep white dashboard cards and JINX/VEGA/ZANE seat colors untouched. */
+header, header *,
+#appScreen > .nav, #appScreen > .nav *,
+#appScreen > .floor-switcher, #appScreen > .floor-switcher *,
+#seatingPanel > .panel:first-child .toolbar,
+#seatingPanel > .panel:first-child .toolbar *,
+#seatingPanel > .panel:first-child .entry-mode,
+#seatingPanel > .panel:first-child .entry-mode *,
+#appScreen button.primary, #appScreen button.primary *,
+#appScreen .toolbar button, #appScreen .toolbar button *,
+#appScreen .entry-mode button, #appScreen .entry-mode button *,
+#appScreen #reloadBtn, #appScreen #reloadBtn *,
+#appScreen #printBtn, #appScreen #printBtn *,
+#appScreen #editSeatPlatformsBtn, #appScreen #editSeatPlatformsBtn *,
+#appScreen #saveSeatPlatformsBtn, #appScreen #saveSeatPlatformsBtn *,
+#appScreen #savePdfBtn, #appScreen #savePdfBtn *,
+#appScreen #singleEntryMode, #appScreen #singleEntryMode *,
+#appScreen #bulkEntryMode, #appScreen #bulkEntryMode * {
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  text-shadow:0 1px 2px rgba(0,0,0,.35) !important;
+}
+/* Force the burgundy controls themselves to retain a strong readable fill. */
+#appScreen .toolbar button,
+#appScreen .entry-mode button,
+#appScreen #reloadBtn, #appScreen #printBtn,
+#appScreen #editSeatPlatformsBtn, #appScreen #savePdfBtn,
+#appScreen #singleEntryMode, #appScreen #bulkEntryMode {
+  background:#64243d !important;
+  border-color:#64243d !important;
+}
+#appScreen #saveSeatPlatformsBtn:disabled,
+#appScreen button:disabled {
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  opacity:1 !important;
+}
+/* Do not recolor seating platform labels or employee-name fields. */
+#seatingPanel .seat, #seatingPanel .seat *,
+#seatingPanel .seat-platform-input, #seatingPanel .employee-name-input {
+  -webkit-text-fill-color:initial;
+  text-shadow:none;
+}
+</style>
 </body>
 </html>
