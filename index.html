@@ -2305,6 +2305,16 @@ table td{color:#344247!important}
 /* Hide the small subtitle beneath the Harmony title, as requested. */
 #headerFloorSeatSummary { display: none !important; }
 </style>
+
+<style id="harmony-hide-platform-tools-feature">
+/* Requested change: remove the Platform Tools interface only.
+   Keep its underlying platform catalog, seat mappings, and application logic intact. */
+#appScreen > .nav button[data-tab="platformPanel"],
+#platformToolsTab,
+#platformPanel {
+  display: none !important;
+}
+</style>
 </head>
 <body>
 <header>
