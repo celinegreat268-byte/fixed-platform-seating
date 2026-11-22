@@ -4015,6 +4015,101 @@ header h1,header p{color:#fff!important}
  #appScreen .seat.platform-vega .seat-platform-input{background:#f8d9ad!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
  #appScreen .seat.platform-zane .seat-platform-input{background:#bfe8d1!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+
+/* Burgundy-only chrome outside the seating map. Keep the seating area white and platform colors intact. */
+:root{
+  --navy:#5b1830!important;
+  --blue:#7a2342!important;
+  --line:#d8bdc7!important;
+}
+html,body{background:#f7f4f5!important;color:#351a25!important}
+header{
+  background:#5b1830!important;
+  border-bottom:4px solid #5b1830!important;
+  box-shadow:0 4px 16px rgba(49,12,27,.22)!important;
+}
+header h1,header p{color:#fff!important}
+#appScreen>.nav{
+  background:#4b1429!important;
+  color:#fff!important;
+  border-right:1px solid #7a3b52!important;
+}
+#appScreen>.nav button:not(#workspaceToggleBtn){
+  background:#68233d!important;color:#fff!important;
+  border:1px solid #9a6478!important;
+}
+#appScreen>.nav button:not(#workspaceToggleBtn):hover,
+#appScreen>.nav button:not(#workspaceToggleBtn).active{
+  background:#8a3453!important;color:#fff!important;border-color:#d7a8b8!important;
+}
+#appScreen>.nav #workspaceToggleBtn{
+  background:#68233d!important;color:#fff!important;border:1px solid #9a6478!important;
+}
+/* Floor selector and work controls */
+#appScreen>.floor-switcher,
+#seatingPanel>.panel:first-child{
+  background:#5b1830!important;color:#fff!important;
+  border:1px solid #7c3a53!important;
+  border-top:3px solid #5b1830!important;
+  box-shadow:0 4px 14px rgba(65,15,35,.13)!important;
+}
+#appScreen .floor-switcher *,
+#seatingPanel>.panel:first-child .toolbar *,
+#seatingPanel>.panel:first-child .stats *,
+#seatingPanel>.panel:first-child>p{
+  color:#fff!important;
+}
+#appScreen .floor-switcher .muted,
+#seatingPanel>.panel:first-child .muted{color:#f0dfe5!important}
+#seatingPanel>.panel:first-child input,
+#seatingPanel>.panel:first-child select{
+  background:#fff!important;color:#321725!important;border:1px solid #d7bdc7!important;
+}
+#seatingPanel>.panel:first-child button,
+#appScreen button.primary,
+#appScreen .toolbar button.primary{
+  background:#7a2342!important;color:#fff!important;
+  border:1px solid #d4aab8!important;
+}
+#editSeatPlatformsBtn{background:#7a2342!important;color:#fff!important;border:1px solid #fff!important}
+#saveSeatPlatformsBtn{background:#286b4e!important;color:#fff!important;border:1px solid #fff!important}
+#savePdfBtn{background:#fff!important;color:#5b1830!important;border:2px solid #d7bdc7!important}
+/* Burgundy KPI cards; values stay high-contrast white. */
+#seatingPanel>.panel:first-child .stat{
+  background:#70243f!important;color:#fff!important;
+  border:1px solid #a66a80!important;border-top:3px solid #d7a8b8!important;
+  box-shadow:none!important;
+}
+#seatingPanel>.panel:first-child .stat small,
+#seatingPanel>.panel:first-child .stat b{color:#fff!important}
+/* The seating map itself remains white; preserve individual platform colors. */
+#seatingPanel .desk,
+#seatingPanel .facing,
+#seatingPanel .side-card,
+#seatingPanel .row-label{
+  background:#fff!important;color:#321725!important;
+}
+#seatingPanel .desk-title,
+#seatingPanel .side-head,
+#seatingPanel .desk h3{color:#5b1830!important}
+/* Remove orange accents from non-seating controls only. */
+#appScreen button:not(.seat button):not(.seat-platform-input){
+  accent-color:#7a2342;
+}
+#appScreen .floor-switcher{border-left:4px solid #5b1830!important}
+#seatingPanel .section-title,
+#seatingPanel .side-head{border-top-color:#5b1830!important}
+/* Platform-specific seat colors remain unchanged and visible. */
+#appScreen .seat.platform-jinx{background:#fff5f6!important;border-color:#a30f32!important}
+#appScreen .seat.platform-jinx .seat-platform-input{background:#f4cbd4!important;color:#650d25!important;border-color:#a30f32!important}
+#appScreen .seat.platform-vega{background:#fff8ed!important;border-color:#bd5b08!important}
+#appScreen .seat.platform-vega .seat-platform-input{background:#f8d9ad!important;color:#713400!important;border-color:#bd5b08!important}
+#appScreen .seat.platform-zane{background:#f1fbf5!important;border-color:#087447!important}
+#appScreen .seat.platform-zane .seat-platform-input{background:#bfe8d1!important;color:#064b30!important;border-color:#087447!important}
+@media print{
+  header,#appScreen>.nav{display:none!important}
+  #seatingPanel .desk,#seatingPanel .facing{background:#fff!important}
+}
 </style>
 
 </body>
