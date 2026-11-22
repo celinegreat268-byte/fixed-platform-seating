@@ -2351,6 +2351,28 @@ table td{color:#344247!important}
   display: none !important;
 }
 </style>
+
+<style id="harmony-platform-off-state-v1">
+/* OFF is a deliberate platform status, visually distinct from active platforms. */
+#appScreen .seat.platform-off{
+  border:2px dashed #64748b!important;
+  background:#f1f5f9!important;
+  box-shadow:none!important;
+}
+#appScreen .seat.platform-off .seat-platform,
+#appScreen .seat.platform-off .seat-platform-input{
+  color:#334155!important;
+  background:#e2e8f0!important;
+  border-color:#94a3b8!important;
+}
+#appScreen .seat .seat-platform-input{
+  display:block;width:100%;min-width:0;max-width:100%;
+  min-height:42px;padding:7px 8px;border:1px solid #aebdc7;
+  border-radius:7px;background:#fff;color:#172936;
+  font:700 12px/1.35 'Merriweather',Georgia,serif;
+}
+</style>
+
 </head>
 <body>
 <header>
@@ -2783,7 +2805,8 @@ function canManageUsers(){return currentRole==="admin"||currentRole==="expat"}
 function canAdmin(){return currentRole==="admin"}
 let managedUsers=[];
 function platformColorClass(value){
- const name=String(value||"").toLowerCase();
+ const name=String(value||"").trim().toLowerCase();
+ if(name==="off")return "platform-off";
  if(name.includes("jinx"))return "platform-jinx";
  if(name.includes("vega"))return "platform-vega";
  if(name.includes("zane"))return "platform-zane";
@@ -3054,7 +3077,8 @@ function renderPlatformSeatEditorSide(side){
  body.innerHTML=rows.map(seat=>{
   const current=String(assignments[seat.id]?.platform||"");
   const hasCurrent=current&&!active.some(p=>p.name===current);
-  const options='<option value="">Belum ditentukan</option>'+(hasCurrent?`<option value="${escapeAttr(current)}" selected>${escapeHtml(current)} (lama/nonaktif)</option>`:'')+active.map(p=>`<option value="${escapeAttr(p.name)}" ${p.name===current?'selected':''}>${escapeHtml(p.name)}</option>`).join("");
+  const isOff=current.trim().toUpperCase()==="OFF";
+  const options='<option value="">Belum ditentukan</option><option value="OFF" '+(isOff?'selected':'')+'>OFF</option>'+(hasCurrent&&!isOff?`<option value="${escapeAttr(current)}" selected>${escapeHtml(current)} (lama/nonaktif)</option>`:'')+active.map(p=>`<option value="${escapeAttr(p.name)}" ${p.name===current?'selected':''}>${escapeHtml(p.name)}</option>`).join("");
   return `<tr><td>${escapeHtml(seat.id)}</td><td><select data-seat-platform="${escapeAttr(seat.id)}">${options}</select></td><td><span class="platform-save-state" data-platform-state="${escapeAttr(seat.id)}">${current?'Tersimpan':'Kosong'}</span></td></tr>`;
  }).join("");
  body.querySelectorAll("[data-seat-platform]").forEach(select=>select.onchange=()=>saveSeatPlatform(select.dataset.seatPlatform,select.value));
@@ -3229,14 +3253,20 @@ function renderSeats(side,tableCount){
  const bottomPcs=Array.from({length:perFace},(_,i)=>perFace*2-i);
  const seatCode=(r,t,pc)=>is8?`F8-${side}-R${r}-T${t}-PC${pc}`:`${side}-R${r}-T${t}-PC${pc}`;
  target.innerHTML=Array.from({length:rowCount},(_,ri)=>{
-  const r=ri+1;
+  // Visual row order is reversed: BARIS 1 is physically at the bottom.
+  // Seat codes remain tied to their original row numbers, so saved assignments are preserved.
+  const r=rowCount-ri;
   const desks=Array.from({length:deskCount},(_,ti)=>{
    const t=ti+1;
    const makeSeat=pc=>{
     const id=seatCode(r,t,pc),v=assignments[id]||{};
     return `<div class="seat ${v.employee_name?"occupied":""} ${platformColorClass(v.platform)}" data-seat="${escapeAttr(id)}">
      <div class="seat-head"><span>${side==="L"?"K":"Kn"}${t} · R${r}</span><span>PC ${pc}</span></div>
-     <input class="seat-platform-input" type="text" data-field="platform" value="${escapeAttr(v.platform||"")}" placeholder="Nama platform" aria-label="Nama platform kursi ${escapeAttr(id)}" ${canEditSeats()&&seatPlatformEditMode?"":"disabled"}>
+     <select class="seat-platform-input" data-field="platform" aria-label="Platform kursi ${escapeAttr(id)}" ${canEditSeats()&&seatPlatformEditMode?"":"disabled"}>
+      <option value="" ${!String(v.platform||"").trim()?"selected":""}>Pilih platform</option>
+      <option value="OFF" ${String(v.platform||"").trim().toUpperCase()==="OFF"?"selected":""}>OFF</option>
+      ${(()=>{const current=String(v.platform||"").trim();const active=platforms.filter(p=>p.active);const known=active.some(p=>String(p.name).toLowerCase()===current.toLowerCase());const legacy=current&&current.toUpperCase()!=="OFF"&&!known?`<option value="${escapeAttr(current)}" selected>${escapeHtml(current)} (tersimpan)</option>`:"";return legacy+active.map(p=>`<option value="${escapeAttr(p.name)}" ${String(p.name).toLowerCase()===current.toLowerCase()?"selected":""}>${escapeHtml(p.name)}</option>`).join("");})()}
+     </select>
      <textarea data-field="employee_name" rows="2" placeholder="Nama karyawan" ${canEditSeats()?"":"disabled"}>${escapeHtml(v.employee_name||"")}</textarea>
     </div>`;
    };
