@@ -2351,6 +2351,16 @@ table td{color:#344247!important}
   display: none !important;
 }
 </style>
+
+<style id="harmony-platform-input-style">
+#appScreen .seat .seat-platform-input{
+  display:block;width:100%;min-width:0;max-width:100%;
+  min-height:42px;padding:7px 8px;border:1px solid #aebdc7;
+  border-radius:7px;background:#fff;color:#172936;
+  font:700 12px/1.35 'Merriweather',Georgia,serif;
+}
+</style>
+
 </head>
 <body>
 <header>
@@ -2388,7 +2398,7 @@ table td{color:#344247!important}
    <div class="toolbar">
     <div class="field" style="display:none!important" aria-hidden="true"><label>Tanggal kerja</label><input id="workDate" type="date" tabindex="-1"></div>
     <div class="field"><label>Shift</label><select id="workShift"><option>Pagi</option><option>Malam</option></select></div>
-    <button id="reloadBtn" style="color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 1px rgba(0,0,0,.25)!important;">Refresh data</button><button id="printBtn" style="color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 1px rgba(0,0,0,.25)!important;">Print denah</button>
+    <button id="reloadBtn" style="color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 1px rgba(0,0,0,.25)!important;">Refresh data</button><button id="saveWholeLayoutBtn" type="button" class="primary">Simpan denah</button><button id="printBtn" style="color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 1px rgba(0,0,0,.25)!important;">Print denah</button>
     <button id="editSeatPlatformsBtn" type="button" style="color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 1px rgba(0,0,0,.25)!important;">Edit platform</button>
     <button id="saveSeatPlatformsBtn" type="button" disabled style="color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 1px rgba(0,0,0,.25)!important;">Done Edit &amp; Simpan</button>
     <button id="savePdfBtn" type="button" style="color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 1px rgba(0,0,0,.25)!important;">Simpan PDF</button>
@@ -2610,7 +2620,10 @@ let seatPlatformEditMode=false;
 const pendingSeatPlatformEdits={};
 const $=id=>document.getElementById(id);
 const today=()=>new Date().toLocaleDateString("en-CA");
-$("workDate").value=today();$("dashDate").value=today();
+// Permanent key for the seating plan: it never changes at midnight or on a new date.
+// Existing dated records are preserved; the first load migrates the latest saved seat values per shift.
+const HARMONY_FIXED_LAYOUT_DATE="1900-01-02";
+$("workDate").value=HARMONY_FIXED_LAYOUT_DATE;$("dashDate").value=today();
 const FLOOR8_DEFAULT={depthRows:5,leftTables:1,rightTables:1,seatsPerFace:3};
 const FLOOR8_META_DATE="1900-01-01", FLOOR8_META_SHIFT="Pagi", FLOOR8_META_CODE="__FLOOR8_LAYOUT_CONFIG_V1__";
 let floor8Config={...FLOOR8_DEFAULT};
@@ -2783,7 +2796,7 @@ function canManageUsers(){return currentRole==="admin"||currentRole==="expat"}
 function canAdmin(){return currentRole==="admin"}
 let managedUsers=[];
 function platformColorClass(value){
- const name=String(value||"").toLowerCase();
+ const name=String(value||"").trim().toLowerCase();
  if(name.includes("jinx"))return "platform-jinx";
  if(name.includes("vega"))return "platform-vega";
  if(name.includes("zane"))return "platform-zane";
@@ -3053,7 +3066,7 @@ function renderPlatformSeatEditorSide(side){
  const active=platforms.filter(p=>p.active);
  body.innerHTML=rows.map(seat=>{
   const current=String(assignments[seat.id]?.platform||"");
-  const hasCurrent=current&&!active.some(p=>p.name===current);
+  const hasCurrent=current&&current.trim().toUpperCase()!=="OFF"&&!active.some(p=>p.name===current);
   const options='<option value="">Belum ditentukan</option>'+(hasCurrent?`<option value="${escapeAttr(current)}" selected>${escapeHtml(current)} (lama/nonaktif)</option>`:'')+active.map(p=>`<option value="${escapeAttr(p.name)}" ${p.name===current?'selected':''}>${escapeHtml(p.name)}</option>`).join("");
   return `<tr><td>${escapeHtml(seat.id)}</td><td><select data-seat-platform="${escapeAttr(seat.id)}">${options}</select></td><td><span class="platform-save-state" data-platform-state="${escapeAttr(seat.id)}">${current?'Tersimpan':'Kosong'}</span></td></tr>`;
  }).join("");
@@ -3089,43 +3102,44 @@ function previousCalendarDate(dateText){
 }
 async function loadAssignments(){
  const loadSequence=++assignmentLoadSequence;
- message("Memuat data online...");
- const date=$("workDate").value,shift=$("workShift").value;
- const {data,error}=await sb.from("seat_assignments").select("seat_code,employee_name,platform").eq("work_date",date).eq("shift",shift);
+ const date=HARMONY_FIXED_LAYOUT_DATE,shift=$("workShift").value;
+ $("workDate").value=HARMONY_FIXED_LAYOUT_DATE;
+ message("Memuat denah tetap...");
+ const activeSeatIds=new Set(seats.map(x=>x.id));
+ let {data,error}=await sb.from("seat_assignments").select("seat_code,employee_name,platform")
+  .eq("work_date",date).eq("shift",shift);
  if(loadSequence!==assignmentLoadSequence)return;
  if(error){message("Gagal memuat: "+error.message);return}
- const activeSeatIds=new Set(seats.map(x=>x.id));
  let rows=(data||[]).filter(x=>activeSeatIds.has(x.seat_code));
- let loadMessage="Tersinkron online";
- // Only carry forward when the selected date/shift has no records at all.
- // The source is the immediately preceding calendar date for the same shift.
+ let loadMessage="Denah tetap tersinkron online · tidak reset saat pergantian hari.";
+
+ // One-time migration per shift: if the permanent key is empty, copy the newest
+ // saved value for each seat from the existing dated records. Historical rows are untouched.
  if(rows.length===0){
-  const sourceDate=previousCalendarDate(date);
-  if(sourceDate){
-   const {data:sourceRows,error:sourceError}=await sb.from("seat_assignments")
-    .select("seat_code,employee_name,platform")
-    .eq("work_date",sourceDate).eq("shift",shift);
+  const {data:historyRows,error:historyError}=await sb.from("seat_assignments")
+   .select("work_date,seat_code,employee_name,platform")
+   .neq("work_date",date).eq("shift",shift).in("seat_code",[...activeSeatIds])
+   .order("work_date",{ascending:false}).limit(10000);
+  if(loadSequence!==assignmentLoadSequence)return;
+  if(historyError){message("Gagal mengambil denah tersimpan sebelumnya: "+historyError.message);return}
+  const latestBySeat=new Map();
+  (historyRows||[]).forEach(row=>{if(!latestBySeat.has(row.seat_code))latestBySeat.set(row.seat_code,row)});
+  const migrated=[...latestBySeat.values()].map(row=>({
+   work_date:date,shift,seat_code:row.seat_code,
+   employee_name:row.employee_name||"",platform:row.platform||"",updated_by:currentUser.id
+  }));
+  if(migrated.length){
+   const {error:migrateError}=await sb.from("seat_assignments").upsert(migrated,{onConflict:"work_date,shift,seat_code"});
    if(loadSequence!==assignmentLoadSequence)return;
-   if(sourceError){message("Data hari ini kosong. Gagal memeriksa denah hari sebelumnya: "+sourceError.message);return}
-   const source=(sourceRows||[]).filter(x=>activeSeatIds.has(x.seat_code)&&(String(x.employee_name||"").trim()||String(x.platform||"").trim()));
-   if(source.length){
-    const copiedRows=source.map(x=>({
-     work_date:date,shift,seat_code:x.seat_code,
-     employee_name:x.employee_name||"",platform:x.platform||"",updated_by:currentUser.id
-    }));
-    const {error:copyError}=await sb.from("seat_assignments").upsert(copiedRows,{onConflict:"work_date,shift,seat_code"});
-    if(loadSequence!==assignmentLoadSequence)return;
-    if(copyError){
-     message("Gagal menyalin denah dari "+sourceDate+": "+copyError.message);
-     return;
-    }
-    rows=copiedRows;
-    loadMessage=`Denah disalin dari ${sourceDate} · Shift ${shift}. Kamu bisa mengedit tanggal ini tanpa mengubah tanggal sebelumnya.`;
-   }
+   if(migrateError){message("Migrasi denah tetap gagal: "+migrateError.message);return}
+   rows=migrated;
+   loadMessage=`Denah ${shift} berhasil dipertahankan dari data terakhir. Riwayat tanggal lama tidak dihapus.`;
   }
  }
  assignments={};rows.forEach(x=>assignments[x.seat_code]=x);
- renderSeats("L",activeFloor==="8"?floor8Config.leftTables:3);renderSeats("R",activeFloor==="8"?floor8Config.rightTables:2);updateStats();renderBulkPlatformOptions();updateBulkSummary();
+ renderSeats("L",activeFloor==="8"?floor8Config.leftTables:3);
+ renderSeats("R",activeFloor==="8"?floor8Config.rightTables:2);
+ updateStats();renderBulkPlatformOptions();updateBulkSummary();
  if($("platformPanel")&&!$("platformPanel").classList.contains("hidden"))renderPlatformSeatEditor();
  message(loadMessage);
 }
@@ -3229,14 +3243,19 @@ function renderSeats(side,tableCount){
  const bottomPcs=Array.from({length:perFace},(_,i)=>perFace*2-i);
  const seatCode=(r,t,pc)=>is8?`F8-${side}-R${r}-T${t}-PC${pc}`:`${side}-R${r}-T${t}-PC${pc}`;
  target.innerHTML=Array.from({length:rowCount},(_,ri)=>{
-  const r=ri+1;
+  // Visual row order is reversed: BARIS 1 is physically at the bottom.
+  // Seat codes remain tied to their original row numbers, so saved assignments are preserved.
+  const r=rowCount-ri;
   const desks=Array.from({length:deskCount},(_,ti)=>{
    const t=ti+1;
    const makeSeat=pc=>{
     const id=seatCode(r,t,pc),v=assignments[id]||{};
     return `<div class="seat ${v.employee_name?"occupied":""} ${platformColorClass(v.platform)}" data-seat="${escapeAttr(id)}">
      <div class="seat-head"><span>${side==="L"?"K":"Kn"}${t} · R${r}</span><span>PC ${pc}</span></div>
-     <input class="seat-platform-input" type="text" data-field="platform" value="${escapeAttr(v.platform||"")}" placeholder="Nama platform" aria-label="Nama platform kursi ${escapeAttr(id)}" ${canEditSeats()&&seatPlatformEditMode?"":"disabled"}>
+     <select class="seat-platform-input" data-field="platform" aria-label="Platform kursi ${escapeAttr(id)}" ${canEditSeats()&&seatPlatformEditMode?"":"disabled"}>
+      <option value="" ${!String(v.platform||"").trim()?"selected":""}>Pilih platform</option>
+      ${(()=>{const current=String(v.platform||"").trim();const active=platforms.filter(p=>p.active);const known=active.some(p=>String(p.name).toLowerCase()===current.toLowerCase());const legacy=current&&current.toUpperCase()!=="OFF"&&!known?`<option value="${escapeAttr(current)}" selected>${escapeHtml(current)} (tersimpan)</option>`:"";return legacy+active.map(p=>`<option value="${escapeAttr(p.name)}" ${String(p.name).toLowerCase()===current.toLowerCase()?"selected":""}>${escapeHtml(p.name)}</option>`).join("");})()}
+     </select>
      <textarea data-field="employee_name" rows="2" placeholder="Nama karyawan" ${canEditSeats()?"":"disabled"}>${escapeHtml(v.employee_name||"")}</textarea>
     </div>`;
    };
@@ -3455,7 +3474,7 @@ $("refreshPlatformMap").onclick=async()=>{await loadAssignments();await loadPlat
 $("loginBtn").onclick=login;
 $("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
 $("logoutBtn").onclick=async()=>{if(sb)await sb.auth.signOut();currentUser=null;setApp(false)};
-$("workDate").onchange=loadAssignments;$("workShift").onchange=loadAssignments;
+$("workDate").onchange=()=>{$("workDate").value=HARMONY_FIXED_LAYOUT_DATE;loadAssignments();};$("workShift").onchange=loadAssignments;
 $("reloadBtn").onclick=loadAssignments;$("printBtn").onclick=()=>window.print();
 function setSeatPlatformEditMode(enabled){
  if(!canEditSeats()){alert("Kamu tidak memiliki akses untuk mengedit platform.");return}
@@ -3719,94 +3738,7 @@ main#appScreen{background:transparent!important;color:var(--harmony-ink)!importa
 </style>
 
 
-<script id="harmony-carry-forward-addition-v1">
-/*
- * ADD-ONLY PATCH:
- * Keep all original application code unchanged.
- * For a date/shift with missing seat records, fill only the missing seat rows
- * from the most recent earlier date that has seating data for the same shift.
- * Existing rows on the selected date are never overwritten.
- */
-async function loadAssignments(){
- const loadSequence=++assignmentLoadSequence;
- message("Memuat data online...");
- const date=$("workDate").value,shift=$("workShift").value;
- const {data,error}=await sb.from("seat_assignments")
-  .select("seat_code,employee_name,platform")
-  .eq("work_date",date).eq("shift",shift);
- if(loadSequence!==assignmentLoadSequence)return;
- if(error){message("Gagal memuat: "+error.message);return}
- const activeSeatIds=new Set(seats.map(x=>x.id));
- let rows=(data||[]).filter(x=>activeSeatIds.has(x.seat_code));
- let loadMessage="Tersinkron online";
 
- /* Only look backward when the selected date has seats that have not yet
-    been saved. This also handles dates containing only partial records. */
- const existingSeatIds=new Set(rows.map(x=>x.seat_code));
- const missingSeatIds=[...activeSeatIds].filter(id=>!existingSeatIds.has(id));
-
- if(missingSeatIds.length){
-  const {data:latestDateRows,error:latestDateError}=await sb.from("seat_assignments")
-   .select("work_date")
-   .lt("work_date",date)
-   .eq("shift",shift)
-   .in("seat_code",[...activeSeatIds])
-   .order("work_date",{ascending:false})
-   .limit(1);
-  if(loadSequence!==assignmentLoadSequence)return;
-  if(latestDateError){
-   message("Gagal memeriksa data hari sebelumnya: "+latestDateError.message);
-   return;
-  }
-
-  const sourceDate=latestDateRows?.[0]?.work_date;
-  if(sourceDate){
-   const {data:sourceRows,error:sourceError}=await sb.from("seat_assignments")
-    .select("seat_code,employee_name,platform")
-    .eq("work_date",sourceDate).eq("shift",shift)
-    .in("seat_code",missingSeatIds);
-   if(loadSequence!==assignmentLoadSequence)return;
-   if(sourceError){
-    message("Gagal membaca denah tanggal "+sourceDate+": "+sourceError.message);
-    return;
-   }
-
-   const copiedRows=(sourceRows||[])
-    .filter(x=>activeSeatIds.has(x.seat_code))
-    .map(x=>({
-     work_date:date,
-     shift,
-     seat_code:x.seat_code,
-     employee_name:x.employee_name||"",
-     platform:x.platform||"",
-     updated_by:currentUser.id
-    }));
-
-   if(copiedRows.length){
-    const {error:copyError}=await sb.from("seat_assignments")
-     .upsert(copiedRows,{onConflict:"work_date,shift,seat_code"});
-    if(loadSequence!==assignmentLoadSequence)return;
-    if(copyError){
-     message("Gagal melanjutkan denah dari "+sourceDate+": "+copyError.message);
-     return;
-    }
-    rows=rows.concat(copiedRows);
-    loadMessage=`Denah dilanjutkan dari ${sourceDate} · Shift ${shift}. Data yang sudah ada pada tanggal ini tidak diubah.`;
-   }
-  }
- }
-
- assignments={};
- rows.forEach(x=>assignments[x.seat_code]=x);
- renderSeats("L",activeFloor==="8"?floor8Config.leftTables:3);
- renderSeats("R",activeFloor==="8"?floor8Config.rightTables:2);
- updateStats();
- renderBulkPlatformOptions();
- updateBulkSummary();
- if($("platformPanel")&&!$("platformPanel").classList.contains("hidden"))renderPlatformSeatEditor();
- message(loadMessage);
-}
-</script>
 
 
 <style id="harmony-platform-side-quantity-addition">
@@ -4831,12 +4763,12 @@ html body #appScreen #seatingPanel .layout-wrap::before {
 
   async function mirrorMorningPlatformToNight(seatCode){
     const date=document.getElementById("workDate")?.value;
-    const user=window.currentUser;
+    const user=currentUser;
     if(!date || !user?.id) return false;
 
-    const platformValue=String(window.assignments?.[seatCode]?.platform||"");
+    const platformValue=String(assignments?.[seatCode]?.platform||"");
 
-    const {data:nightRow,error:readError}=await window.sb
+    const {data:nightRow,error:readError}=await sb
       .from("seat_assignments")
       .select("employee_name")
       .eq("work_date",date)
@@ -4858,7 +4790,7 @@ html body #appScreen #seatingPanel .layout-wrap::before {
       updated_by:user.id
     };
 
-    const {error:writeError}=await window.sb
+    const {error:writeError}=await sb
       .from("seat_assignments")
       .upsert(payload,{onConflict:"work_date,shift,seat_code"});
 
@@ -4877,23 +4809,82 @@ html body #appScreen #seatingPanel .layout-wrap::before {
     if(shift==="Pagi"){
       const mirrored=await mirrorMorningPlatformToNight(seatCode);
       if(!mirrored){
-        if(typeof window.message==="function"){
-          window.message("Data Pagi tersimpan. Platform ke Malam belum berhasil disalin; coba simpan ulang.");
-        }
-      }else if(typeof window.message==="function"){
-        window.message("Data Pagi tersimpan. Platform juga diperbarui di Malam; nama Malam tetap.");
+        message("Data Pagi tersimpan. Platform ke Malam belum berhasil disalin; coba simpan ulang.");
+      }else{
+        message("Data Pagi tersimpan. Platform juga diperbarui di Malam; nama Malam tetap.");
       }
     }
     return true;
   };
 
   window.addEventListener("beforeunload",function(event){
-    const pending=window.pendingSeatPlatformEdits;
+    const pending=pendingSeatPlatformEdits;
     if(pending && Object.keys(pending).length){
       event.preventDefault();
       event.returnValue="";
     }
   });
+})();
+</script>
+
+
+<script id="harmony-daily-persistence-and-save-v1">
+(function(){
+ const saveButton=document.getElementById("saveWholeLayoutBtn");
+
+ async function saveWholeLayout(){
+  if(!currentUser || !canEditSeats()){
+   message("Kamu tidak memiliki akses untuk menyimpan denah.");
+   return;
+  }
+  if(Object.keys(pendingSeatPlatformEdits).length){
+   Object.entries(pendingSeatPlatformEdits).forEach(([id,value])=>{
+    assignments[id] ||= {seat_code:id,employee_name:"",platform:""};
+    assignments[id].platform=value;
+   });
+  }
+
+  const date=HARMONY_FIXED_LAYOUT_DATE;
+  $("workDate").value=HARMONY_FIXED_LAYOUT_DATE;
+  const shift=$("workShift").value;
+  const rows=Object.entries(assignments)
+   .filter(([id])=>seats.some(seat=>seat.id===id))
+   .map(([id,value])=>({
+    work_date:date,
+    shift,
+    seat_code:id,
+    employee_name:value.employee_name||"",
+    platform:value.platform||"",
+    updated_by:currentUser.id
+   }));
+
+  if(!rows.length){
+   message("Belum ada data kursi untuk disimpan.");
+   return;
+  }
+
+  saveButton.disabled=true;
+  const oldText=saveButton.textContent;
+  saveButton.textContent="Menyimpan...";
+  message("Menyimpan seluruh denah...");
+  try{
+   const {error}=await sb.from("seat_assignments")
+    .upsert(rows,{onConflict:"work_date,shift,seat_code"});
+   if(error)throw error;
+   Object.keys(pendingSeatPlatformEdits).forEach(id=>delete pendingSeatPlatformEdits[id]);
+   if(seatPlatformEditMode)setSeatPlatformEditMode(false);
+   message(`Berhasil menyimpan ${rows.length} data kursi · ${date} · Shift ${shift}.`);
+  }catch(error){
+   message("Gagal menyimpan denah: "+(error?.message||error));
+   alert("Denah belum berhasil disimpan. Periksa koneksi internet lalu coba Simpan denah lagi.\n\n"+(error?.message||""));
+  }finally{
+   saveButton.disabled=false;
+   saveButton.textContent=oldText;
+  }
+ }
+
+ if(saveButton)saveButton.addEventListener("click",saveWholeLayout);
+
 })();
 </script>
 
