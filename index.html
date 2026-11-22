@@ -4158,5 +4158,166 @@ header h1,header p{color:#fff!important}
 }
 </style>
 
+
+
+<style id="harmony-readable-burgundy-refinement-v3">
+/* Visual-only refinement: clear typography, calm white workspace, restrained burgundy chrome. */
+:root{
+  color-scheme:light;
+  --harmony-burgundy:#64243d;
+  --harmony-burgundy-deep:#451629;
+  --harmony-burgundy-soft:#f5edf1;
+  --harmony-ink:#26313a;
+  --harmony-muted:#596873;
+  --harmony-line:#d9e0e4;
+}
+html,body{background:#f4f5f4!important;color:var(--harmony-ink)!important}
+body{font-family:'Merriweather',Georgia,serif!important;font-weight:500!important}
+header{
+  background:linear-gradient(115deg,var(--harmony-burgundy-deep),var(--harmony-burgundy))!important;
+  color:#fff!important;border-bottom:3px solid #c4a477!important;
+  box-shadow:0 3px 14px rgba(55,20,35,.16)!important;
+}
+header h1,header p{color:#fff!important}
+#appScreen{background:#f4f5f4!important;color:var(--harmony-ink)!important}
+#appScreen>.nav{
+  background:var(--harmony-burgundy-deep)!important;
+  border:1px solid #7a465b!important;border-radius:12px!important;padding:9px!important;
+}
+#appScreen>.nav button:not(#workspaceToggleBtn){
+  background:#754057!important;color:#fff!important;border:1px solid #9b7182!important;
+}
+#appScreen>.nav button:not(#workspaceToggleBtn).active,
+#appScreen>.nav button:not(#workspaceToggleBtn):hover{
+  background:#fff!important;color:var(--harmony-burgundy-deep)!important;border-color:#d8c0ca!important;
+}
+#appScreen>.nav #workspaceToggleBtn{background:#754057!important;color:#fff!important;border:1px solid #9b7182!important}
+/* Work surfaces stay white; avoid burgundy backgrounds behind text. */
+#appScreen .panel,#appScreen .floor-switcher,#appScreen .side-card,
+#appScreen .desk,#appScreen .facing,#appScreen .platform-map-side,
+#appScreen .platform-manager-card,#appScreen .platform-seat-tools,
+#appScreen .bulk-side-card,#appScreen .bulk-entry,#appScreen .stat,
+#appScreen .employee-card,#appScreen .dashboard-card{
+  background:#fff!important;color:var(--harmony-ink)!important;
+  border-color:var(--harmony-line)!important;
+  box-shadow:0 2px 9px rgba(35,48,57,.045)!important;
+}
+#appScreen .floor-switcher,#seatingPanel>.panel:first-child{
+  background:#fff!important;color:var(--harmony-ink)!important;
+  border:1px solid var(--harmony-line)!important;border-left:4px solid var(--harmony-burgundy)!important;
+  box-shadow:0 2px 9px rgba(35,48,57,.045)!important;
+}
+#appScreen .floor-switcher *,#seatingPanel>.panel:first-child .toolbar *,
+#seatingPanel>.panel:first-child .stats *,#seatingPanel>.panel:first-child>p{
+  color:var(--harmony-ink)!important;
+}
+#appScreen .floor-switcher .muted,#seatingPanel>.panel:first-child .muted{color:var(--harmony-muted)!important}
+#appScreen h1,#appScreen h2,#appScreen h3,#appScreen h4,
+#appScreen label,#appScreen .desk-title,#appScreen .side-head h3,
+#appScreen .platform-map-side-head h3{color:var(--harmony-burgundy-deep)!important}
+#appScreen .muted,#appScreen .seat-head,#appScreen .face-label,
+#appScreen .platform-map-side-head p{color:var(--harmony-muted)!important}
+#appScreen input,#appScreen select,#appScreen textarea{
+  background:#fff!important;color:#26313a!important;border:1px solid #b9c5cb!important;
+}
+#appScreen input::placeholder,#appScreen textarea::placeholder{color:#687780!important;opacity:1!important}
+#appScreen button:not(.seat button){border-radius:8px!important}
+#appScreen button.primary,#appScreen .toolbar button.primary,
+#editSeatPlatformsBtn{background:var(--harmony-burgundy)!important;color:#fff!important;border:1px solid var(--harmony-burgundy)!important}
+#saveSeatPlatformsBtn{background:#216b4b!important;color:#fff!important;border:1px solid #216b4b!important}
+#savePdfBtn{background:#fff!important;color:var(--harmony-burgundy)!important;border:1px solid #a77b8d!important}
+/* KPI cards use white backgrounds and a restrained burgundy accent, not colored fills. */
+#seatingPanel>.panel:first-child .stat,#dashboardPanel .stat{
+  background:#fff!important;color:var(--harmony-ink)!important;
+  border:1px solid var(--harmony-line)!important;border-top:3px solid #8b536b!important;
+  box-shadow:0 2px 8px rgba(35,48,57,.04)!important;
+}
+#seatingPanel>.panel:first-child .stat small,#seatingPanel>.panel:first-child .stat b,
+#dashboardPanel .stat small,#dashboardPanel .stat b{color:var(--harmony-ink)!important}
+#appScreen .row-label{background:#f4f1f3!important;color:#4d293a!important;border:1px solid #d9cbd1!important}
+#appScreen .divider{background:#c9b8c0!important}
+#appScreen .side-head{border-bottom:1px solid #e5e9eb!important}
+#appScreen .notice{background:#fff8eb!important;color:#624719!important;border-color:#e8d4a9!important}
+#appScreen .status{background:#edf6f0!important;color:#1b6042!important;border:1px solid #c7e2d1!important}
+/* Keep platform identity colors intact and high contrast, including custom catalog colors. */
+#appScreen .seat.platform-jinx{background:#fff5f6!important;border:2px solid #a30f32!important}
+#appScreen .seat.platform-jinx .seat-platform-input{background:#f4cbd4!important;color:#650d25!important;border:2px solid #a30f32!important}
+#appScreen .seat.platform-vega{background:#fff8ed!important;border:2px solid #bd5b08!important}
+#appScreen .seat.platform-vega .seat-platform-input{background:#f8d9ad!important;color:#713400!important;border:2px solid #bd5b08!important}
+#appScreen .seat.platform-zane{background:#f1fbf5!important;border:2px solid #087447!important}
+#appScreen .seat.platform-zane .seat-platform-input{background:#bfe8d1!important;color:#064b30!important;border:2px solid #087447!important}
+#appScreen .seat.platform-custom{background:var(--platform-seat-bg,#f4f6f8)!important;border:2px solid var(--platform-color,#64748b)!important}
+#appScreen .seat.platform-custom .seat-platform-input{background:var(--platform-bg,#e8edf2)!important;color:var(--platform-ink,#243746)!important;border:2px solid var(--platform-color,#64748b)!important}
+/* Login: a small original decorative seating illustration above a clean, readable form. */
+#loginScreen{
+  max-width:480px!important;margin:6vh auto!important;padding:18px!important;
+  display:grid;gap:0!important;
+}
+#loginScreen:not(.hidden){display:grid!important}
+#loginScreen::before{
+  content:"";display:block;height:142px;border-radius:16px 16px 0 0;
+  background-color:var(--harmony-burgundy);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 150'%3E%3Crect width='480' height='150' fill='%2364243d'/%3E%3Cpath d='M0 118 Q120 70 240 118 T480 118 V150 H0Z' fill='%237b3b56' opacity='.8'/%3E%3Cg fill='none' stroke='%23e6d1d9' stroke-width='2' opacity='.85'%3E%3Crect x='52' y='43' width='70' height='48' rx='8'/%3E%3Crect x='139' y='43' width='70' height='48' rx='8'/%3E%3Crect x='226' y='43' width='70' height='48' rx='8'/%3E%3Cpath d='M62 91v12m50-12v12m37-12v12m50-12v12m37-12v12m50-12v12'/%3E%3C/g%3E%3Cg fill='%23d8b989'%3E%3Ccircle cx='360' cy='42' r='5'/%3E%3Ccircle cx='382' cy='65' r='3'/%3E%3Ccircle cx='414' cy='37' r='4'/%3E%3C/g%3E%3Ctext x='240' y='130' text-anchor='middle' font-family='Georgia' font-size='10' letter-spacing='3' fill='%23f8edf1'%3EHARMONY SEATING%3C/text%3E%3C/svg%3E");
+  background-size:cover;background-position:center;
+}
+#loginScreen>.panel{
+  margin:0!important;border:1px solid #e1d7dc!important;border-top:0!important;
+  border-radius:0 0 16px 16px!important;background:#fff!important;
+  padding:26px!important;box-shadow:0 10px 30px rgba(55,20,35,.10)!important;
+}
+#loginScreen h2{color:var(--harmony-burgundy-deep)!important;margin-top:0;font-size:22px}
+#loginScreen .muted{color:#596873!important}
+#loginScreen label{color:#3c2a33!important}
+#loginScreen input{background:#fff!important;color:#26313a!important;border:1px solid #bac5cb!important}
+#loginScreen button.primary{background:var(--harmony-burgundy)!important;color:#fff!important}
+@media(max-width:600px){#loginScreen{margin:3vh auto!important;padding:10px!important}#loginScreen::before{height:112px}#loginScreen>.panel{padding:20px!important}}
+@media print{
+  header,#appScreen>.nav{display:none!important}
+  #appScreen .panel,#appScreen .side-card,#appScreen .desk,#appScreen .facing{background:#fff!important;color:#111!important}
+  #appScreen .seat.platform-jinx .seat-platform-input{background:#f4cbd4!important;color:#650d25!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #appScreen .seat.platform-vega .seat-platform-input{background:#f8d9ad!important;color:#713400!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #appScreen .seat.platform-zane .seat-platform-input{background:#bfe8d1!important;color:#064b30!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+
+
+
+<style id="harmony-burgundy-contrast-fix-v4">
+/* V4: readable white button labels and burgundy aisle/section trim only. */
+#appScreen #seatingPanel>.panel:first-child .toolbar button,
+#appScreen #seatingPanel>.panel:first-child .entry-mode button,
+#appScreen #seatingPanel>.panel:first-child button.primary,
+#appScreen #seatingPanel>.panel:first-child .actions button,
+#appScreen #editSeatPlatformsBtn,
+#appScreen #saveSeatPlatformsBtn{
+  color:#fff!important;
+  text-shadow:none!important;
+}
+#appScreen #seatingPanel>.panel:first-child .toolbar button:not(:disabled),
+#appScreen #seatingPanel>.panel:first-child .entry-mode button:not(:disabled){
+  background:#64243d!important;
+  border:1px solid #64243d!important;
+}
+#appScreen #seatingPanel>.panel:first-child .toolbar button:disabled{
+  background:#b99aa7!important;color:#fff!important;border:1px solid #b99aa7!important;opacity:1!important;
+}
+#appScreen #seatingPanel .layout-wrap::before{
+  background:linear-gradient(180deg,#64243d 0%,#7a3450 100%)!important;
+  border:2px solid #64243d!important;color:#fff!important;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)!important;
+}
+#appScreen #seatingPanel .layout-wrap>.side-card:first-child,
+#appScreen #seatingPanel .layout-wrap>.side-card:last-child{
+  border-top:4px solid #64243d!important;
+}
+#appScreen #seatingPanel .section-title,
+#appScreen #seatingPanel .side-card>.side-head{
+  border-top-color:#64243d!important;
+}
+#appScreen #seatingPanel .side-card{
+  border-color:#d9cbd1!important;
+}
+</style>
+
 </body>
 </html>
