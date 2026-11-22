@@ -4347,5 +4347,45 @@ header h1,header p{color:#fff!important}
 }
 </style>
 
+<style id="harmony-button-white-final-v6">
+/* V6 hard override: force readable white labels on the exact toolbar and entry buttons. */
+#appScreen button#reloadBtn,
+#appScreen button#printBtn,
+#appScreen button#editSeatPlatformsBtn,
+#appScreen button#saveSeatPlatformsBtn,
+#appScreen button#savePdfBtn,
+#appScreen button#singleEntryMode,
+#appScreen button#bulkEntryMode {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  text-shadow: 0 1px 1px rgba(0,0,0,.22) !important;
+}
+#appScreen button#reloadBtn *,
+#appScreen button#printBtn *,
+#appScreen button#editSeatPlatformsBtn *,
+#appScreen button#saveSeatPlatformsBtn *,
+#appScreen button#savePdfBtn *,
+#appScreen button#singleEntryMode *,
+#appScreen button#bulkEntryMode * {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+/* Keep the disabled save action legible too. */
+#appScreen button#saveSeatPlatformsBtn:disabled {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  opacity: 1 !important;
+  background: #b58b9b !important;
+}
+/* Burgundy outline on both seating-side outer edges and the central divider. */
+#appScreen #seatingPanel .layout-wrap > .side-card {
+  border-top: 4px solid #64243d !important;
+}
+#appScreen #seatingPanel .layout-wrap::before {
+  background: linear-gradient(180deg, #64243d 0%, #7a3450 100%) !important;
+  border: 2px solid #64243d !important;
+}
+</style>
+
 </body>
 </html>
