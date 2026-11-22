@@ -1769,16 +1769,6 @@ header #logoutBtn{background:#fff8fb!important;color:#713653!important;border:1p
 /* ===== END POLISHED PINK PALETTE ===== */
 
 
-/* 15-minute inactivity auto-logout dialog */
-#autoLogoutOverlay{position:fixed;inset:0;z-index:99999;background:rgba(7,22,42,.62);display:none;align-items:center;justify-content:center;padding:20px}
-#autoLogoutOverlay.show{display:flex}
-#autoLogoutDialog{width:min(420px,100%);background:#fff;border:1px solid #cbd8e6;border-radius:18px;padding:26px;box-shadow:0 22px 70px rgba(0,0,0,.28);text-align:center;color:#102a43}
-#autoLogoutDialog .auto-icon{font-size:34px;margin-bottom:8px}
-#autoLogoutDialog h3{margin:4px 0 8px;color:#102a43}
-#autoLogoutDialog p{margin:0 0 16px;color:#526579;line-height:1.5}
-#autoLogoutCountdown{font-size:28px;font-weight:800;color:#087f8c;margin:8px 0 18px}
-#stayLoggedInBtn{background:linear-gradient(135deg,#087f8c,#0e9a9a);color:#fff;border:0;border-radius:10px;padding:11px 20px;font-weight:700;cursor:pointer}
-
 
 
 /* FINAL READABILITY REFINEMENT: burgundy is used as trim/borders, not large text backgrounds. */
@@ -2839,42 +2829,7 @@ function setApp(on){
  $("logoutBtn").classList.toggle("hidden",!on);$("userBadge").classList.toggle("hidden",!on);
 }
 
-// Automatically sign out after 15 minutes without user activity.
-const INACTIVITY_LIMIT_MS=15*60*1000;
-const INACTIVITY_WARNING_MS=60*1000;
-let inactivityTimer=null, logoutCountdownTimer=null, logoutDeadline=0;
-function hideAutoLogoutWarning(){
- const overlay=$("autoLogoutOverlay");if(overlay)overlay.classList.remove("show");
- if(logoutCountdownTimer){clearInterval(logoutCountdownTimer);logoutCountdownTimer=null;}
-}
-function clearInactivityTimers(){
- if(inactivityTimer){clearTimeout(inactivityTimer);inactivityTimer=null;}
- if(logoutCountdownTimer){clearInterval(logoutCountdownTimer);logoutCountdownTimer=null;}
- hideAutoLogoutWarning();
-}
-async function performInactivityLogout(){
- clearInactivityTimers();
- if(sb){try{await sb.auth.signOut();}catch(e){console.warn("Sign out error",e);}}
- currentUser=null;setApp(false);
- showLoginMessage("Kamu otomatis logout karena tidak ada aktivitas selama 15 menit.");
-}
-function showAutoLogoutWarning(){
- const overlay=$("autoLogoutOverlay");if(!overlay)return;
- logoutDeadline=Date.now()+INACTIVITY_WARNING_MS;overlay.classList.add("show");
- const tick=()=>{const left=Math.max(0,Math.ceil((logoutDeadline-Date.now())/1000));$("autoLogoutCountdown").textContent=left+" detik";if(left<=0)performInactivityLogout();};
- tick();logoutCountdownTimer=setInterval(tick,1000);
-}
-function resetInactivityTimer(){
- if(!currentUser||$("appScreen").classList.contains("hidden"))return;
- if(inactivityTimer)clearTimeout(inactivityTimer);
- if(logoutCountdownTimer){clearInterval(logoutCountdownTimer);logoutCountdownTimer=null;}
- hideAutoLogoutWarning();
- inactivityTimer=setTimeout(showAutoLogoutWarning,INACTIVITY_LIMIT_MS-INACTIVITY_WARNING_MS);
-}
-["click","keydown","mousemove","mousedown","touchstart","scroll","wheel"].forEach(eventName=>{
- document.addEventListener(eventName,resetInactivityTimer,{passive:true});
-});
-if($("stayLoggedInBtn"))$("stayLoggedInBtn").addEventListener("click",resetInactivityTimer);
+// Inactivity auto-logout is disabled. Users remain signed in while the Supabase session is valid.
 function showLoginMessage(t){$("loginMessage").textContent=t}
 async function login(){
  if(!sb){showLoginMessage("Koneksi Supabase belum aktif. Periksa konfigurasi URL dan Publishable Key di index.html.");return}
@@ -2898,7 +2853,6 @@ async function startSession(user){
  currentRole=profile.role;
  $("userBadge").textContent=(profile.full_name||user.email)+" · "+currentRole.toUpperCase();
  setApp(true);
- resetInactivityTimer();
  applyPermissions();
  await loadPlatforms();
  await loadEmployees();
@@ -3500,7 +3454,7 @@ $("clearBulkPlatforms").onclick=()=>{$("bulkPlatformNames").value="";updateBulkP
 $("refreshPlatformMap").onclick=async()=>{await loadAssignments();await loadPlatforms();renderPlatformSeatEditor()};
 $("loginBtn").onclick=login;
 $("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
-$("logoutBtn").onclick=async()=>{clearInactivityTimers();if(sb)await sb.auth.signOut();currentUser=null;setApp(false)};
+$("logoutBtn").onclick=async()=>{if(sb)await sb.auth.signOut();currentUser=null;setApp(false)};
 $("workDate").onchange=loadAssignments;$("workShift").onchange=loadAssignments;
 $("reloadBtn").onclick=loadAssignments;$("printBtn").onclick=()=>window.print();
 function setSeatPlatformEditMode(enabled){
@@ -3546,15 +3500,6 @@ if(sb){sb.auth.getSession().then(({data})=>{if(data.session)startSession(data.se
 else{showLoginMessage("Mode online belum aktif. Lengkapi konfigurasi Supabase pada file index.html.")}
 </script>
 
-<div id="autoLogoutOverlay" role="dialog" aria-modal="true" aria-labelledby="autoLogoutTitle">
- <div id="autoLogoutDialog">
-  <div class="auto-icon">🔒</div>
-  <h3 id="autoLogoutTitle">Sesi akan berakhir</h3>
-  <p>Tidak ada aktivitas selama 14 menit. Kamu akan otomatis logout dalam:</p>
-  <div id="autoLogoutCountdown">60 detik</div>
-  <button id="stayLoggedInBtn" type="button">Tetap Login</button>
- </div>
-</div>
 
 <script id="workspace-sidebar-toggle-script">
 (function(){
