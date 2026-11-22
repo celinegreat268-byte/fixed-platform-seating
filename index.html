@@ -3227,7 +3227,8 @@ function renderSeats(side,tableCount){
      <textarea data-field="employee_name" rows="2" placeholder="Nama karyawan" ${canEditSeats()?"":"disabled"}>${escapeHtml(v.employee_name||"")}</textarea>
     </div>`;
    };
-   return `<div class="desk"><div class="desk-title">Meja ${side==="L"?"Kiri":"Kanan"} ${t}</div><div class="facing">
+   const deskLabel = deskCount - t + 1;
+return `<div class="desk"><div class="desk-title">Meja ${side==="L"?"Kiri":"Kanan"} ${deskLabel}</div><div class="facing">
     <div class="face-label">BARIS ATAS</div><div class="seats" style="grid-template-columns:repeat(${perFace},minmax(155px,1fr))">${topPcs.map(makeSeat).join("")}</div>
     <div class="divider"></div><div class="face-label">BARIS BAWAH</div><div class="seats" style="grid-template-columns:repeat(${perFace},minmax(155px,1fr))">${bottomPcs.map(makeSeat).join("")}</div>
    </div></div>`;
