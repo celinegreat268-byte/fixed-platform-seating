@@ -4778,5 +4778,26 @@ html body #appScreen #seatingPanel > .panel > .toolbar button:disabled {
 }
 </style>
 
+
+<style id="harmony-floor-switcher-readable-black-text-final">
+/* Readability fix requested: floor title and description use dark text on their light surface. */
+html body #appScreen > .panel.floor-switcher.no-print .floor-switcher-copy,
+html body #appScreen > .panel.floor-switcher.no-print .floor-active-label,
+html body #appScreen > .panel.floor-switcher.no-print #activeFloorDescription {
+  color:#26313a !important;
+  -webkit-text-fill-color:#26313a !important;
+  text-shadow:none !important;
+  background:transparent !important;
+  border:0 !important;
+}
+/* Keep the floor dropdown text dark, matching the supplied reference image. */
+html body #appScreen > .panel.floor-switcher.no-print #activeFloorSelect,
+html body #appScreen > .panel.floor-switcher.no-print #activeFloorSelect option {
+  color:#26313a !important;
+  -webkit-text-fill-color:#26313a !important;
+  background:#fff !important;
+}
+</style>
+
 </body>
 </html>
