@@ -4540,5 +4540,60 @@ html body #appScreen .employee-name-input {
 }
 </style>
 
+
+<style id="harmony-burgundy-white-text-final">
+/* FINAL CONTRAST OVERRIDE:
+   White typography on every burgundy navigation/action surface.
+   Does not change seat platform colors, employee fields, layout, data, or JavaScript. */
+html body header,
+html body header *,
+html body #appScreen > .nav,
+html body #appScreen > .nav *,
+html body #appScreen > .nav button,
+html body #appScreen > .nav button *,
+html body #appScreen .toolbar > button,
+html body #appScreen .toolbar > button *,
+html body #appScreen .entry-mode > button,
+html body #appScreen .entry-mode > button *,
+html body #appScreen button.primary,
+html body #appScreen button.primary *,
+html body #appScreen #reloadBtn,
+html body #appScreen #reloadBtn *,
+html body #appScreen #printBtn,
+html body #appScreen #printBtn *,
+html body #appScreen #editSeatPlatformsBtn,
+html body #appScreen #editSeatPlatformsBtn *,
+html body #appScreen #saveSeatPlatformsBtn,
+html body #appScreen #saveSeatPlatformsBtn *,
+html body #appScreen #savePdfBtn,
+html body #appScreen #savePdfBtn *,
+html body #appScreen #singleEntryMode,
+html body #appScreen #singleEntryMode *,
+html body #appScreen #bulkEntryMode,
+html body #appScreen #bulkEntryMode *,
+html body #logoutBtn,
+html body #logoutBtn * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,.30) !important;
+}
+/* Keep white labels visible on disabled burgundy action buttons too. */
+html body #appScreen button:disabled {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+}
+/* Keep normal dark text on white inputs and preserve each platform's seat colors. */
+html body #appScreen input,
+html body #appScreen select,
+html body #appScreen textarea,
+html body #appScreen .seat,
+html body #appScreen .seat *,
+html body #appScreen .seat-platform,
+html body #appScreen .platform-chip {
+  text-shadow: none !important;
+}
+</style>
+
 </body>
 </html>
