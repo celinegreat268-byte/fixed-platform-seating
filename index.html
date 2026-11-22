@@ -4893,7 +4893,8 @@ html body #appScreen #seatingPanel .layout-wrap::before {
 
 <!-- PDF EXPORT V2: create and download a single-page PDF directly; no print dialog. -->
 <style id="harmony-pdf-export-v2">
-#harmonyPdfExportStage { position: fixed; left: -100000px; top: 0; z-index: -1; background: #fff; }
+#harmonyPdfExportStage { position: fixed; left: 0; top: 0; z-index: 2147483647; background: #fff; pointer-events: none; display: block; }
+#harmonyPdfExportStage .layout-wrap, #harmonyPdfExportStage .side-card { visibility: visible !important; opacity: 1 !important; }
 #harmonyPdfExportStage .layout-wrap { display:grid !important; grid-template-columns:1880px 52px 1280px !important; width:3240px !important; min-width:3240px !important; gap:14px !important; transform:none !important; }
 #harmonyPdfExportStage .layout-wrap > .side-card:first-child { grid-column:1 !important; grid-row:1 !important; }
 #harmonyPdfExportStage .layout-wrap > .side-card:last-child { grid-column:3 !important; grid-row:1 !important; }
@@ -4928,6 +4929,15 @@ html body #appScreen #seatingPanel .layout-wrap::before {
       stage=document.createElement('div');
       stage.id='harmonyPdfExportStage';
       const clone=source.cloneNode(true);
+      // Preserve the currently displayed values in cloned form controls.
+      const srcControls=source.querySelectorAll('input,select,textarea');
+      const cloneControls=clone.querySelectorAll('input,select,textarea');
+      srcControls.forEach((el,i)=>{
+        const copy=cloneControls[i]; if(!copy) return;
+        if(el.tagName==='SELECT'){ Array.from(copy.options).forEach((o,j)=>{o.selected=!!el.options[j]?.selected;}); copy.value=el.value; }
+        else if(el.tagName==='TEXTAREA'){ copy.value=el.value; copy.textContent=el.value; }
+        else { copy.value=el.value; copy.setAttribute('value',el.value); }
+      });
       clone.style.width='3240px';
       clone.style.minWidth='3240px';
       clone.style.maxWidth='none';
@@ -4942,6 +4952,8 @@ html body #appScreen #seatingPanel .layout-wrap::before {
       stage.appendChild(clone);
       document.body.appendChild(stage);
       await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+      if(document.fonts?.ready) await document.fonts.ready;
+      await Promise.all(Array.from(stage.querySelectorAll('img')).map(img=>img.complete?Promise.resolve():new Promise(resolve=>{img.onload=resolve;img.onerror=resolve;})));
       const widthPx=Math.ceil(stage.scrollWidth);
       const heightPx=Math.ceil(stage.scrollHeight);
       const margin=8;
@@ -4954,7 +4966,7 @@ html body #appScreen #seatingPanel .layout-wrap::before {
         margin:margin,
         filename:'Harmony_Seating_'+floor+'_'+shift+'.pdf',
         image:{type:'jpeg',quality:0.98},
-        html2canvas:{scale:1.5,useCORS:true,backgroundColor:'#ffffff',windowWidth:widthPx,scrollX:0,scrollY:0},
+        html2canvas:{scale:1.5,useCORS:true,backgroundColor:'#ffffff',windowWidth:widthPx,windowHeight:heightPx,scrollX:0,scrollY:0,allowTaint:false},
         jsPDF:{unit:'mm',format:[pageWidth,pageHeight],orientation:'landscape',compress:true},
         pagebreak:{mode:[]}
       };
