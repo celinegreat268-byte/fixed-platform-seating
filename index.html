@@ -4319,5 +4319,33 @@ header h1,header p{color:#fff!important}
 }
 </style>
 
+
+<style id="harmony-user-contrast-fix-v5">
+/* Only button text is changed to white; preserve existing button fills and behavior. */
+#appScreen #reloadBtn,
+#appScreen #printBtn,
+#appScreen #editSeatPlatformsBtn,
+#appScreen #saveSeatPlatformsBtn,
+#appScreen #savePdfBtn,
+#appScreen #singleEntryMode,
+#appScreen #bulkEntryMode {
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  text-shadow:none !important;
+}
+/* Burgundy trim on the seating layout outlines. */
+#appScreen #seatingPanel .layout-wrap > .side-card {
+  border-top:4px solid #64243d !important;
+}
+#appScreen #seatingPanel .layout-wrap::before {
+  background:linear-gradient(180deg,#64243d 0%,#7a3450 100%) !important;
+  border:2px solid #64243d !important;
+}
+#appScreen #seatingPanel .section-title,
+#appScreen #seatingPanel .side-card > .side-head {
+  border-top-color:#64243d !important;
+}
+</style>
+
 </body>
 </html>
