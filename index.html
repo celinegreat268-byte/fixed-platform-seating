@@ -2398,10 +2398,10 @@ table td{color:#344247!important}
    <div class="toolbar">
     <div class="field"><label>Tanggal kerja</label><input id="workDate" type="date"></div>
     <div class="field"><label>Shift</label><select id="workShift"><option>Pagi</option><option>Malam</option></select></div>
-    <button id="reloadBtn">Refresh data</button><button id="printBtn">Print denah</button>
-    <button id="editSeatPlatformsBtn" type="button">Edit platform</button>
-    <button id="saveSeatPlatformsBtn" type="button" disabled>Done Edit &amp; Simpan</button>
-    <button id="savePdfBtn" type="button">Simpan PDF</button>
+    <button id="reloadBtn" style="color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 1px rgba(0,0,0,.25)!important;">Refresh data</button><button id="printBtn" style="color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 1px rgba(0,0,0,.25)!important;">Print denah</button>
+    <button id="editSeatPlatformsBtn" type="button" style="color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 1px rgba(0,0,0,.25)!important;">Edit platform</button>
+    <button id="saveSeatPlatformsBtn" type="button" disabled style="color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 1px rgba(0,0,0,.25)!important;">Done Edit &amp; Simpan</button>
+    <button id="savePdfBtn" type="button" style="color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 1px rgba(0,0,0,.25)!important;">Simpan PDF</button>
     <span id="saveStatus" class="muted">Belum tersinkron</span>
    </div>
    <div class="stats">
@@ -2429,8 +2429,8 @@ table td{color:#344247!important}
    </div>
    <div class="entry-mode no-print">
     <strong style="font-size:13px">Cara memasukkan nama:</strong>
-    <button id="singleEntryMode" class="active" type="button">Satu per satu</button>
-    <button id="bulkEntryMode" type="button">Banyak sekaligus</button>
+    <button id="singleEntryMode" class="active" type="button" style="color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 1px rgba(0,0,0,.25)!important;">Satu per satu</button>
+    <button id="bulkEntryMode" type="button" style="color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 1px rgba(0,0,0,.25)!important;">Banyak sekaligus</button>
    </div>
    <div id="singleEntryHelp" class="muted" style="margin-top:8px">Mode satu per satu: klik kolom <b>Nama karyawan</b> pada kursi yang dipilih, lalu ketik nama seperti biasa.</div>
    <div id="bulkEntryBox" class="bulk-entry hidden no-print">
@@ -4387,5 +4387,11 @@ header h1,header p{color:#fff!important}
 }
 </style>
 
+<style id="harmony-v7-inline-text-contrast">
+#reloadBtn,#printBtn,#editSeatPlatformsBtn,#saveSeatPlatformsBtn,#savePdfBtn,#singleEntryMode,#bulkEntryMode,
+#reloadBtn * ,#printBtn * ,#editSeatPlatformsBtn * ,#saveSeatPlatformsBtn * ,#savePdfBtn * ,#singleEntryMode * ,#bulkEntryMode * {
+ color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:0 1px 1px rgba(0,0,0,.25)!important;
+}
+</style>
 </body>
 </html>
