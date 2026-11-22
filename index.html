@@ -3240,7 +3240,7 @@ function renderSeats(side,tableCount){
      <textarea data-field="employee_name" rows="2" placeholder="Nama karyawan" ${canEditSeats()?"":"disabled"}>${escapeHtml(v.employee_name||"")}</textarea>
     </div>`;
    };
-   const deskLabel = deskCount - t + 1;
+   const deskLabel = t;
 return `<div class="desk"><div class="desk-title">Meja ${side==="L"?"Kiri":"Kanan"} ${deskLabel}</div><div class="facing">
     <div class="face-label">BARIS ATAS</div><div class="seats" style="grid-template-columns:repeat(${perFace},minmax(155px,1fr))">${topPcs.map(makeSeat).join("")}</div>
     <div class="divider"></div><div class="face-label">BARIS BAWAH</div><div class="seats" style="grid-template-columns:repeat(${perFace},minmax(155px,1fr))">${bottomPcs.map(makeSeat).join("")}</div>
@@ -4786,8 +4786,8 @@ html body #appScreen > .nav #workspaceToggleBtn * {
 
 
 <style id="harmony-swap-seating-sides-v1">
-/* Tukar posisi tampilan: grup meja KIRI pindah ke KANAN,
-   grup meja KANAN pindah ke KIRI. Isi kursi dan data tetap pada grup asal. */
+/* Swap the physical display positions of the two seating groups.
+   Keep each group's seats, labels, assignments and JavaScript IDs intact. */
 html body #appScreen #seatingPanel .layout-wrap {
   grid-template-columns: 1280px 52px 1880px !important;
   width: 3240px !important;
