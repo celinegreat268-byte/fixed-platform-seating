@@ -2353,6 +2353,9 @@ table td{color:#344247!important}
     <div class="field"><label>Tanggal kerja</label><input id="workDate" type="date"></div>
     <div class="field"><label>Shift</label><select id="workShift"><option>Pagi</option><option>Malam</option></select></div>
     <button id="reloadBtn">Refresh data</button><button id="printBtn">Print denah</button>
+    <button id="editSeatPlatformsBtn" type="button">Edit platform</button>
+    <button id="saveSeatPlatformsBtn" type="button" disabled>Done Edit &amp; Simpan</button>
+    <button id="savePdfBtn" type="button">Simpan PDF</button>
     <span id="saveStatus" class="muted">Belum tersinkron</span>
    </div>
    <div class="stats">
@@ -2567,6 +2570,8 @@ const supabaseReady = SUPABASE_URL.startsWith("https://") && SUPABASE_ANON_KEY.s
 const sb = supabaseReady ? window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY) : null;
 
 let currentUser=null, currentRole="expat", assignments={}, employees=[], platforms=[];
+let seatPlatformEditMode=false;
+const pendingSeatPlatformEdits={};
 const $=id=>document.getElementById(id);
 const today=()=>new Date().toLocaleDateString("en-CA");
 $("workDate").value=today();$("dashDate").value=today();
@@ -2768,9 +2773,10 @@ function applyPlatformColor(card,value){
  card.style.removeProperty("--platform-bg");
  card.style.removeProperty("--platform-seat-bg");
  card.style.removeProperty("--platform-ink");
- // The saved catalog color is authoritative for every platform name,
- // including JINX, VEGA, and ZANE. Category colors are only a fallback
- // when a matching catalog entry/color is unavailable.
+ // Keep the core platform identities consistent and high-contrast.
+ // Other platform names continue to use their saved catalog color.
+ const colorClass=platformColorClass(value);
+ if(colorClass){card.classList.add(colorClass);return;}
  const entry=platformForName(value);
  if(entry&&/^#[0-9a-f]{6}$/i.test(String(entry.color||""))){
   const color=entry.color;
@@ -2779,10 +2785,7 @@ function applyPlatformColor(card,value){
   card.style.setProperty("--platform-bg",blendHex(color,.72));
   card.style.setProperty("--platform-seat-bg",blendHex(color,.94));
   card.style.setProperty("--platform-ink",darkenHex(color,.55));
-  return;
  }
- const colorClass=platformColorClass(value);
- if(colorClass)card.classList.add(colorClass);
 }
 function message(text){$("saveStatus").textContent=text}
 function setApp(on){
@@ -3233,7 +3236,7 @@ function renderSeats(side,tableCount){
     const id=seatCode(r,t,pc),v=assignments[id]||{};
     return `<div class="seat ${v.employee_name?"occupied":""} ${platformColorClass(v.platform)}" data-seat="${escapeAttr(id)}">
      <div class="seat-head"><span>${side==="L"?"K":"Kn"}${t} · R${r}</span><span>PC ${pc}</span></div>
-     <input class="seat-platform-input" type="text" data-field="platform" value="${escapeAttr(v.platform||"")}" placeholder="Nama platform" aria-label="Nama platform kursi ${escapeAttr(id)}" ${canEditSeats()?"":"disabled"}>
+     <input class="seat-platform-input" type="text" data-field="platform" value="${escapeAttr(v.platform||"")}" placeholder="Nama platform" aria-label="Nama platform kursi ${escapeAttr(id)}" ${canEditSeats()&&seatPlatformEditMode?"":"disabled"}>
      <textarea data-field="employee_name" rows="2" placeholder="Nama karyawan" ${canEditSeats()?"":"disabled"}>${escapeHtml(v.employee_name||"")}</textarea>
     </div>`;
    };
@@ -3247,11 +3250,15 @@ return `<div class="desk"><div class="desk-title">Meja ${side==="L"?"Kiri":"Kana
  }).join("");
  target.querySelectorAll("[data-seat]").forEach(card=>applyPlatformColor(card,assignments[card.dataset.seat]?.platform||""));
  target.querySelectorAll("[data-seat] [data-field]").forEach(el=>{
-  // Preview the platform color immediately while typing; persist on change/blur.
-  if(el.dataset.field==="platform")el.addEventListener("input",()=>{
-   const card=el.closest("[data-seat]");
-   applyPlatformColor(card,el.value.trim());
-  });
+  if(el.dataset.field==="platform"){
+   el.addEventListener("input",()=>{
+    const card=el.closest("[data-seat]"),id=card.dataset.seat;
+    pendingSeatPlatformEdits[id]=el.value.trim();
+    applyPlatformColor(card,el.value.trim());
+   });
+   // Platform edits are staged until the user clicks "Selesai edit & simpan".
+   return;
+  }
   el.addEventListener("change",async()=>{
    const card=el.closest("[data-seat]"),id=card.dataset.seat;
    assignments[id] ||= {seat_code:id,employee_name:"",platform:""};
@@ -3268,8 +3275,8 @@ async function saveSeat(id){
  const v=assignments[id]||{},payload={work_date:$("workDate").value,shift:$("workShift").value,seat_code:id,employee_name:v.employee_name||"",platform:v.platform||"",updated_by:currentUser.id};
  message("Menyimpan...");
  const {error}=await sb.from("seat_assignments").upsert(payload,{onConflict:"work_date,shift,seat_code"});
- if(error){message("Gagal simpan: "+error.message);return}
- message("Tersimpan online");updateStats();renderBulkPlatformOptions();updateBulkSummary();
+ if(error){message("Gagal simpan: "+error.message);return false}
+ message("Tersimpan online");updateStats();renderBulkPlatformOptions();updateBulkSummary();return true;
 }
 function updateStats(){
  const vals=Object.values(assignments),present=vals.filter(v=>(v.employee_name||"").trim()).length;
@@ -3450,6 +3457,41 @@ $("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
 $("logoutBtn").onclick=async()=>{clearInactivityTimers();if(sb)await sb.auth.signOut();currentUser=null;setApp(false)};
 $("workDate").onchange=loadAssignments;$("workShift").onchange=loadAssignments;
 $("reloadBtn").onclick=loadAssignments;$("printBtn").onclick=()=>window.print();
+function setSeatPlatformEditMode(enabled){
+ if(!canEditSeats()){alert("Kamu tidak memiliki akses untuk mengedit platform.");return}
+ seatPlatformEditMode=!!enabled;
+ document.querySelectorAll("#leftRows .seat-platform-input,#rightRows .seat-platform-input").forEach(input=>input.disabled=!seatPlatformEditMode);
+ $("editSeatPlatformsBtn").disabled=seatPlatformEditMode;
+ $("saveSeatPlatformsBtn").disabled=!seatPlatformEditMode;
+ $("editSeatPlatformsBtn").textContent=seatPlatformEditMode?"Sedang edit...":"Edit platform";
+}
+$("editSeatPlatformsBtn").onclick=()=>setSeatPlatformEditMode(true);
+$("saveSeatPlatformsBtn").onclick=async()=>{
+ const ids=Object.keys(pendingSeatPlatformEdits);
+ const btn=$("saveSeatPlatformsBtn");
+ btn.disabled=true;btn.textContent="Menyimpan...";
+ try{
+  for(const id of ids){
+   assignments[id] ||= {seat_code:id,employee_name:"",platform:""};
+   assignments[id].platform=pendingSeatPlatformEdits[id];
+   const saved=await saveSeat(id);
+   if(!saved)throw new Error("Gagal menyimpan platform pada kursi "+id);
+   delete pendingSeatPlatformEdits[id];
+  }
+  setSeatPlatformEditMode(false);
+  renderSeats("L",activeFloor==="8"?floor8Config.leftTables:3);
+  renderSeats("R",activeFloor==="8"?floor8Config.rightTables:2);
+  updateStats();
+  message(ids.length?`Berhasil menyimpan ${ids.length} perubahan platform.`:"Tidak ada perubahan platform untuk disimpan.");
+ }catch(error){
+  alert("Sebagian perubahan belum berhasil disimpan: "+error.message);
+  btn.disabled=false;
+ }finally{
+  btn.textContent="Done Edit & Simpan";
+  btn.disabled=!seatPlatformEditMode;
+ }
+};
+$("savePdfBtn").onclick=()=>window.print();
 $("dashRefresh").onclick=dashboard;$("addEmployee").onclick=addEmployee;
 $("createUserBtn").onclick=createManagedUser;
 $("refreshUsersBtn").onclick=loadUserAccounts;
@@ -3919,5 +3961,61 @@ async function loadAssignments(){
 #appScreen .seat .seat-platform-input:focus{outline:2px solid rgba(54,86,107,.2);outline-offset:1px}
 #appScreen .seat .seat-platform-input:disabled{opacity:1;cursor:not-allowed}
 </style>
+<style id="seat-platform-edit-workflow">
+#editSeatPlatformsBtn{background:#173447;color:#fff;border:1px solid #fff;font-weight:800}
+#saveSeatPlatformsBtn{background:#26734f;color:#fff;border:1px solid #fff;font-weight:800}
+#saveSeatPlatformsBtn:disabled{opacity:.45;cursor:not-allowed}
+#savePdfBtn{background:#f4f7fa;color:#173447;border:1px solid #9aabb7;font-weight:800}
+@media print{
+ #editSeatPlatformsBtn,#saveSeatPlatformsBtn,#savePdfBtn,#reloadBtn,#printBtn{display:none!important}
+}
+</style>
+
+<style id="harmony-premium-burgundy-white-theme-v2">
+:root{--navy:#5b1830!important;--blue:#7a2342!important;--line:#e5d7dc!important;color:#261820!important;background:#fff!important}
+html,body{background:#fff!important;color:#261820!important}
+header{background:#5b1830!important;color:#fff!important;border-bottom:4px solid #b88a54!important}
+header h1,header p{color:#fff!important}
+#appScreen{background:#fff!important;color:#261820!important}
+#appScreen .panel,#appScreen .side-card,#appScreen .desk,#appScreen .facing,
+#appScreen .floor-switcher,#appScreen .stat,#appScreen .platform-map-side,
+#appScreen .platform-manager-card,#appScreen .platform-seat-tools,
+#appScreen .employee-card,#appScreen .dashboard-card{
+ background:#fff!important;color:#261820!important;border-color:#e2d5da!important;
+ box-shadow:0 3px 12px rgba(66,20,39,.07)!important
+}
+#appScreen .nav button{background:#f5edf0!important;color:#5b1830!important;border:1px solid #d8bdc7!important}
+#appScreen .nav button.active{background:#5b1830!important;color:#fff!important;border-color:#5b1830!important}
+#appScreen button.primary,#appScreen .toolbar button.primary{background:#7a2342!important;color:#fff!important}
+#appScreen button{border-color:#d7c2ca!important}
+#appScreen h1,#appScreen h2,#appScreen h3,#appScreen h4,
+#appScreen label,#appScreen .desk-title,#appScreen .side-head h3{color:#5b1830!important}
+#appScreen .muted,#appScreen .seat-head,#appScreen .face-label{color:#62545a!important}
+#appScreen input,#appScreen select,#appScreen textarea{background:#fff!important;color:#261820!important;border-color:#cdbbc2!important}
+#appScreen .stat{border-top:3px solid #7a2342!important}
+#appScreen .stat b{color:#7a2342!important}
+#appScreen .row-label{background:#f5edf0!important;color:#5b1830!important}
+#appScreen .divider{background:#b88a9a!important}
+/* Platform colors remain distinct and intentionally stronger than the white dashboard. */
+#appScreen .seat.platform-jinx{background:#fff5f6!important;border:2px solid #a30f32!important}
+#appScreen .seat.platform-jinx .seat-platform-input{background:#f4cbd4!important;color:#650d25!important;border:2px solid #a30f32!important;font-weight:900!important}
+#appScreen .seat.platform-vega{background:#fff8ed!important;border:2px solid #bd5b08!important}
+#appScreen .seat.platform-vega .seat-platform-input{background:#f8d9ad!important;color:#713400!important;border:2px solid #bd5b08!important;font-weight:900!important}
+#appScreen .seat.platform-zane{background:#f1fbf5!important;border:2px solid #087447!important}
+#appScreen .seat.platform-zane .seat-platform-input{background:#bfe8d1!important;color:#064b30!important;border:2px solid #087447!important;font-weight:900!important}
+#appScreen .seat.platform-custom{background:var(--platform-seat-bg,#f4f6f8)!important;border:2px solid var(--platform-color,#64748b)!important}
+#appScreen .seat.platform-custom .seat-platform-input{background:var(--platform-bg,#e8edf2)!important;color:var(--platform-ink,#243746)!important;border:2px solid var(--platform-color,#64748b)!important;font-weight:900!important}
+#appScreen .seat .seat-platform-input:disabled{opacity:1!important;cursor:not-allowed!important}
+#editSeatPlatformsBtn{background:#5b1830!important;color:#fff!important;border:1px solid #fff!important}
+#saveSeatPlatformsBtn{background:#18734b!important;color:#fff!important;border:1px solid #fff!important}
+#savePdfBtn{background:#fff!important;color:#5b1830!important;border:2px solid #7a2342!important}
+@media print{
+ html,body,#appScreen{background:#fff!important;color:#111!important}
+ #appScreen .seat.platform-jinx .seat-platform-input{background:#f4cbd4!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ #appScreen .seat.platform-vega .seat-platform-input{background:#f8d9ad!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ #appScreen .seat.platform-zane .seat-platform-input{background:#bfe8d1!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+
 </body>
 </html>
