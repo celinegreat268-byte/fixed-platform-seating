@@ -4799,5 +4799,44 @@ html body #appScreen > .panel.floor-switcher.no-print #activeFloorSelect option 
 }
 </style>
 
+
+
+<style id="harmony-sidebar-click-text-visibility-fix">
+/* Keep Workspace menu labels readable in every state, including after click/focus. */
+html body #appScreen > .nav button:not(#workspaceToggleBtn),
+html body #appScreen > .nav button:not(#workspaceToggleBtn):hover,
+html body #appScreen > .nav button:not(#workspaceToggleBtn):focus,
+html body #appScreen > .nav button:not(#workspaceToggleBtn):focus-visible,
+html body #appScreen > .nav button:not(#workspaceToggleBtn):active,
+html body #appScreen > .nav button:not(#workspaceToggleBtn).active,
+html body #appScreen > .nav button:not(#workspaceToggleBtn)[aria-current="page"],
+html body #appScreen > .nav button:not(#workspaceToggleBtn)[aria-selected="true"] {
+  background:linear-gradient(135deg,#68243f 0%,#85405b 100%) !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  border:1px solid #b47b91 !important;
+  opacity:1 !important;
+  text-shadow:0 1px 2px rgba(0,0,0,.35) !important;
+}
+html body #appScreen > .nav button:not(#workspaceToggleBtn) *,
+html body #appScreen > .nav button:not(#workspaceToggleBtn)::before {
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+}
+html body #appScreen > .nav #workspaceToggleBtn,
+html body #appScreen > .nav #workspaceToggleBtn:hover,
+html body #appScreen > .nav #workspaceToggleBtn:focus,
+html body #appScreen > .nav #workspaceToggleBtn:active {
+  background:linear-gradient(135deg,#68243f 0%,#85405b 100%) !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+  border:1px solid #b47b91 !important;
+}
+html body #appScreen > .nav #workspaceToggleBtn * {
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+}
+</style>
+
 </body>
 </html>
