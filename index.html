@@ -3286,7 +3286,27 @@ return `<div class="desk"><div class="desk-title">Meja ${side==="L"?"Kiri":"Kana
     pendingSeatPlatformEdits[id]=el.value.trim();
     applyPlatformColor(card,el.value.trim());
    });
-   // Platform edits are staged until the user clicks "Selesai edit & simpan".
+   // Simpan otomatis saat kolom platform selesai diedit/kehilangan fokus.
+   // Data tetap memakai kunci denah permanen, bukan tanggal kalender.
+   el.addEventListener("change",async()=>{
+    const card=el.closest("[data-seat]"),id=card.dataset.seat;
+    const value=el.value.trim();
+    assignments[id] ||= {seat_code:id,employee_name:"",platform:""};
+    assignments[id].platform=value;
+    pendingSeatPlatformEdits[id]=value;
+    el.disabled=true;
+    try{
+     const saved=await saveSeat(id);
+     if(!saved)throw new Error("Penyimpanan platform gagal untuk "+id);
+     delete pendingSeatPlatformEdits[id];
+     message("Platform "+id+" tersimpan otomatis dan tersinkron ke kedua shift.");
+    }catch(error){
+     message("Gagal menyimpan "+id+": "+(error?.message||error));
+     alert("Perubahan platform belum tersimpan. Jangan tutup halaman; coba edit/simpan kembali.\\n\\n"+(error?.message||""));
+    }finally{
+     el.disabled=!seatPlatformEditMode;
+    }
+   });
    return;
   }
   el.addEventListener("change",async()=>{
@@ -3491,7 +3511,22 @@ $("refreshPlatformMap").onclick=async()=>{await loadAssignments();await loadPlat
 $("loginBtn").onclick=login;
 $("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
 $("logoutBtn").onclick=async()=>{if(sb)await sb.auth.signOut();currentUser=null;setApp(false)};
-$("workDate").onchange=()=>{$("workDate").value=HARMONY_FIXED_LAYOUT_DATE;loadAssignments();};$("workShift").onchange=loadAssignments;
+$("workDate").onchange=()=>{$("workDate").value=HARMONY_FIXED_LAYOUT_DATE;loadAssignments();};
+$("workShift").onchange=async()=>{
+ // Jangan pernah mengganti tampilan shift sebelum semua edit platform tertulis ke database.
+ const pendingIds=Object.keys(pendingSeatPlatformEdits);
+ for(const id of pendingIds){
+  assignments[id] ||= {seat_code:id,employee_name:"",platform:""};
+  assignments[id].platform=pendingSeatPlatformEdits[id];
+  const saved=await saveSeat(id);
+  if(!saved){
+   alert("Ada perubahan yang belum berhasil disimpan. Shift tidak diganti agar editan tidak hilang.");
+   return;
+  }
+  delete pendingSeatPlatformEdits[id];
+ }
+ await loadAssignments();
+};
 $("reloadBtn").onclick=loadAssignments;$("printBtn").onclick=()=>window.print();
 function setSeatPlatformEditMode(enabled){
  if(!canEditSeats()){alert("Kamu tidak memiliki akses untuk mengedit platform.");return}
@@ -4902,7 +4937,7 @@ html body #appScreen #seatingPanel .layout-wrap::before {
 
    Object.keys(pendingSeatPlatformEdits).forEach(id=>delete pendingSeatPlatformEdits[id]);
    if(seatPlatformEditMode)setSeatPlatformEditMode(false);
-   message(`Berhasil menyimpan ${rows.length} data kursi · ${date} · Shift ${shift}.`);
+   message(`Berhasil menyimpan ${rows.length} data kursi. Denah permanen tersimpan untuk Pagi dan Malam; nama karyawan tetap terpisah per shift.`);
   }catch(error){
    message("Gagal menyimpan denah: "+(error?.message||error));
    alert("Denah belum berhasil disimpan. Periksa koneksi internet lalu coba Simpan denah lagi.\n\n"+(error?.message||""));
