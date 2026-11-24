@@ -3079,7 +3079,7 @@ function renderPlatformSeatEditorSide(side){
  body.querySelectorAll("[data-seat-platform]").forEach(select=>select.onchange=()=>saveSeatPlatform(select.dataset.seatPlatform,select.value));
 }
 async function saveSeatPlatform(seatCode,platformName){
- if(!canAdmin()){alert("Hanya Admin yang dapat mengubah pemetaan platform.");return}
+ if(!canEditSeats()){alert("Kamu tidak memiliki akses untuk mengubah pemetaan platform.");return}
  if(String(platformName||"").trim().toUpperCase()==="OFF"){
   alert("Platform OFF tidak diperbolehkan. Kosongkan pilihan atau gunakan nama platform lain.");
   return;
@@ -4849,27 +4849,11 @@ html body #appScreen #seatingPanel .layout-wrap::before {
     .upsert(rows,{onConflict:"work_date,shift,seat_code"});
    if(error)throw error;
 
-   // Setelah simpan seluruh denah, salin platform untuk semua kursi ke shift lawan.
-   // Nama karyawan shift tujuan dibaca dari database dan tidak pernah ditimpa.
-   const otherShift=shift==="Pagi"?"Malam":"Pagi";
-   const seatCodes=rows.map(row=>row.seat_code);
-   const {data:otherRows,error:otherReadError}=await sb.from("seat_assignments")
-    .select("seat_code,employee_name")
-    .eq("work_date",date).eq("shift",otherShift).in("seat_code",seatCodes);
-   if(otherReadError)throw otherReadError;
-   const otherNameBySeat=new Map((otherRows||[]).map(row=>[row.seat_code,row.employee_name||""]));
-   const mirroredRows=rows.map(row=>({
-    work_date:date,shift:otherShift,seat_code:row.seat_code,
-    employee_name:otherNameBySeat.get(row.seat_code)||"",
-    platform:row.platform||"",updated_by:currentUser.id
-   }));
-   const {error:mirrorError}=await sb.from("seat_assignments")
-    .upsert(mirroredRows,{onConflict:"work_date,shift,seat_code"});
-   if(mirrorError)throw mirrorError;
+   // Shift Pagi dan Malam disimpan secara independen. Tidak ada penyalinan ke shift lain.
 
    Object.keys(pendingSeatPlatformEdits).forEach(id=>delete pendingSeatPlatformEdits[id]);
    if(seatPlatformEditMode)setSeatPlatformEditMode(false);
-   message(`Berhasil menyimpan ${rows.length} data kursi. Denah permanen tersimpan untuk Pagi dan Malam; nama karyawan tetap terpisah per shift.`);
+   message(`Berhasil menyimpan ${rows.length} data kursi untuk shift ${shift} saja. Shift lainnya tidak diubah.`);
   }catch(error){
    message("Gagal menyimpan denah: "+(error?.message||error));
    alert("Denah belum berhasil disimpan. Periksa koneksi internet lalu coba Simpan denah lagi.\n\n"+(error?.message||""));
