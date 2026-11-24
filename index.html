@@ -2369,7 +2369,7 @@ table td{color:#344247!important}
 <body>
 <header>
  <div><h1>HARMONY SEATING ARRANGEMENT</h1><p id="headerFloorSeatSummary">240 seats · Employee database · Attendance dashboard</p></div>
- <div class="toolbar"><div class="language-switch" aria-label="Language"><button type="button" id="langIdBtn" class="active">ID</button><button type="button" id="langEnBtn">EN</button></div><span id="userBadge" class="status hidden"></span><button id="logoutBtn" class="hidden">Logout</button></div>
+ <div class="toolbar"><span id="userBadge" class="status hidden"></span><button id="logoutBtn" class="hidden">Logout</button></div>
 </header>
 
 <section id="loginScreen" class="login-wrap">
@@ -2840,14 +2840,14 @@ function applyPlatformColor(card,value){
   card.style.setProperty("--platform-ink",darkenHex(color,.55));
  }
 }
-function message(text){$("saveStatus").textContent=window.HARMONY_TRANSLATE?window.HARMONY_TRANSLATE(text):text}
+function message(text){$("saveStatus").textContent=text}
 function setApp(on){
  $("loginScreen").classList.toggle("hidden",on);$("appScreen").classList.toggle("hidden",!on);
  $("logoutBtn").classList.toggle("hidden",!on);$("userBadge").classList.toggle("hidden",!on);
 }
 
 // Inactivity auto-logout is disabled. Users remain signed in while the Supabase session is valid.
-function showLoginMessage(t){$("loginMessage").textContent=window.HARMONY_TRANSLATE?window.HARMONY_TRANSLATE(t):t}
+function showLoginMessage(t){$("loginMessage").textContent=t}
 async function login(){
  if(!sb){showLoginMessage("Koneksi Supabase belum aktif. Periksa konfigurasi URL dan Publishable Key di index.html.");return}
  const button=$("loginBtn");
@@ -3079,7 +3079,7 @@ function renderPlatformSeatEditorSide(side){
  body.querySelectorAll("[data-seat-platform]").forEach(select=>select.onchange=()=>saveSeatPlatform(select.dataset.seatPlatform,select.value));
 }
 async function saveSeatPlatform(seatCode,platformName){
- if(!canEditSeats()){alert("Hanya ADMIN, TL, dan EXPAT yang dapat mengubah pemetaan platform.");return}
+ if(!canAdmin()){alert("Hanya Admin yang dapat mengubah pemetaan platform.");return}
  if(String(platformName||"").trim().toUpperCase()==="OFF"){
   alert("Platform OFF tidak diperbolehkan. Kosongkan pilihan atau gunakan nama platform lain.");
   return;
@@ -3299,9 +3299,7 @@ return `<div class="desk"><div class="desk-title">Meja ${side==="L"?"Kiri":"Kana
      const saved=await saveSeat(id);
      if(!saved)throw new Error("Penyimpanan platform gagal untuk "+id);
      delete pendingSeatPlatformEdits[id];
-     message(String(value).trim().toUpperCase()==="VEGA"
-      ? "Platform VEGA tersimpan hanya untuk shift ini; shift lainnya tetap berbeda."
-      : "Platform "+id+" tersimpan otomatis untuk shift ini saja.");
+     message("Platform "+id+" tersimpan otomatis dan tersinkron ke kedua shift.");
     }catch(error){
      message("Gagal menyimpan "+id+": "+(error?.message||error));
      alert("Perubahan platform belum tersimpan. Jangan tutup halaman; coba edit/simpan kembali.\\n\\n"+(error?.message||""));
@@ -4806,9 +4804,7 @@ html body #appScreen #seatingPanel .layout-wrap::before {
 </style>
 
 
-<!-- Cross-shift platform mirroring removed: Pagi and Malam are saved independently. -->
-
-
+<!-- Removed automatic cross-shift platform mirroring: Pagi and Malam save independently. -->
 <script id="harmony-daily-persistence-and-save-v1">
 (function(){
  const saveButton=document.getElementById("saveWholeLayoutBtn");
@@ -4853,9 +4849,27 @@ html body #appScreen #seatingPanel .layout-wrap::before {
     .upsert(rows,{onConflict:"work_date,shift,seat_code"});
    if(error)throw error;
 
+   // Setelah simpan seluruh denah, salin platform untuk semua kursi ke shift lawan.
+   // Nama karyawan shift tujuan dibaca dari database dan tidak pernah ditimpa.
+   const otherShift=shift==="Pagi"?"Malam":"Pagi";
+   const seatCodes=rows.map(row=>row.seat_code);
+   const {data:otherRows,error:otherReadError}=await sb.from("seat_assignments")
+    .select("seat_code,employee_name")
+    .eq("work_date",date).eq("shift",otherShift).in("seat_code",seatCodes);
+   if(otherReadError)throw otherReadError;
+   const otherNameBySeat=new Map((otherRows||[]).map(row=>[row.seat_code,row.employee_name||""]));
+   const mirroredRows=rows.map(row=>({
+    work_date:date,shift:otherShift,seat_code:row.seat_code,
+    employee_name:otherNameBySeat.get(row.seat_code)||"",
+    platform:row.platform||"",updated_by:currentUser.id
+   }));
+   const {error:mirrorError}=await sb.from("seat_assignments")
+    .upsert(mirroredRows,{onConflict:"work_date,shift,seat_code"});
+   if(mirrorError)throw mirrorError;
+
    Object.keys(pendingSeatPlatformEdits).forEach(id=>delete pendingSeatPlatformEdits[id]);
    if(seatPlatformEditMode)setSeatPlatformEditMode(false);
-   message(`Berhasil menyimpan ${rows.length} data kursi untuk shift ${shift} saja. Shift lainnya tidak diubah.`);
+   message(`Berhasil menyimpan ${rows.length} data kursi. Denah permanen tersimpan untuk Pagi dan Malam; nama karyawan tetap terpisah per shift.`);
   }catch(error){
    message("Gagal menyimpan denah: "+(error?.message||error));
    alert("Denah belum berhasil disimpan. Periksa koneksi internet lalu coba Simpan denah lagi.\n\n"+(error?.message||""));
@@ -4970,220 +4984,5 @@ html body #appScreen #seatingPanel .layout-wrap::before {
   });
 })();
 </script>
-
-<script id="harmony-bilingual-ui-v1">
-(function(){
- const translations = {
-  "Login team":"Team Login",
-  "Masuk menggunakan akun masing-masing. Akun dibuat oleh administrator.":"Sign in with your individual account. Accounts are created by the administrator.",
-  "Pilih lantai":"Select floor",
-  "Lantai 9 · Operasional · 240 kursi":"Floor 9 · Operations · 240 seats",
-  "Lantai 8 · Perencanaan · denah fleksibel":"Floor 8 · Planning · flexible layout",
-  "Lantai 9 · Operasional":"Floor 9 · Operations",
-  "Lantai 8 · Perencanaan":"Floor 8 · Planning",
-  "Denah tetap 240 kursi. Data Lantai 9 tidak berubah saat kamu membuka Lantai 8.":"Fixed 240-seat layout. Floor 9 data remains unchanged when you open Floor 8.",
-  "OPERASIONAL":"OPERATIONS",
-  "PERENCANAAN":"PLANNING",
-  "Tanggal kerja":"Work date",
-  "Shift":"Shift",
-  "Pagi":"Morning",
-  "Malam":"Night",
-  "Refresh data":"Refresh data",
-  "Simpan denah":"Save seating plan",
-  "Print denah":"Print seating plan",
-  "Edit platform":"Edit platforms",
-  "Done Edit & Simpan":"Done Editing & Save",
-  "Simpan PDF":"Save PDF",
-  "Belum tersinkron":"Not synced yet",
-  "Total kapasitas — Lantai 9":"Total capacity — Floor 9",
-  "Hadir / nama terisi — Lantai 9":"Present / names entered — Floor 9",
-  "Kursi kosong — Lantai 9":"Empty seats — Floor 9",
-  "Platform terisi — Lantai 9":"Seats with platforms — Floor 9",
-  "Platform berbeda — Lantai 9":"Different platforms — Floor 9",
-  "Lantai 9 · Operasional: isi nama karyawan pada kursi yang tersedia. Nama yang terisi otomatis dihitung sebagai hadir untuk tanggal dan shift yang dipilih.":"Floor 9 · Operations: enter employee names in the available seats. Any entered name is automatically counted as present for the selected date and shift.",
-  "Salin denah harian — Lantai 9:":"Copy daily seating plan — Floor 9:",
-  "Jika tanggal dan shift yang dipilih belum memiliki data, aplikasi akan menyalin nama, platform, dan posisi kursi dari tanggal kalender sebelumnya pada shift yang sama di lantai yang sama. Data Lantai 8 dan Lantai 9 tetap dipisahkan.":"If the selected date and shift have no data, the app copies names, platforms, and seat positions from the previous calendar date for the same shift and floor. Floor 8 and Floor 9 data remain separate.",
-  "Planning · Belum final":"Planning · Not final",
-  "Atur pemetaan meja — Lantai 8":"Configure table layout — Floor 8",
-  "Masukkan ukuran sementara. Denah akan dibuat otomatis dan bisa diubah lagi ketika ukuran lantai sudah pasti.":"Enter temporary dimensions. The seating plan will be generated automatically and can be changed when the floor dimensions are confirmed.",
-  "Konfigurasi fleksibel":"Flexible configuration",
-  "Baris ke belakang":"Rows deep",
-  "Meja berjajar — Sisi Kiri":"Tables in a row — Left side",
-  "Meja berjajar — Sisi Kanan":"Tables in a row — Right side",
-  "Kursi per sisi meja (atas/bawah)":"Seats per table side (top/bottom)",
-  "Jumlah kursi per meja":"Seats per table",
-  "kursi (otomatis)":"seats (automatic)",
-  "Perkiraan total kapasitas Lantai 8:":"Estimated total capacity — Floor 8:",
-  "Sisi kiri":"Left side",
-  "Sisi kanan":"Right side",
-  "Perbarui preview denah":"Update seating preview",
-  "Simpan denah Lantai 8":"Save Floor 8 seating plan",
-  "Kembalikan contoh awal":"Restore default example",
-  "Contoh awal: 1 meja sisi kiri + 1 meja sisi kanan (2 meja melintang), 5 baris ke belakang, 3 kursi atas dan 3 kursi bawah per meja.":"Default example: 1 table on the left + 1 table on the right (2 tables across), 5 rows deep, 3 seats on top and 3 seats on the bottom of each table.",
-  "Pengaturan denah Lantai 8 tersimpan online. Kursi Lantai 8 menggunakan kode tersendiri, sehingga tidak bercampur dengan 240 kursi Lantai 9.":"Floor 8 layout settings are saved online. Floor 8 seats use separate seat codes and do not mix with the 240 Floor 9 seats.",
-  "Cara memasukkan nama:":"How to enter names:",
-  "Satu per satu":"One at a time",
-  "Banyak sekaligus":"Bulk entry",
-  "Mode satu per satu: klik kolom":"Single-entry mode: click the",
-  "Nama karyawan":"Employee name",
-  "pada kursi yang dipilih, lalu ketik nama seperti biasa.":"field on the selected seat, then type the name as usual.",
-  "Pengisian nama dipisah berdasarkan sisi":"Enter names separately by side",
-  "Gunakan kotak Sisi Kiri dan Sisi Kanan secara terpisah. Pilihan platform hanya mengambil kursi pada sisi yang dipilih, sehingga nama dari satu sisi tidak akan pernah masuk ke sisi lainnya.":"Use the Left Side and Right Side boxes separately. Platform selection only includes seats on the selected side, so names from one side will never be assigned to the other side.",
-  "SISI KIRI":"LEFT SIDE",
-  "SISI KANAN":"RIGHT SIDE",
-  "Pengisian hanya untuk kursi di sisi kiri. Urutan mengikuti jalur zig-zag pada denah.":"Entry applies only to seats on the left side. The order follows the zig-zag path in the seating plan.",
-  "Platform di Sisi Kiri":"Platform on the Left Side",
-  "Daftar nama karyawan — Sisi Kiri (satu nama per baris)":"Employee name list — Left Side (one name per line)",
-  "Upload .txt / .csv":"Upload .txt / .csv",
-  "Periksa daftar":"Review list",
-  "Isi Sisi Kiri":"Fill Left Side",
-  "Bersihkan":"Clear",
-  "Pilih platform sisi kiri, lalu masukkan daftar nama.":"Select a left-side platform, then enter the list of names.",
-  "Pengisian hanya untuk kursi di sisi kanan. Nama tidak akan bercampur dengan sisi kiri.":"Entry applies only to seats on the right side. Names will not mix with the left side.",
-  "Platform di Sisi Kanan":"Platform on the Right Side",
-  "Daftar nama karyawan — Sisi Kanan (satu nama per baris)":"Employee name list — Right Side (one name per line)",
-  "Isi Sisi Kanan":"Fill Right Side",
-  "Pilih platform sisi kanan, lalu masukkan daftar nama.":"Select a right-side platform, then enter the list of names.",
-  "MEJA":"TABLE",
-  "kursi":"seats",
-  "baris":"rows",
-  "meja per baris":"tables per row",
-  "kursi per meja":"seats per table",
-  "Platform tools":"Platform tools",
-  "Kelola nama platform dan susunan platform per kursi dari satu tempat. Perubahan tersimpan online.":"Manage platform names and platform assignments for each seat in one place. Changes are saved online.",
-  "Admin only":"Admin only",
-  "Pengelolaan nama dan warna platform dilakukan di sini. Daftar platform dipisahkan dari pemetaan kursi agar lebih mudah dibaca dan tidak tercampur dengan pengaturan denah.":"Manage platform names and colors here. The platform list is separate from seat assignments for easier viewing and to keep it separate from seating layout settings.",
-  "Tambah platform":"Add platform",
-  "Tambahkan satu platform atau masukkan banyak nama sekaligus. Daftar platform dan tombol edit sekarang berada di panel sebelah kanan.":"Add one platform or enter multiple names at once. The platform list and edit buttons are in the panel on the right.",
-  "Nama platform baru":"New platform name",
-  "Contoh: VEGA-12":"Example: VEGA-12",
-  "Warna":"Color",
-  "+ Tambah":"+ Add",
-  "Tambah banyak platform sekaligus":"Add multiple platforms",
-  "Satu nama per baris":"One name per line",
-  "Tempel semua nama platform sekaligus. Nama JINX otomatis mendapat warna merah, VEGA oranye, dan ZANE hijau. Nama lain menggunakan warna default yang kamu pilih.":"Paste all platform names at once. JINX is automatically colored red, VEGA orange, and ZANE green. Other names use the default color you choose.",
-  "Daftar nama platform":"Platform name list",
-  "Warna default nama lain":"Default color for other names",
-  "+ Tambahkan semua":"+ Add all",
-  "Tempel daftar platform, lalu periksa sebelum menyimpan.":"Paste the platform list, then review it before saving.",
-  "Daftar platform":"Platform list",
-  "Semua platform yang tersedia, status aktif, serta pengaturan nama dan warna.":"All available platforms, their active status, and name and color settings.",
-  "Katalog platform":"Platform catalog",
-  "Memuat daftar platform...":"Loading platform list...",
-  "Pemetaan platform per sisi":"Platform mapping by side",
-  "Pemetaan ditampilkan dalam dua panel berdampingan. Setiap panel memiliki pencarian dan filter sendiri.":"The mapping is shown in two side-by-side panels. Each panel has its own search and filter.",
-  "Refresh kedua sisi":"Refresh both sides",
-  "Cari kode kursi — Sisi Kiri":"Search seat code — Left Side",
-  "Filter platform Sisi Kiri":"Filter platforms — Left Side",
-  "Semua platform sisi kiri":"All left-side platforms",
-  "Belum ditentukan":"Not assigned",
-  "Kode kursi kiri":"Left seat code",
-  "Status":"Status",
-  "Memuat pemetaan sisi kiri...":"Loading left-side mapping...",
-  "Cari kode kursi — Sisi Kanan":"Search seat code — Right Side",
-  "Filter platform Sisi Kanan":"Filter platforms — Right Side",
-  "Semua platform sisi kanan":"All right-side platforms",
-  "Kode kursi kanan":"Right seat code",
-  "Memuat pemetaan sisi kanan...":"Loading right-side mapping...",
-  "Dashboard kehadiran —":"Attendance dashboard —",
-  "Tanggal":"Date",
-  "Tampilkan rekap":"Show summary",
-  "Total kursi":"Total seats",
-  "Total hadir":"Total present",
-  "Belum terisi":"Not assigned",
-  "Persentase hadir":"Attendance rate",
-  "Platform aktif":"Active platforms",
-  "Hadir per platform":"Attendance by platform",
-  "Belum ada data.":"No data yet.",
-  "Employee database":"Employee database",
-  "User & access":"Users & access",
-  "Login":"Login",
-  "Logout":"Logout",
-  "Email":"Email",
-  "Password":"Password",
-  "Sedang login...":"Signing in...",
-  "Memuat denah tetap...":"Loading permanent seating plan...",
-  "Denah tetap tersinkron online · tidak reset saat pergantian hari.":"Permanent seating plan synced online · does not reset when the day changes.",
-  "Tersimpan online":"Saved online",
-  "Menyimpan...":"Saving...",
-  "Menyimpan seluruh denah...":"Saving entire seating plan...",
-  "Gagal menyimpan denah: ":"Failed to save seating plan: ",
-  "Denah belum berhasil disimpan. Periksa koneksi internet lalu coba Simpan denah lagi.":"The seating plan could not be saved. Check your internet connection and try saving again.",
-  "Platform ":"Platform ",
-  " tersimpan otomatis.":" was saved automatically.",
-  "Platform OFF tidak diperbolehkan. Silakan kosongkan kolom atau masukkan nama platform yang benar.":"OFF is not allowed as a platform. Leave the field blank or enter a valid platform name.",
-  "Kamu tidak memiliki akses untuk menyimpan denah.":"You do not have permission to save the seating plan.",
-  "Belum ada data kursi untuk disimpan.":"There is no seat data to save.",
-  "Gagal memuat:":"Failed to load:",
-  "Simpan platform":"Save platforms",
-  "Platform tersimpan":"Platforms saved",
-  "Hadir":"Present",
-  "Kosong":"Empty",
-  "Aktif":"Active",
-  "Nonaktif":"Inactive",
-  "Edit":"Edit",
-  "Hapus":"Delete",
-  "Simpan":"Save",
-  "Batal":"Cancel",
-  "Nama":"Name",
-  "Role":"Role",
-  "Aksi":"Actions",
-  "Cari":"Search",
-  "Tambah karyawan":"Add employee",
-  "Tambah user":"Add user",
-  "Buat akun":"Create account",
-  "Perbarui":"Update",
-  "Kembali":"Back"
- };
- const reverse = Object.fromEntries(Object.entries(translations).map(([a,b])=>[b,a]));
- let language=localStorage.getItem("harmony_language_v1")||"id";
- const exact = value => {
-   const trimmed=value.trim();
-   if(language==="en" && translations[trimmed]) return value.replace(trimmed,translations[trimmed]);
-   if(language==="id" && reverse[trimmed]) return value.replace(trimmed,reverse[trimmed]);
-   return value;
- };
- function translateTree(root){
-   if(!root)return;
-   const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
-   const nodes=[]; while(walker.nextNode())nodes.push(walker.currentNode);
-   nodes.forEach(node=>{const next=exact(node.nodeValue);if(next!==node.nodeValue)node.nodeValue=next;});
-   root.querySelectorAll?.("input[placeholder],textarea[placeholder],button[title],[aria-label]").forEach(el=>{
-     ["placeholder","title","aria-label"].forEach(attr=>{if(el.hasAttribute(attr)){const v=el.getAttribute(attr),n=exact(v);if(n!==v)el.setAttribute(attr,n);}});
-   });
-   root.querySelectorAll?.("option").forEach(el=>{const n=exact(el.textContent);if(n!==el.textContent)el.textContent=n;});
- }
- function applyLanguage(next){
-   language=next==="en"?"en":"id";
-   localStorage.setItem("harmony_language_v1",language);
-   document.documentElement.lang=language;
-   translateTree(document.body);
-   document.getElementById("langIdBtn")?.classList.toggle("active",language==="id");
-   document.getElementById("langEnBtn")?.classList.toggle("active",language==="en");
-   document.getElementById("langIdBtn")?.setAttribute("aria-pressed",String(language==="id"));
-   document.getElementById("langEnBtn")?.setAttribute("aria-pressed",String(language==="en"));
-   window.HARMONY_LANGUAGE=language;
- }
- document.getElementById("langIdBtn")?.addEventListener("click",()=>applyLanguage("id"));
- document.getElementById("langEnBtn")?.addEventListener("click",()=>applyLanguage("en"));
- const observer=new MutationObserver(records=>{
-   if(language!=="en")return;
-   records.forEach(record=>{
-     if(record.type==="childList")record.addedNodes.forEach(node=>{if(node.nodeType===Node.ELEMENT_NODE)translateTree(node);else if(node.nodeType===Node.TEXT_NODE){const n=exact(node.nodeValue);if(n!==node.nodeValue)node.nodeValue=n;}});
-     else if(record.type==="characterData"){const n=exact(record.target.nodeValue);if(n!==record.target.nodeValue)record.target.nodeValue=n;}
-   });
- });
- observer.observe(document.body,{subtree:true,childList:true,characterData:true});
- window.HARMONY_TRANSLATE = function(value){return exact(String(value??""));};
- window.HARMONY_SET_LANGUAGE=applyLanguage;
- applyLanguage(language);
-})();
-</script>
-<style id="harmony-language-switch-style">
-.language-switch{display:flex;gap:4px;padding:3px;border:1px solid rgba(255,255,255,.45);border-radius:9px;background:rgba(0,0,0,.12)}
-.language-switch button{padding:6px 10px;min-width:38px;border-radius:6px;background:transparent;color:#fff;border:1px solid transparent;font-size:12px}
-.language-switch button.active{background:#fff;color:#243746;border-color:#fff}
-</style>
-
 </body>
 </html>
