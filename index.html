@@ -5237,15 +5237,100 @@ html body #appScreen #seatingPanel .layout-wrap::before {
   "Tambah user":"Add user",
   "Buat akun":"Create account",
   "Perbarui":"Update",
-  "Kembali":"Back"
+  "Kembali":"Back",
+  "Sembunyikan menu":"Hide menu",
+  "Tampilkan menu":"Show menu",
+  "Sembunyikan menu Workspace":"Hide Workspace menu",
+  "Tampilkan menu Workspace":"Show Workspace menu",
+  "WORKSPACE":"WORKSPACE",
+  "Pilih lantai":"Select floor",
+  "Lantai 8 · Perencanaan · 120 kursi":"Floor 8 · Planning · 120 seats",
+  "Floor 8 · Planning":"Floor 8 · Planning",
+  "Kapasitas Lantai 8 saat ini":"Current Floor 8 capacity",
+  "Kapasitas tetap Lantai 9 adalah":"The fixed capacity of Floor 9 is",
+  "Kapasitas Lantai 8 saat ini 120 kursi · 4 baris · 3 meja sisi kiri · 2 meja sisi kanan. Denah masih fleksibel dan datanya terpisah dari Lantai 9.":"Current Floor 8 capacity: 120 seats · 4 rows · 3 tables on the left · 2 tables on the right. The layout is flexible and its data is separate from Floor 9.",
+  "Kapasitas Lantai 8 saat ini 120 kursi":"Current Floor 8 capacity: 120 seats",
+  "Total kapasitas — Lantai 8":"Total capacity — Floor 8",
+  "Hadir / nama terisi — Lantai 8":"Present / names entered — Floor 8",
+  "Kursi kosong — Lantai 8":"Empty seats — Floor 8",
+  "Pilih lantai":"Select floor",
+  "120 kursi":"120 seats",
+  "4 baris":"4 rows",
+  "3 meja sisi kiri":"3 tables on the left",
+  "2 meja sisi kanan":"2 tables on the right",
+  "Denah masih fleksibel":"The layout is still flexible",
+  "denah fleksibel":"flexible layout",
+  "Nama platform":"Platform name",
+  "Nama karyawan":"Employee name",
+  "Employee name":"Employee name",
+  "SISI KANAN · 2 MEJA":"RIGHT SIDE · 2 TABLES",
+  "SISI KIRI · 3 MEJA":"LEFT SIDE · 3 TABLES",
+  "Meja Kiri":"Left Table",
+  "Meja Kanan":"Right Table",
+  "Meja kiri":"Left table",
+  "Meja kanan":"Right table",
+  "Meja kiri 1":"Left Table 1",
+  "Meja kiri 2":"Left Table 2",
+  "Meja kanan 1":"Right Table 1",
+  "Meja kanan 2":"Right Table 2",
+  "Nama platform:":"Platform name:",
+  "Kursi per meja":"Seats per table",
+  "Kursi per sisi":"Seats per side",
+  "Total kapasitas":"Total capacity",
+  "Hadir / nama terisi":"Present / names entered",
+  "Kursi kosong":"Empty seats",
+  "Estimasi total kapasitas":"Estimated total capacity",
+  "Sisi kiri":"Left side",
+  "Sisi kanan":"Right side",
+  "baris":"rows",
+  "kursi":"seats",
+  "meja":"tables",
+  "Pilih shift":"Select shift",
+  "Pagi":"Morning",
+  "Malam":"Night",
+  "Perencanaan":"Planning",
+  "Operasional":"Operations",
+  "Belum final":"Not final",
+  "Belum ada data":"No data yet",
+  "Data tersimpan":"Data saved",
+  "Simpan denah":"Save seating plan",
+  "Perbarui preview denah":"Update seating preview",
+  "Simpan denah Lantai 8":"Save Floor 8 seating plan",
+  "Kembalikan contoh awal":"Restore default example",
+  "Konfigurasi fleksibel":"Flexible configuration",
+  "Baris ke belakang":"Rows deep",
+  "Meja berjajar — Sisi Kiri":"Tables in a row — Left side",
+  "Meja berjajar — Sisi Kanan":"Tables in a row — Right side",
+  "Kursi per sisi meja (atas/bawah)":"Seats per table side (top/bottom)",
+  "Seats per table":"Seats per table",
+  "Estimated total capacity — Floor 8:":"Estimated total capacity — Floor 8:",
+  "Pilih platform":"Select platform",
+  "Belum ditentukan":"Not assigned",
+  "Simpan perubahan":"Save changes",
+  "Perubahan tersimpan":"Changes saved",
+  "Gagal menyimpan":"Failed to save",
+  "Tidak ada data":"No data",
  };
+
  const reverse = Object.fromEntries(Object.entries(translations).map(([a,b])=>[b,a]));
  let language=localStorage.getItem("harmony_language_v1")||"id";
  const exact = value => {
+   if(language==="en"){
+     const trimmed=value.trim();
+     if(translations[trimmed]) return value.replace(trimmed,translations[trimmed]);
+     let result=value;
+     Object.keys(translations).sort((a,b)=>b.length-a.length).forEach(key=>{
+       if(key && result.includes(key)) result=result.split(key).join(translations[key]);
+     });
+     return result;
+   }
    const trimmed=value.trim();
-   if(language==="en" && translations[trimmed]) return value.replace(trimmed,translations[trimmed]);
-   if(language==="id" && reverse[trimmed]) return value.replace(trimmed,reverse[trimmed]);
-   return value;
+   if(reverse[trimmed]) return value.replace(trimmed,reverse[trimmed]);
+   let result=value;
+   Object.keys(reverse).sort((a,b)=>b.length-a.length).forEach(key=>{
+     if(key && result.includes(key)) result=result.split(key).join(reverse[key]);
+   });
+   return result;
  };
  function translateTree(root){
    if(!root)return;
